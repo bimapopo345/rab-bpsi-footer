@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Bahan Upah & Alat</title>
+    <style>
+        :root {
+            --primary: #1a4f7c;
+            --secondary: #f26522;
+            --accent: #58595b;
+            --background: #f5f5f5;
+            --white: #ffffff;
+            --border: #dde1e4;
+            --shadow: rgba(26, 79, 124, 0.1);
+            --hover: #183f62;
+            --error: #dc3545;
+            --success: #28a745;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: var(--accent);
+        }
+
+        .top-bar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            color: var(--white);
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        .action-btn {
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background-color: #e55511;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
+        .nav-btn.danger {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .nav-btn.danger:hover {
+            background-color: var(--error);
+            color: var(--white);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            box-shadow: 0 2px 4px var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        th:hover {
+            background-color: var(--hover);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tr:hover {
+            background-color: #f0f4f8;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--primary);
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding: 20px;
+            text-align: center;
+            color: var(--accent);
+            border-top: 1px solid var(--border);
+        }
+
+        .sort-icon {
+            opacity: 0.5;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        th:hover .sort-icon {
+            opacity: 1;
+        }
+
+        /* Table action buttons */
+        .table-action {
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            color: var(--white);
+        }
+
+        .table-action.edit {
+            background-color: #ffc107;
+        }
+
+        .table-action.edit:hover {
+            background-color: #e0a800;
+        }
+
+        .table-action.delete {
+            background-color: var(--error);
+        }
+
+        .table-action.delete:hover {
+            background-color: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 15px;
+                padding: 15px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <button class="nav-btn" onclick="window.location.href='index.html'">← Kembali</button>
+        <h1>Daftar Bahan Upah & Alat</h1>
+        <button class="nav-btn danger" onclick="logout()">Keluar</button>
+    </div>
+
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="Cari Bahan / Upah / Alat"
+                autocomplete="off">
+            <button class="action-btn" onclick="addNewMaterial()">
+                <span>+</span> Tambah Baru
+            </button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortTable('name')">
+                        <div style="display: flex; align-items: center;">
+                            NAMA <span class="sort-icon">↕</span>
+                        </div>
+                    </th>
+                    <th onclick="sortTable('unit')">
+                        <div style="display: flex; align-items: center;">
+                            SATUAN <span class="sort-icon">↕</span>
+                        </div>
+                    </th>
+                    <th onclick="sortTable('price')">
+                        <div style="display: flex; align-items: center;">
+                            HARGA <span class="sort-icon">↕</span>
+                        </div>
+                    </th>
+                    <th onclick="sortTable('category')">
+                        <div style="display: flex; align-items: center;">
+                            KATEGORI <span class="sort-icon">↕</span>
+                        </div>
+                    </th>
+                    <th onclick="sortTable('created_at')">
+                        <div style="display: flex; align-items: center;">
+                            UPDATE TERAKHIR <span class="sort-icon">↕</span>
+                        </div>
+                    </th>
+                    <th>AKSI</th>
+                </tr>
+            </thead>
+            <tbody id="materialTableBody">
+                <!-- Data rows will be populated here -->
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>Total: <span id="materialCount" style="font-weight: 600; color: var(--white)">0</span> Bahan & Upah</p>
+        </div>
+    </div>
+
+    <!-- Modal untuk menambah material baru -->
+    <div id="addMaterialModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 25px;">Tambah Material/Upah Baru</h2>
+            <div class="form-group">
+                <label for="newName">Nama:</label>
+                <input type="text" id="newName" required placeholder="Masukkan nama" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="newUnit">Satuan:</label>
+                <input type="text" id="newUnit" required placeholder="Masukkan satuan" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="newPrice">Harga:</label>
+                <input type="number" id="newPrice" required placeholder="Masukkan harga" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="newCategory">Kategori:</label>
+                <select id="newCategory" required>
+                    <option value="Bahan">Bahan</option>
+                    <option value="Upah">Upah</option>
+                    <option value="Alat">Alat</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="action-btn" onclick="closeAddModal()"
+                    style="background-color: var(--accent)">Batal</button>
+                <button class="action-btn" onclick="saveMaterial()"
+                    style="background-color: var(--success)">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Edit Material -->
+    <div id="editMaterialModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 25px;">Edit Bahan Upah & Alat</h2>
+            <div class="form-group">
+                <label for="editName">Nama:</label>
+                <input type="text" id="editName" required placeholder="Masukkan nama">
+            </div>
+            <div class="form-group">
+                <label for="editUnit">Satuan:</label>
+                <input type="text" id="editUnit" required placeholder="Masukkan satuan">
+            </div>
+            <div class="form-group">
+                <label for="editPrice">Harga Satuan:</label>
+                <input type="number" id="editPrice" required placeholder="Masukkan harga">
+            </div>
+            <div class="form-group">
+                <label for="editCategory">Kategori:</label>
+                <select id="editCategory" required>
+                    <option value="Bahan">Bahan</option>
+                    <option value="Upah">Upah</option>
+                    <option value="Alat">Alat</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="action-btn" onclick="closeEditModal()"
+                    style="background-color: var(--accent)">Batal</button>
+                <button class="action-btn" onclick="updateMaterial()"
+                    style="background-color: var(--primary)">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="material_upah_renderer.js"></script>
+    <footer class="footer">
+        <div>Thanks to Bima Prawang Saputra</div>
+        <div class="social-links">
+            <a href="https://www.linkedin.com/in/bimaprawangsaputra/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+            </a>
+            <a href="https://www.instagram.com/bimatech/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+            </a>
+            <a href="https://api.whatsapp.com/send/?phone=6282275637656&text&type=phone_number&app_absent=0"
+                target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+            </a>
+        </div>
+    </footer>
+
+    <style>
+        .footer {
+            background-color: var(--primary);
+            color: var(--white);
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+
+        .social-links {
+            margin-top: 10px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-2px);
+            opacity: 0.8;
+        }
+
+        .social-links img {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</body>
+
+</html>

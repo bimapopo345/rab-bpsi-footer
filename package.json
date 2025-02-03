@@ -1,0 +1,22 @@
+{
+  "name": "rab",
+  "version": "1.0.0",
+  "description": "RAB Management System with Electron and SQLite",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0",
+    "exceljs": "^4.4.0",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^3.2.9"
+  }
+}

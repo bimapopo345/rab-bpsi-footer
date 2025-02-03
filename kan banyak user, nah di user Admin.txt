@@ -1,0 +1,14 @@
+kan banyak user, nah di user Admin nanti tambahin satu fitur didalam index.html dia sendiri yaitu menu User List, jadi pas ditekan muncul table ada Username, Password & Hint 
+
+jangan lupa ada tombol kembali
+
+
+-==
+
+nah fitur terakhir, semisal pas mereka daftar tambahin satu input "Hint"
+
+>> jadi semisal kalau mereka lupa password, ada di login itu nanti lupa password, terus tarok text kalau mau reset password sertakan username & Hint !!!
+
+>> jadi biar bisa ganti password gitu
+
+PENTING !!! : >> pliss perhatikan api response long ya... soalnya api saya ga bisa ngoding 1 file langsung Panjang, kalau bisa perhatikan chunk di cut cut

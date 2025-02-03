@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login - Sistem RAB</title>
+    <style>
+        :root {
+            --primary: #1a4f7c;
+            --secondary: #f26522;
+            --accent: #58595b;
+            --background: #f5f5f5;
+            --white: #ffffff;
+            --border: #dde1e4;
+            --shadow: rgba(26, 79, 124, 0.1);
+            --error: #dc3545;
+            --success: #28a745;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, #2980b9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Engineering pattern background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(30deg, rgba(255, 255, 255, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.1) 87.5%, rgba(255, 255, 255, 0.1)),
+                linear-gradient(150deg, rgba(255, 255, 255, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.1) 87.5%, rgba(255, 255, 255, 0.1)),
+                linear-gradient(30deg, rgba(255, 255, 255, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.1) 87.5%, rgba(255, 255, 255, 0.1)),
+                linear-gradient(150deg, rgba(255, 255, 255, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.1) 87.5%, rgba(255, 255, 255, 0.1)),
+                linear-gradient(60deg, rgba(255, 255, 255, 0.1) 25%, transparent 25.5%, transparent 75%, rgba(255, 255, 255, 0.1) 75%, rgba(255, 255, 255, 0.1)),
+                linear-gradient(60deg, rgba(255, 255, 255, 0.1) 25%, transparent 25.5%, transparent 75%, rgba(255, 255, 255, 0.1) 75%, rgba(255, 255, 255, 0.1));
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+            z-index: 0;
+        }
+
+        .login-container {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.5s ease-out;
+            margin: auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .login-container h2 {
+            color: var(--primary);
+            font-size: 24px;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .login-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 16px;
+            color: var(--accent);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        .input-group input::placeholder {
+            color: #a0a0a0;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #16426a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        #message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+
+        #message.error {
+            display: block;
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        #message.success {
+            display: block;
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            background-color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .logo svg {
+            width: 35px;
+            height: 35px;
+            fill: var(--white);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            z-index: 1;
+            color: white;
+            margin-top: auto;
+        }
+
+        .social-links {
+            margin-top: 10px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-2px);
+            opacity: 0.8;
+        }
+
+        .social-links img {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .auth-links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .auth-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-links a:hover {
+            color: var(--secondary);
+        }
+
+        .form-container {
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4V20ZM19 19V5H5V19H19ZM12 7V17H7V7H12ZM17 7V17H14V7H17Z" />
+            </svg>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="form-container active">
+            <h2>Login Sistem RAB</h2>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password">
+            </div>
+            <button onclick="attemptLogin()">Masuk</button>
+            <div class="auth-links">
+                <a href="#" onclick="showResetForm()">Lupa Password?</a>
+                <a href="#" onclick="showRegisterForm()">Daftar</a>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="form-container">
+            <h2>Daftar Akun</h2>
+            <div class="input-group">
+                <input type="text" id="regUsername" placeholder="Username" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="password" id="regPassword" placeholder="Password">
+            </div>
+            <div class="input-group">
+                <input type="password" id="regConfirmPassword" placeholder="Ulangi Password">
+            </div>
+            <div class="input-group">
+                <input type="text" id="regHint" placeholder="Password Hint">
+            </div>
+            <button onclick="attemptRegister()">Daftar</button>
+            <div class="auth-links">
+                <a href="#" onclick="showLoginForm()">Kembali ke Login</a>
+            </div>
+        </div>
+
+        <!-- Reset Password Form -->
+        <div id="resetForm" class="form-container">
+            <h2>Reset Password</h2>
+            <div class="input-group">
+                <input type="text" id="resetUsername" placeholder="Username" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="text" id="resetHint" placeholder="Password Hint">
+            </div>
+            <div class="input-group">
+                <input type="password" id="resetPassword" placeholder="Password Baru">
+            </div>
+            <div class="input-group">
+                <input type="password" id="resetConfirmPassword" placeholder="Ulangi Password Baru">
+            </div>
+            <button onclick="attemptReset()">Reset Password</button>
+            <div class="auth-links">
+                <a href="#" onclick="showLoginForm()">Kembali ke Login</a>
+            </div>
+        </div>
+
+        <p id="message"></p>
+    </div>
+
+    <footer class="footer">
+        <div>Thanks to Bima Prawang Saputra</div>
+        <div class="social-links">
+            <a href="https://www.linkedin.com/in/bimaprawangsaputra/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+            </a>
+            <a href="https://www.instagram.com/bimatech/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+            </a>
+            <a href="https://api.whatsapp.com/send/?phone=6282275637656&text&type=phone_number&app_absent=0"
+                target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // Form visibility functions
+        function showLoginForm() {
+            document.getElementById('loginForm').classList.add('active');
+            document.getElementById('registerForm').classList.remove('active');
+            document.getElementById('resetForm').classList.remove('active');
+            clearMessage();
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').classList.remove('active');
+            document.getElementById('registerForm').classList.add('active');
+            document.getElementById('resetForm').classList.remove('active');
+            clearMessage();
+        }
+
+        function showResetForm() {
+            document.getElementById('loginForm').classList.remove('active');
+            document.getElementById('registerForm').classList.remove('active');
+            document.getElementById('resetForm').classList.add('active');
+            clearMessage();
+        }
+
+        // Message handling
+        const messageElement = document.getElementById('message');
+        function showError(message) {
+            messageElement.textContent = message;
+            messageElement.className = 'error';
+        }
+
+        function showSuccess(message) {
+            messageElement.textContent = message;
+            messageElement.className = 'success';
+        }
+
+        function clearMessage() {
+            messageElement.textContent = '';
+            messageElement.className = '';
+        }
+    </script>
+    <script defer src="renderer.js"></script>
+</body>
+
+</html>

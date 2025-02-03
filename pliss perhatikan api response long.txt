@@ -1,0 +1,48 @@
+>> pliss perhatikan api response long ya... soalnya api saya ga bisa ngoding 1 file langsung Panjang, kalau bisa perhatikan chunk di cut cut
+
+ingat jangan  sentuh fitur lain!! apalgi delete fitur yang ada, dan pastikan reponsi api jangan Panjang, di potong per chunk aja karena api nya ga bisa
+
+nah sekarang yg utama saya ingin kamu buatin menu register di pas login gitu dibawahnya ada tulisan register,
+
+ini tiap user beda bedakan material & upah & AHS & dll nya? ibarat kaya beda akun beda hal projek t ermasuk nama lokasi, bahan, ahs, dll
+
+di register ada input : username, hint, password, ulangi password
+
+hint >> gunnya saat reset password nanti, tapi hiraukan dulu buat saja ada input hint
+
+untuk admin dan user tidak ada bedanya, admin sebelumnya untuk test aja hiraukan saja ga ada fitur penting
+
+nah jadi tujuan saya gini tiap akun itu pasti proyeknya beda beda kan? nah pengennya gitu
+
+tapi yg sebelumnya pake akun admin admin biarin aja deh, buat tabel baru aja user terus tiap akun beda beda handle nya
+
+>> pliss perhatikan api response long ya... soalnya api saya ga bisa ngoding 1 file langsung Panjang, kalau bisa perhatikan chunk di cut cut
+
+PERHATIKAN : ini tiap user beda bedakan material & upah & AHS & dll nya? ibarat kaya beda akun beda hal projek t ermasuk nama lokasi, bahan, ahs, dll
+
+-=== 
+
+>> pliss perhatikan api response long ya... soalnya api saya ga bisa ngoding 1 file langsung Panjang, kalau bisa perhatikan chunk di cut cut
+
+perbaiki juga untuk table admin admin tambahin default userid biar ga error diawal pas baru buat db
+
+pas setelah login gitu muncul error pas di index.html
+
+A JavaScript error occurred in the main process
+Uncaught Exception:
+TypeError: Cannot destructure property 'userld' of 'undefined' as it is undefined.
+at IpcMainImpl.<anonymous>
+(C:\Users\bimap\OneDrive\Desktop\Ku\rab\src\handlers\projectHandlers.js:3:39) at IpcMainImpl.emit (node:events:517:28) at WebContents. <anonymous> (node:electron/js2c/browser_init:2:77585)
+at WebContents.emit (node:events:517:28)
+
+---
+
+-==
+
+nah fitur terakhir, semisal pas mereka daftar tambahin satu input "Hint"
+
+>> jadi semisal kalau mereka lupa password, ada di login itu nanti lupa password, terus tarok text kalau mau reset password sertakan username & Hint !!!
+
+>> jadi biar bisa ganti password gitu
+
+PENTING !!! : >> pliss perhatikan api response long ya... soalnya api saya ga bisa ngoding 1 file langsung Panjang, kalau bisa perhatikan chunk di cut cut

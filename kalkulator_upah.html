@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kalkulator Upah - RAB</title>
+    <style>
+        :root {
+            --primary: #1a4f7c;
+            --secondary: #f26522;
+            --accent: #58595b;
+            --background: #f5f5f5;
+            --white: #ffffff;
+            --border: #dde1e4;
+            --shadow: rgba(26, 79, 124, 0.1);
+            --hover: #183f62;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+        display: flex; flex-direction: column; min-height: 100vh; }
+
+        .top-bar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .report-container {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px var(--shadow);
+            margin-top: 20px;
+        }
+
+        .report-title {
+            color: var(--primary);
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--background);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: var(--background);
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: var(--background);
+        }
+
+        .ahs-group {
+            margin-bottom: 30px;
+        }
+
+        .ahs-title {
+            color: var(--primary);
+            font-size: 18px;
+            margin: 20px 0 10px;
+            padding: 10px;
+            background-color: var(--background);
+            border-radius: 6px;
+        }
+
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
+        #summaryReport,
+        #detailReport {
+            display: none;
+        }
+
+        .navigation-btn-group {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <h1>Kalkulator Upah</h1>
+        <button class="back-btn">Kembali</button>
+    </div>
+
+    <div class="container">
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="showSummaryReport()">Rekap Semua Pekerjaan</button>
+            <button class="btn btn-primary" onclick="showDetailReport()">Detail Per Kelompok Pekerjaan</button>
+        </div>
+
+        <!-- Summary Report -->
+        <div id="summaryReport" class="report-container">
+            <h2 class="report-title">Rekap Semua Pekerjaan</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Deskripsi</th>
+                        <th>Satuan</th>
+                        <th>HRG Satuan</th>
+                        <th>Volume</th>
+                        <th>Biaya</th>
+                    </tr>
+                </thead>
+                <tbody id="summaryTableBody">
+                    <!-- Data will be populated here -->
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4">Total Biaya</td>
+                        <td id="summaryTotal">0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Detail Report -->
+        <div id="detailReport" class="report-container">
+            <h2 class="report-title">Detail Per Kelompok Pekerjaan</h2>
+            <div id="ahsGroups">
+                <!-- AHS groups will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="kalkulator_upah_renderer.js"></script>
+<footer class="footer">
+    <div>Thanks to Bima Prawang Saputra</div>
+    <div class="social-links">
+        <a href="https://www.linkedin.com/in/bimaprawangsaputra/" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+        </a>
+        <a href="https://www.instagram.com/bimatech/" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+        </a>
+        <a href="https://api.whatsapp.com/send/?phone=6282275637656&text&type=phone_number&app_absent=0"
+            target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+        </a>
+    </div>
+</footer>
+
+<style>
+    .footer {
+        background-color: var(--primary);
+        color: var(--white);
+        text-align: center;
+        padding: 20px;
+        margin-top: auto;
+    }
+
+    .social-links {
+        margin-top: 10px;
+    }
+
+    .social-links a {
+        display: inline-block;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+        transform: translateY(-2px);
+        opacity: 0.8;
+    }
+
+    .social-links img {
+        width: 24px;
+        height: 24px;
+    }
+</style></body>
+
+</html>

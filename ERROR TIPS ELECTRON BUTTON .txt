@@ -1,0 +1,36 @@
+https://github.com/electron/electron/issues/20400#issuecomment-539586029
+
+The earliest mention I could find of this issue was June 5, 2019, so we may not get a fix anytime soon. I was able to use the following workaround to fix this behavior:
+
+  const isWindows = process.platform === 'win32';
+  let needsFocusFix = false;
+  let triggeringProgrammaticBlur = false;
+
+  win.on('blur', (event) => {
+    if(!triggeringProgrammaticBlur) {
+      needsFocusFix = true;
+    }
+  })
+
+  win.on('focus', (event) => {
+    if(isWindows && needsFocusFix) {
+      needsFocusFix = false;
+      triggeringProgrammaticBlur = true;
+      setTimeout(function () {
+        win.blur();
+        win.focus();
+        setTimeout(function () {
+          triggeringProgrammaticBlur = false;
+        }, 100);
+      }, 100);
+    }
+  })
+Update: the workaround above causes unintended consequences when attempting to refocus the app, where the app can blur but not refocus at times. The only solution for now appears to be ditching alert() for a custom implementation.
+
+
+duh setelah delete gitu malah masih ga bisa input mau input di login, add, dll
+
+karena saya ga tau kenapa kalau tekan delete terjadi gitu
+
+perbaikan event listener dan fokus.
+Okay, let's see. The user is having trouble with input fields not working after deleting an item. I need to figure out why that's happening.

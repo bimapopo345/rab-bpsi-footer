@@ -1,0 +1,11 @@
+nah setiap user adakan fitur export dong, jadi semua data dia itu diexport ke excel , terus juga ada menu import biat semisal dari pc 1 ke pc yang lain semisal ingin pake data yg sama tinggal export & Import
+
+ada 2 nih : 
+
+1. export untuk user A semua datanya terus di import sama user B >> berupa excel
+
+2. export db >> terkadang dari 1 laptop ke laptop lain mau export import db nya sapa tau ada banyak user kan semisal ada 10 user, kalau export 1 1 cape, jadi sekali import aja database apk itu berganti ke database yg di import
+
+cumin admin yang bisa export dan import antar db
+
+kalau excel tiap user bisa
