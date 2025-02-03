@@ -168,21 +168,19 @@
         }
 
         .logo {
-            width: 60px;
-            height: 60px;
+            width: 120px;
+            height: 120px;
             margin-bottom: 20px;
-            background-color: var(--primary);
-            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
         }
 
-        .logo svg {
-            width: 35px;
-            height: 35px;
-            fill: var(--white);
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .footer {
@@ -253,15 +251,12 @@
 <body>
     <div class="login-container">
         <div class="logo">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4V20ZM19 19V5H5V19H19ZM12 7V17H7V7H12ZM17 7V17H14V7H17Z" />
-            </svg>
+            <img src="Logo Kementerian Pertanian Republik Indonesia.png" alt="Logo Kementan">
         </div>
 
         <!-- Login Form -->
         <div id="loginForm" class="form-container active">
-            <h2>Login Sistem RAB</h2>
+            <h2>Penyusunan Estimator RAB</h2>
             <div class="input-group">
                 <input type="text" id="username" placeholder="Username" autocomplete="off">
             </div>
@@ -321,17 +316,19 @@
     </div>
 
     <footer class="footer">
-        <div>Thanks to Bima Prawang Saputra</div>
+        <div>Balai Besar Pengujian Standar Instrumen Sumberdaya Lahan Pertanian</div>
         <div class="social-links">
-            <a href="https://www.linkedin.com/in/bimaprawangsaputra/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+            <a href="https://www.facebook.com/BBSDLP/?locale=id_ID" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
             </a>
-            <a href="https://www.instagram.com/bimatech/" target="_blank">
+            <a href="https://www.instagram.com/bsip_sdlp/" target="_blank">
                 <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
             </a>
-            <a href="https://api.whatsapp.com/send/?phone=6282275637656&text&type=phone_number&app_absent=0"
-                target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+            <a href="https://www.youtube.com/@bbsdlp5005/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
+            </a>
+            <a href="https://sdlp.bsip.pertanian.go.id/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website">
             </a>
         </div>
     </footer>
