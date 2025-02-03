@@ -1,133 +1,166 @@
-# Project RAB
+# RAB BLDSP - Aplikasi Desktop Manajemen RAB
 
-Aplikasi web untuk mengelola dan mencetak dokumen RAB (Rencana Anggaran Biaya), dibangun menggunakan HTML, CSS, dan JavaScript dengan Electron.
+Aplikasi desktop untuk mengelola dan mencetak Rencana Anggaran Biaya (RAB), dikembangkan khusus untuk Balai Besar Pengujian Standar Instrumen Sumberdaya Lahan Pertanian menggunakan teknologi Electron.
 
-## Struktur Proyek
+![RAB BLDSP Logo](Logo%20Kementerian%20Pertanian%20Republik%20Indonesia.png)
 
-```markdown
-project-rab/
-├── src/ # File sumber
-│ ├── components/ # Komponen HTML
-│ ├── database/ # Inisialisasi database
-│ ├── handlers/ # Handler permintaan
-│ ├── styles/ # Gaya CSS
-│ ├── utils/ # Fungsi utilitas
-│ └── main.js # File JavaScript utama
-├── index.html # File HTML utama
-├── login.html # Halaman login
-├── material_upah.html # Halaman material dan upah
-├── daftar_ahs.html # Halaman daftar AHS
-├── package.json # Dependensi proyek
-├── package-lock.json # Lockfile untuk dependensi
-└── README.md # Dokumentasi proyek
+## 🌟 Fitur Utama
+
+- **Multi-User System**
+
+  - Login dan manajemen user
+  - Sistem hak akses berbasis role
+  - Fitur reset password dengan hint
+
+- **Manajemen Data Proyek**
+
+  - Pencatatan detail proyek
+  - Penyimpanan histori proyek
+  - Export data proyek
+
+- **Kalkulasi RAB**
+
+  - Kalkulator material dan upah
+  - Analisa Harga Satuan (AHS)
+  - Perhitungan otomatis total biaya
+
+- **Cetak Laporan**
+  - Export ke Excel dengan format terstruktur
+  - Cetak AHS, material, dan upah
+  - Template laporan standar
+
+## 💻 Teknologi
+
+- **Framework**: Electron.js
+- **Frontend**: HTML, CSS, JavaScript
+- **Database**: SQLite
+- **Export**: ExcelJS
+- **Interface**: Custom CSS components
+
+## 📂 Struktur Aplikasi
+
+```
+rab-bldsp/
+├── src/                     # Kode sumber
+│   ├── components/         # Komponen UI yang dapat digunakan kembali
+│   ├── database/          # Konfigurasi dan inisialisasi database
+│   ├── handlers/          # Handler untuk berbagai fitur
+│   │   ├── print/        # Handler untuk cetak dokumen
+│   │   └── ...          # Handler lainnya
+│   ├── styles/           # File CSS
+│   └── utils/            # Fungsi utilitas
+├── *.html                # File-file antarmuka
+├── *_renderer.js         # File JavaScript untuk setiap antarmuka
+├── main.js              # File utama Electron
+└── package.json         # Konfigurasi proyek dan dependensi
 ```
 
-## Daftar Isi
+## 📱 Halaman Aplikasi
 
-- [Tentang](#tentang)
-- [Fitur](#fitur)
-- [Teknologi yang Digunakan](#teknologi-yang-digunakan)
-- [Prasyarat](#prasyarat)
-- [Instalasi](#instalasi)
-- [Penggunaan](#penggunaan)
-- [Dokumentasi API](#dokumentasi-api)
-- [Deployment](#deployment)
-- [Kontribusi](#kontribusi)
-- [Lisensi](#lisensi)
-- [Kontak](#kontak)
+1. **Login (login.html)**
 
-## Tentang
+   - Autentikasi pengguna
+   - Fitur daftar akun baru
+   - Reset password
 
-Project RAB adalah aplikasi web yang dirancang untuk mengelola dan mencetak dokumen RAB (Rencana Anggaran Biaya). Aplikasi ini memungkinkan pengguna untuk memasukkan data material dan upah, menghasilkan laporan RAB yang terperinci, dan mencetaknya dalam format yang terstruktur. Dengan menggunakan Electron, aplikasi ini dapat berjalan di berbagai platform sebagai aplikasi desktop.
+2. **Dashboard (index.html)**
 
-## Fitur
+   - Menu utama aplikasi
+   - Informasi proyek aktif
+   - Akses ke semua fitur
 
-- Autentikasi dan otorisasi pengguna
-- Memasukkan dan mengelola data material dan upah
-- Menghasilkan laporan RAB yang terperinci
-- Mencetak dokumen RAB dalam format yang terstruktur
-- Antarmuka pengguna yang intuitif dan mudah digunakan
-- Dukungan untuk berbagai platform melalui Electron
+3. **Material & Upah (material_upah.html)**
 
-## Teknologi yang Digunakan
+   - Manajemen data material
+   - Manajemen data upah
+   - Pencarian dan filter
 
-### Frontend
+4. **Analisa Harga Satuan (daftar_ahs.html, rincian_ahs.html)**
 
-- **HTML**: Bahasa markup untuk membuat halaman web
-- **CSS**: Bahasa stylesheet untuk mendesain halaman web
-- **JavaScript**: Bahasa pemrograman untuk pengembangan web
+   - Daftar AHS
+   - Detail per AHS
+   - Pengelolaan koefisien
 
-### Backend
+5. **Kalkulator (kalkulator_material.html, kalkulator_upah.html)**
 
-- **Node.js**: Runtime JavaScript untuk membangun backend
-- **SQLite**: Database ringan untuk menyimpan data
+   - Perhitungan biaya material
+   - Perhitungan biaya upah
+   - Rekap total biaya
 
-### Alat Lainnya
+6. **Data Proyek (data_proyek.html)**
 
-- **Express.js**: Framework web Node.js untuk membangun API
-- **ExcelJS**: Library untuk membuat file Excel
-- **Electron**: Framework untuk membangun aplikasi desktop lintas platform dengan JavaScript, HTML, dan CSS
+   - Informasi proyek
+   - Pengaturan proyek
+   - Histori proyek
 
-## Prasyarat
+7. **Cetak (cetak_ahs.html)**
+   - Export ke Excel
+   - Pilihan template cetak
+   - Preview dokumen
 
-- Node.js (versi 14 atau lebih tinggi) > v20.18.2
-- npm (versi 6 atau lebih tinggi)
+## ⚙️ Instalasi & Penggunaan
 
-## Instalasi
+1. **Prasyarat**
 
-```bash
-# Clone repositori
-git clone https://github.com/bimapopo345/rab-bldsp.git
-cd project-rab
+   ```bash
+   Node.js >= v20.18.2
+   npm >= v6
+   ```
 
-# Instal dependensi
-npm install
+2. **Instalasi**
 
-# Inisialisasi database
-node src/database/init.js
+   ```bash
+   # Clone repositori
+   git clone https://github.com/bimapopo345/rab-bldsp.git
+   cd rab-bldsp
 
-# Mulai server pengembangan
-npm start
+   # Install dependensi
+   npm install
 
-#instalasi Kodingan Menjadi Program .Exe
-npx electron-packager . project-rab --platform=win32 --arch=x64 --out=dist --overwrite
-```
+   # Inisialisasi database
+   node src/database/init.js
+   ```
 
-## Penggunaan
+3. **Development**
 
-1. Buka browser web dan navigasikan ke `http://localhost:3000`
-2. Daftarkan akun pengguna baru atau masuk ke akun yang sudah ada
-3. Masukkan data material dan upah
-4. Hasilkan dan cetak laporan RAB
+   ```bash
+   # Menjalankan aplikasi dalam mode development
+   npm start
+   ```
 
-## Dokumentasi API
+4. **Build Aplikasi**
+   ```bash
+   # Build aplikasi untuk Windows
+   npx electron-packager . rab-bldsp --platform=win32 --arch=x64 --out=dist --overwrite
+   ```
 
-Dokumentasi API tersedia di `http://localhost:3000/api/docs`
+## 🔒 Keamanan
 
-## Deployment
+- Database SQLite terenkripsi
+- Hash password untuk keamanan
+- Validasi input untuk mencegah SQL injection
+- Backup otomatis database
 
-Aplikasi ini dapat dideploy ke lingkungan produksi menggunakan platform cloud seperti Heroku atau Vercel.
+## 🛠️ Pengembangan
 
-### Deployment Backend
+- Dibuat dengan Electron untuk performa optimal
+- Menggunakan SQLite untuk penyimpanan data lokal
+- Interface responsif dan user-friendly
+- Modular dan mudah dimaintain
 
-1. Buat aplikasi Heroku baru dan instal add-on SQLite
-2. Atur variabel lingkungan untuk string koneksi database dan pengaturan lainnya
-3. Deploy kode backend ke Heroku menggunakan Git
+## 📄 Lisensi
 
-### Deployment Frontend
+Hak Cipta © 2024 Balai Besar Pengujian Standar Instrumen Sumberdaya Lahan Pertanian. All rights reserved.
 
-1. Buat aplikasi Vercel baru dan tautkan ke repositori frontend
-2. Atur variabel lingkungan untuk endpoint API dan pengaturan lainnya
-3. Deploy kode frontend ke Vercel
+## 📞 Kontak & Support
 
-## Kontribusi
+- **Website**: [https://sdlp.bsip.pertanian.go.id/](https://sdlp.bsip.pertanian.go.id/)
+- **Facebook**: [BBSDLP](https://www.facebook.com/BBSDLP/?locale=id_ID)
+- **Instagram**: [@bsip_sdlp](https://www.instagram.com/bsip_sdlp/)
+- **YouTube**: [@bbsdlp5005](https://www.youtube.com/@bbsdlp5005/)
 
-Kontribusi sangat diterima! Silakan kirim pull request dengan perubahan Anda dan deskripsi singkat tentang pembaruan.
+---
 
-## Lisensi
+Dikembangkan oleh Bima Prawang Saputra
 
-Aplikasi Project RAB dilisensikan di bawah Lisensi MIT.
-
-## Kontak
-
-Untuk pertanyaan, masalah, atau umpan balik, silakan hubungi tim pengembangan di [bimapopo345@gmail.com](mailto:bimapopo345@gmail.com)
+WhatsApp: [wa.me/6282275637656](https://wa.me/6282275637656)
