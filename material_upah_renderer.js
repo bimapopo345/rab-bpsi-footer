@@ -6,6 +6,8 @@ let sortOrder = {
   unit: "asc",
   price: "asc",
   category: "asc",
+  lokasi: "asc",
+  sumber_data: "asc",
   created_at: "asc",
 };
 
@@ -39,6 +41,8 @@ ipcRenderer.on("sorted-materials", (event, materials) => {
       <td>${material.unit}</td>
       <td>Rp ${material.price.toLocaleString()}</td>
       <td>${material.category}</td>
+      <td>${material.lokasi || "-"}</td>
+      <td>${material.sumber_data || "-"}</td>
       <td>${new Date(material.created_at).toLocaleDateString()}</td>
       <td>
         <button onclick="editMaterial(${material.id})">Edit</button>
@@ -106,6 +110,8 @@ ipcRenderer.on("material-data", (event, material) => {
   document.getElementById("editUnit").value = material.unit;
   document.getElementById("editPrice").value = material.price;
   document.getElementById("editCategory").value = material.category;
+  document.getElementById("editLokasi").value = material.lokasi || "";
+  document.getElementById("editSumberData").value = material.sumber_data || "";
 
   // Tampilkan modal
   const modal = document.getElementById("editMaterialModal");
@@ -124,6 +130,8 @@ ipcRenderer.on("materials-data", (event, materials) => {
           <td>${material.unit}</td>
           <td>Rp ${material.price.toLocaleString()}</td>
           <td>${material.category}</td>
+          <td>${material.lokasi || "-"}</td>
+          <td>${material.sumber_data || "-"}</td>
           <td>${new Date(material.created_at).toLocaleDateString()}</td>
           <td>
               <button onclick="editMaterial(${material.id})">Edit</button>
@@ -155,6 +163,8 @@ function addNewMaterial() {
   document.getElementById("newUnit").value = "";
   document.getElementById("newPrice").value = "";
   document.getElementById("newCategory").value = "Material";
+  document.getElementById("newLokasi").value = "";
+  document.getElementById("newSumberData").value = "";
 
   modal.style.display = "block";
 
@@ -183,9 +193,11 @@ function updateMaterial() {
   const unit = document.getElementById("editUnit").value.trim();
   const price = document.getElementById("editPrice").value;
   const category = document.getElementById("editCategory").value;
+  const lokasi = document.getElementById("editLokasi").value.trim();
+  const sumber_data = document.getElementById("editSumberData").value.trim();
 
   if (!name || !unit || !price) {
-    alert("Semua field harus diisi!");
+    alert("Nama, Satuan, dan Harga harus diisi!");
     return;
   }
 
@@ -196,6 +208,8 @@ function updateMaterial() {
     unit,
     price,
     category,
+    lokasi,
+    sumber_data,
     userId,
   });
 
@@ -210,9 +224,11 @@ function saveMaterial() {
   const unit = document.getElementById("newUnit").value.trim();
   const price = document.getElementById("newPrice").value;
   const category = document.getElementById("newCategory").value;
+  const lokasi = document.getElementById("newLokasi").value.trim();
+  const sumber_data = document.getElementById("newSumberData").value.trim();
 
   if (!name || !unit || !price) {
-    alert("Semua field harus diisi!");
+    alert("Nama, Satuan, dan Harga harus diisi!");
     return;
   }
 
@@ -222,6 +238,8 @@ function saveMaterial() {
       unit,
       price: parseFloat(price),
       category,
+      lokasi,
+      sumber_data,
     },
     userId,
   });

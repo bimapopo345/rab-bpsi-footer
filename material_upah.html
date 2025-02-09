@@ -364,6 +364,16 @@
                             KATEGORI <span class="sort-icon">↕</span>
                         </div>
                     </th>
+                    <th onclick="sortTable('lokasi')">
+                        <div style="display: flex; align-items: center;">
+                            LOKASI <span class="sort-icon">↕</span>
+                        </div>
+                    </th>
+                    <th onclick="sortTable('sumber_data')">
+                        <div style="display: flex; align-items: center;">
+                            SUMBER DATA <span class="sort-icon">↕</span>
+                        </div>
+                    </th>
                     <th onclick="sortTable('created_at')">
                         <div style="display: flex; align-items: center;">
                             UPDATE TERAKHIR <span class="sort-icon">↕</span>
@@ -407,6 +417,14 @@
                     <option value="Alat">Alat</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label for="newLokasi">Lokasi:</label>
+                <input type="text" id="newLokasi" placeholder="Masukkan lokasi" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="newSumberData">Sumber Data:</label>
+                <input type="text" id="newSumberData" placeholder="Masukkan sumber data" autocomplete="off">
+            </div>
             <div class="modal-buttons">
                 <button class="action-btn" onclick="closeAddModal()"
                     style="background-color: var(--accent)">Batal</button>
@@ -440,6 +458,14 @@
                     <option value="Upah">Upah</option>
                     <option value="Alat">Alat</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label for="editLokasi">Lokasi:</label>
+                <input type="text" id="editLokasi" placeholder="Masukkan lokasi">
+            </div>
+            <div class="form-group">
+                <label for="editSumberData">Sumber Data:</label>
+                <input type="text" id="editSumberData" placeholder="Masukkan sumber data">
             </div>
             <div class="modal-buttons">
                 <button class="action-btn" onclick="closeEditModal()"

@@ -55,7 +55,7 @@ function initDatabase() {
           }
         );
 
-        // Create materials table with user_id
+        // Create materials table with user_id and new columns
         db.run(`
           CREATE TABLE IF NOT EXISTS materials (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,10 +65,47 @@ function initDatabase() {
             price REAL NOT NULL,
             category TEXT NOT NULL,
             description TEXT,
+            lokasi TEXT,
+            sumber_data TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
         `);
+
+        // Add new columns to existing materials table if they don't exist
+        db.get("PRAGMA table_info(materials)", (err, rows) => {
+          if (err) {
+            console.error("Error checking materials table columns:", err);
+            return;
+          }
+
+          // Check if lokasi column exists
+          db.get("SELECT lokasi FROM materials LIMIT 1", (err) => {
+            if (err) {
+              // Add lokasi column if it doesn't exist
+              db.run("ALTER TABLE materials ADD COLUMN lokasi TEXT", (err) => {
+                if (err) {
+                  console.error("Error adding lokasi column:", err);
+                }
+              });
+            }
+          });
+
+          // Check if sumber_data column exists
+          db.get("SELECT sumber_data FROM materials LIMIT 1", (err) => {
+            if (err) {
+              // Add sumber_data column if it doesn't exist
+              db.run(
+                "ALTER TABLE materials ADD COLUMN sumber_data TEXT",
+                (err) => {
+                  if (err) {
+                    console.error("Error adding sumber_data column:", err);
+                  }
+                }
+              );
+            }
+          });
+        });
 
         // Create AHS table with user_id
         db.run(`

@@ -29,8 +29,8 @@ function setupMaterialHandlers(ipcMain, db) {
 
     const query = `%${searchTerm}%`;
     db.all(
-      "SELECT * FROM materials WHERE user_id = ? AND (name LIKE ? OR category LIKE ?)",
-      [userId, query, query],
+      "SELECT * FROM materials WHERE user_id = ? AND (name LIKE ? OR category LIKE ? OR lokasi LIKE ? OR sumber_data LIKE ?)",
+      [userId, query, query, query, query],
       (err, materials) => {
         if (err) {
           console.error("Error searching materials:", err);
@@ -50,8 +50,16 @@ function setupMaterialHandlers(ipcMain, db) {
     }
 
     db.run(
-      "INSERT INTO materials (name, unit, price, category, user_id) VALUES (?, ?, ?, ?, ?)",
-      [material.name, material.unit, material.price, material.category, userId],
+      "INSERT INTO materials (name, unit, price, category, lokasi, sumber_data, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
+        material.name,
+        material.unit,
+        material.price,
+        material.category,
+        material.lokasi || null,
+        material.sumber_data || null,
+        userId,
+      ],
       (err) => {
         if (err) {
           console.error("Error adding material:", err);
@@ -109,15 +117,27 @@ function setupMaterialHandlers(ipcMain, db) {
   // Update material
   ipcMain.on(
     "update-material",
-    (event, { id, name, unit, price, category, userId }) => {
+    (
+      event,
+      { id, name, unit, price, category, lokasi, sumber_data, userId }
+    ) => {
       if (!userId) {
         event.reply("material-updated", { error: "User ID is required" });
         return;
       }
 
       db.run(
-        "UPDATE materials SET name = ?, unit = ?, price = ?, category = ? WHERE id = ? AND user_id = ?",
-        [name, unit, price, category, id, userId],
+        "UPDATE materials SET name = ?, unit = ?, price = ?, category = ?, lokasi = ?, sumber_data = ? WHERE id = ? AND user_id = ?",
+        [
+          name,
+          unit,
+          price,
+          category,
+          lokasi || null,
+          sumber_data || null,
+          id,
+          userId,
+        ],
         (err) => {
           if (err) {
             console.error("Error updating material:", err);

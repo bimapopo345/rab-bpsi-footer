@@ -17,12 +17,14 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
       { header: "Satuan", key: "satuan", width: 12 },
       { header: "Kuantitas", key: "kuantitas", width: 12 },
       { header: "Harga Satuan", key: "harga", width: 20 },
+      { header: "Lokasi", key: "lokasi", width: 20 },
+      { header: "Sumber Data", key: "sumber_data", width: 20 },
       { header: "Jumlah", key: "jumlah", width: 20 },
     ];
 
     sheet.columns = columns;
     // Add report title
-    sheet.mergeCells("A1:H1");
+    sheet.mergeCells("A1:J1");
     const titleCell = sheet.getCell("A1");
     titleCell.value = "DAFTAR HARGA BAHAN / MATERIAL";
     titleCell.font = { bold: true, size: 14, color: { argb: "FFFFFF" } };
@@ -55,7 +57,9 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
                 m.name as material_name,
                 a.satuan,
                 m.price as harga_satuan,
-                p.koefisien as kuantitas
+                p.koefisien as kuantitas,
+                m.lokasi,
+                m.sumber_data
             FROM ahs a
             LEFT JOIN pricing p ON a.id = p.ahs_id
             LEFT JOIN materials m ON p.material_id = m.id
@@ -96,7 +100,7 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
           kelompokTotal = 0;
 
           const kelompokRow = sheet.getRow(currentRow);
-          sheet.mergeCells(`A${currentRow}:H${currentRow}`);
+          sheet.mergeCells(`A${currentRow}:J${currentRow}`);
           kelompokRow.getCell(1).value = `KELOMPOK: ${currentKelompok}`;
           kelompokRow.height = 25;
           kelompokRow.eachCell((cell) => {
@@ -120,6 +124,8 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
           row.satuan,
           row.kuantitas,
           row.harga_satuan,
+          row.lokasi || "-",
+          row.sumber_data || "-",
           biaya,
         ];
         dataRow.height = 35;
@@ -127,7 +133,7 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
         dataRow.eachCell((cell, colNumber) => {
           cell.border = BORDERS;
           cell.alignment = { vertical: "middle" };
-          if (colNumber === 7 || colNumber === 8) {
+          if (colNumber === 7 || colNumber === 10) {
             cell.numFmt = CURRENCY_FORMAT;
           }
         });
@@ -149,10 +155,10 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
 
 function addKelompokTotal(sheet, row, kelompok, total) {
   const totalRow = sheet.getRow(row);
-  sheet.mergeCells(`A${row}:G${row}`);
+  sheet.mergeCells(`A${row}:I${row}`);
   totalRow.getCell(1).value = `Total ${kelompok}`;
-  totalRow.getCell(8).value = total;
-  totalRow.getCell(8).numFmt = CURRENCY_FORMAT;
+  totalRow.getCell(10).value = total;
+  totalRow.getCell(10).numFmt = CURRENCY_FORMAT;
   totalRow.height = 25;
   totalRow.eachCell((cell) => {
     Object.assign(cell, STYLES.totalRow);
@@ -162,10 +168,10 @@ function addKelompokTotal(sheet, row, kelompok, total) {
 
 function addGrandTotal(sheet, row, total) {
   const totalRow = sheet.getRow(row);
-  sheet.mergeCells(`A${row}:G${row}`);
+  sheet.mergeCells(`A${row}:I${row}`);
   totalRow.getCell(1).value = "TOTAL BIAYA MATERIAL";
-  totalRow.getCell(8).value = total;
-  totalRow.getCell(8).numFmt = CURRENCY_FORMAT;
+  totalRow.getCell(10).value = total;
+  totalRow.getCell(10).numFmt = CURRENCY_FORMAT;
   totalRow.height = 30;
   totalRow.eachCell((cell) => {
     Object.assign(cell, {
