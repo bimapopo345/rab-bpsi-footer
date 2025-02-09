@@ -34,8 +34,9 @@ async function addDetailedAHSSheet(workbook, db, userId) {
 
     db.all(
       `
-            SELECT 
+            SELECT
                 a.*,
+                m.kode as material_kode,
                 m.name as material_name,
                 m.price as material_price,
                 m.lokasi as material_lokasi,
@@ -125,7 +126,9 @@ async function addDetailedAHSSheet(workbook, db, userId) {
             itemRow.values = [
               "",
               "",
-              `- ${row.material_name} (${row.material_category})`,
+              `- ${row.material_kode ? `[${row.material_kode}] ` : ""}${
+                row.material_name
+              } (${row.material_category})`,
               "",
               row.koefisien,
               row.material_price,
@@ -159,7 +162,7 @@ async function addDetailedAHSSheet(workbook, db, userId) {
 
 function addAHSTotal(sheet, row, total) {
   const totalRow = sheet.getRow(row);
-  sheet.mergeCells(`A${row}:H${row}`);
+  sheet.mergeCells(`A${row}:I${row}`);
   totalRow.getCell(1).value = "HARGA SATUAN PEKERJAAN";
   totalRow.getCell(9).value = total;
   totalRow.getCell(9).numFmt = CURRENCY_FORMAT;

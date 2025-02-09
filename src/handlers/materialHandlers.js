@@ -29,8 +29,8 @@ function setupMaterialHandlers(ipcMain, db) {
 
     const query = `%${searchTerm}%`;
     db.all(
-      "SELECT * FROM materials WHERE user_id = ? AND (name LIKE ? OR category LIKE ? OR lokasi LIKE ? OR sumber_data LIKE ?)",
-      [userId, query, query, query, query],
+      "SELECT * FROM materials WHERE user_id = ? AND (kode LIKE ? OR name LIKE ? OR category LIKE ? OR lokasi LIKE ? OR sumber_data LIKE ?)",
+      [userId, query, query, query, query, query],
       (err, materials) => {
         if (err) {
           console.error("Error searching materials:", err);
@@ -50,8 +50,9 @@ function setupMaterialHandlers(ipcMain, db) {
     }
 
     db.run(
-      "INSERT INTO materials (name, unit, price, category, lokasi, sumber_data, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO materials (kode, name, unit, price, category, lokasi, sumber_data, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [
+        material.kode || null,
         material.name,
         material.unit,
         material.price,
@@ -119,7 +120,7 @@ function setupMaterialHandlers(ipcMain, db) {
     "update-material",
     (
       event,
-      { id, name, unit, price, category, lokasi, sumber_data, userId }
+      { id, kode, name, unit, price, category, lokasi, sumber_data, userId }
     ) => {
       if (!userId) {
         event.reply("material-updated", { error: "User ID is required" });
@@ -127,8 +128,9 @@ function setupMaterialHandlers(ipcMain, db) {
       }
 
       db.run(
-        "UPDATE materials SET name = ?, unit = ?, price = ?, category = ?, lokasi = ?, sumber_data = ?, created_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?",
+        "UPDATE materials SET kode = ?, name = ?, unit = ?, price = ?, category = ?, lokasi = ?, sumber_data = ?, created_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?",
         [
+          kode || null,
           name,
           unit,
           price,
@@ -153,6 +155,22 @@ function setupMaterialHandlers(ipcMain, db) {
   // Sort materials
   ipcMain.on("sort-materials", (event, { column, direction, userId }) => {
     if (!userId) {
+      event.reply("sorted-materials", []);
+      return;
+    }
+
+    // Ensure column is a valid column name to prevent SQL injection
+    const validColumns = [
+      "kode",
+      "name",
+      "unit",
+      "price",
+      "category",
+      "lokasi",
+      "sumber_data",
+      "created_at",
+    ];
+    if (!validColumns.includes(column)) {
       event.reply("sorted-materials", []);
       return;
     }

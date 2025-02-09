@@ -25,9 +25,69 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            color: var(--accent);
+            display: flex;
+            flex-direction: column;
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 460px;
+            max-height: 85vh;
+            position: relative;
+            animation: slideIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            position: sticky;
+            bottom: 0;
+            background: var(--white);
+            padding: 15px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Top bar styles */
         .top-bar {
             background-color: var(--primary);
             color: var(--white);
@@ -44,6 +104,7 @@
             font-size: 24px;
         }
 
+        /* Container styles */
         .container {
             max-width: 1200px;
             margin: 30px auto;
@@ -51,8 +112,43 @@
             background-color: var(--white);
             border-radius: 8px;
             box-shadow: 0 4px 6px var(--shadow);
+            flex: 1;
         }
 
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            box-shadow: 0 2px 4px var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--primary);
+            color: var(--white);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tr:hover {
+            background-color: #f0f4f8;
+        }
+
+        /* Search bar styles */
         .search-bar {
             display: flex;
             justify-content: space-between;
@@ -67,15 +163,9 @@
             border: 1px solid var(--border);
             border-radius: 4px;
             font-size: 14px;
-            transition: all 0.3s ease;
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--shadow);
-        }
-
+        /* Button styles */
         .action-btn {
             background-color: var(--secondary);
             color: var(--white);
@@ -88,11 +178,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .action-btn:hover {
-            background-color: #e55511;
-            transform: translateY(-1px);
         }
 
         .nav-btn {
@@ -120,207 +205,20 @@
             color: var(--white);
         }
 
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 25px 0;
-            box-shadow: 0 2px 4px var(--shadow);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th {
-            background-color: var(--primary);
-            color: var(--white);
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        th:hover {
-            background-color: var(--hover);
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-
-        tr:hover {
-            background-color: #f0f4f8;
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-content {
-            background-color: var(--white);
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--shadow);
-        }
-
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 30px;
+        .action-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
         }
 
         .close {
             position: absolute;
-            right: 20px;
-            top: 20px;
+            right: 15px;
+            top: 15px;
             font-size: 24px;
             font-weight: bold;
             color: var(--accent);
             cursor: pointer;
             transition: color 0.3s ease;
-        }
-
-        .close:hover {
-            color: var(--primary);
-        }
-
-        .footer {
-            margin-top: 30px;
-            padding: 20px;
-            text-align: center;
-            color: var(--accent);
-            border-top: 1px solid var(--border);
-        }
-
-        .sort-icon {
-            opacity: 0.5;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-
-        th:hover .sort-icon {
-            opacity: 1;
-        }
-
-        /* Table action buttons */
-        .table-action {
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s ease;
-            border: none;
-            color: var(--white);
-        }
-
-        .table-action.edit {
-            background-color: #ffc107;
-        }
-
-        .table-action.edit:hover {
-            background-color: #e0a800;
-        }
-
-        .table-action.delete {
-            background-color: var(--error);
-        }
-
-        .table-action.delete:hover {
-            background-color: #c82333;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 15px;
-                padding: 15px;
-            }
-
-            .search-bar {
-                flex-direction: column;
-            }
-
-            .search-input {
-                width: 100%;
-            }
-
-            th,
-            td {
-                padding: 10px;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 10% auto;
-            }
         }
     </style>
 </head>
@@ -344,6 +242,11 @@
         <table>
             <thead>
                 <tr>
+                    <th onclick="sortTable('kode')">
+                        <div style="display: flex; align-items: center;">
+                            KODE <span class="sort-icon">↕</span>
+                        </div>
+                    </th>
                     <th onclick="sortTable('name')">
                         <div style="display: flex; align-items: center;">
                             NAMA <span class="sort-icon">↕</span>
@@ -388,7 +291,7 @@
         </table>
 
         <div class="footer">
-            <p>Total: <span id="materialCount" style="font-weight: 600; color: var(--white)">0</span> Bahan & Upah</p>
+            <p>Total: <span id="materialCount" style="font-weight: 600;">0</span> Bahan & Upah</p>
         </div>
     </div>
 
@@ -396,7 +299,11 @@
     <div id="addMaterialModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeAddModal()">&times;</span>
-            <h2 style="color: var(--primary); margin-bottom: 25px;">Tambah Material/Upah Baru</h2>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">Tambah Material/Upah Baru</h2>
+            <div class="form-group">
+                <label for="newKode">Kode:</label>
+                <input type="text" id="newKode" required placeholder="Masukkan kode" autocomplete="off">
+            </div>
             <div class="form-group">
                 <label for="newName">Nama:</label>
                 <input type="text" id="newName" required placeholder="Masukkan nama" autocomplete="off">
@@ -438,7 +345,11 @@
     <div id="editMaterialModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
-            <h2 style="color: var(--primary); margin-bottom: 25px;">Edit Bahan Upah & Alat</h2>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">Edit Bahan Upah & Alat</h2>
+            <div class="form-group">
+                <label for="editKode">Kode:</label>
+                <input type="text" id="editKode" required placeholder="Masukkan kode">
+            </div>
             <div class="form-group">
                 <label for="editName">Nama:</label>
                 <input type="text" id="editName" required placeholder="Masukkan nama">
@@ -477,53 +388,6 @@
     </div>
 
     <script src="material_upah_renderer.js"></script>
-    <footer class="footer">
-        <div>Balai Besar Pengujian Standar Instrumen Sumberdaya Lahan Pertanian</div>
-        <div class="social-links">
-            <a href="https://www.facebook.com/BBSDLP/?locale=id_ID" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
-            </a>
-            <a href="https://www.instagram.com/bsip_sdlp/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
-            </a>
-            <a href="https://www.youtube.com/@bbsdlp5005/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
-            </a>
-            <a href="https://sdlp.bsip.pertanian.go.id/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website">
-            </a>
-        </div>
-    </footer>
-
-    <style>
-        .footer {
-            background-color: var(--primary);
-            color: var(--white);
-            text-align: center;
-            padding: 20px;
-            margin-top: auto;
-        }
-
-        .social-links {
-            margin-top: 10px;
-        }
-
-        .social-links a {
-            display: inline-block;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            transform: translateY(-2px);
-            opacity: 0.8;
-        }
-
-        .social-links img {
-            width: 24px;
-            height: 24px;
-        }
-    </style>
 </body>
 
 </html>

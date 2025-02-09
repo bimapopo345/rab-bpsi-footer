@@ -106,6 +106,7 @@ function displayPricingData(pricingData) {
 
     row.innerHTML = `
       <td>${item.category || "Bahan"}</td>
+      <td>${item.kode || "-"}</td>
       <td>${item.name}</td>
       <td>${item.unit}</td>
       <td><input type="number" value="${
@@ -185,15 +186,16 @@ ipcRenderer.on("materials-data", (event, materials) => {
   filteredMaterials.forEach((material) => {
     const row = document.createElement("tr");
     row.innerHTML = `
+        <td>${material.kode || "-"}</td>
         <td>${material.name}</td>
         <td>${material.unit}</td>
         <td>Rp ${material.price.toLocaleString()}</td>
         <td>${material.category}</td>
         <td>${material.lokasi || "-"}</td>
         <td>${material.sumber_data || "-"}</td>
-        <td><button onclick="selectMaterial(${
-          material.id
-        }, '${material.name.replace("'", "\\'")}', ${material.price}, '${
+        <td><button onclick="selectMaterial(${material.id}, '${
+      material.kode || ""
+    }', '${material.name.replace("'", "\\'")}', ${material.price}, '${
       material.unit
     }', '${material.lokasi || ""}', '${material.sumber_data || ""}', '${
       material.category
@@ -203,7 +205,16 @@ ipcRenderer.on("materials-data", (event, materials) => {
   });
 });
 
-function selectMaterial(id, name, price, unit, lokasi, sumber_data, category) {
+function selectMaterial(
+  id,
+  kode,
+  name,
+  price,
+  unit,
+  lokasi,
+  sumber_data,
+  category
+) {
   const userId = checkAuth();
   if (!userId) return;
 
@@ -217,8 +228,9 @@ function selectMaterial(id, name, price, unit, lokasi, sumber_data, category) {
   row.dataset.materialPrice = price;
   row.innerHTML = `
     <td>${category}</td>
+    <td>${kode || "-"}</td>
     <td>${name}</td>
-    <td>${unit}</td>  
+    <td>${unit}</td>
     <td><input type="number" value="${koefisien}" onchange="updateKoefisien(this)"></td>
     <td>Rp ${price.toLocaleString()}</td>
     <td>${lokasi || "-"}</td>

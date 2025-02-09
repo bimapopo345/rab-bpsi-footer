@@ -13,6 +13,7 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
       { header: "Kelompok", key: "kelompok", width: 20 },
       { header: "Kode AHS", key: "kode_ahs", width: 15 },
       { header: "Nama AHS", key: "uraian", width: 40 },
+      { header: "Kode Material", key: "material_kode", width: 15 },
       { header: "Nama Material", key: "material_name", width: 30 },
       { header: "Satuan", key: "satuan", width: 12 },
       { header: "Kuantitas", key: "kuantitas", width: 12 },
@@ -24,7 +25,7 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
 
     sheet.columns = columns;
     // Add report title
-    sheet.mergeCells("A1:J1");
+    sheet.mergeCells("A1:K1");
     const titleCell = sheet.getCell("A1");
     titleCell.value = "DAFTAR HARGA BAHAN / MATERIAL";
     titleCell.font = { bold: true, size: 14, color: { argb: "FFFFFF" } };
@@ -48,19 +49,19 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
       };
     });
     headerRow.height = 25;
-
     const query = `
-            SELECT 
-                a.kelompok,
-                a.kode_ahs,
-                a.ahs as uraian,
-                m.name as material_name,
-                a.satuan,
-                m.price as harga_satuan,
-                p.koefisien as kuantitas,
-                m.lokasi,
-                m.sumber_data
-            FROM ahs a
+        SELECT
+            a.kelompok,
+            a.kode_ahs,
+            a.ahs as uraian,
+            m.kode as material_kode,
+            m.name as material_name,
+            a.satuan,
+            m.price as harga_satuan,
+            p.koefisien as kuantitas,
+            m.lokasi,
+            m.sumber_data
+        FROM ahs a
             LEFT JOIN pricing p ON a.id = p.ahs_id
             LEFT JOIN materials m ON p.material_id = m.id
             WHERE p.koefisien IS NOT NULL
@@ -100,7 +101,7 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
           kelompokTotal = 0;
 
           const kelompokRow = sheet.getRow(currentRow);
-          sheet.mergeCells(`A${currentRow}:J${currentRow}`);
+          sheet.mergeCells(`A${currentRow}:K${currentRow}`);
           kelompokRow.getCell(1).value = `KELOMPOK: ${currentKelompok}`;
           kelompokRow.height = 25;
           kelompokRow.eachCell((cell) => {
@@ -120,6 +121,7 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
           row.kelompok,
           row.kode_ahs,
           row.uraian,
+          row.material_kode || "-",
           row.material_name,
           row.satuan,
           row.kuantitas,
@@ -155,10 +157,10 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
 
 function addKelompokTotal(sheet, row, kelompok, total) {
   const totalRow = sheet.getRow(row);
-  sheet.mergeCells(`A${row}:I${row}`);
+  sheet.mergeCells(`A${row}:J${row}`);
   totalRow.getCell(1).value = `Total ${kelompok}`;
-  totalRow.getCell(10).value = total;
-  totalRow.getCell(10).numFmt = CURRENCY_FORMAT;
+  totalRow.getCell(11).value = total;
+  totalRow.getCell(11).numFmt = CURRENCY_FORMAT;
   totalRow.height = 25;
   totalRow.eachCell((cell) => {
     Object.assign(cell, STYLES.totalRow);
@@ -168,10 +170,10 @@ function addKelompokTotal(sheet, row, kelompok, total) {
 
 function addGrandTotal(sheet, row, total) {
   const totalRow = sheet.getRow(row);
-  sheet.mergeCells(`A${row}:I${row}`);
+  sheet.mergeCells(`A${row}:J${row}`);
   totalRow.getCell(1).value = "TOTAL BIAYA MATERIAL";
-  totalRow.getCell(10).value = total;
-  totalRow.getCell(10).numFmt = CURRENCY_FORMAT;
+  totalRow.getCell(11).value = total;
+  totalRow.getCell(11).numFmt = CURRENCY_FORMAT;
   totalRow.height = 30;
   totalRow.eachCell((cell) => {
     Object.assign(cell, {

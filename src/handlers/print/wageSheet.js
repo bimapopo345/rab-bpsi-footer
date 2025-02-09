@@ -13,6 +13,7 @@ async function addDetailedWageSheet(workbook, db, userId) {
       { header: "Kelompok", key: "kelompok", width: 20 },
       { header: "Kode AHS", key: "kode_ahs", width: 15 },
       { header: "Nama AHS", key: "uraian", width: 40 },
+      { header: "Kode Tenaga", key: "wage_kode", width: 15 },
       { header: "Nama Tenaga", key: "wage_name", width: 30 },
       { header: "Satuan", key: "satuan", width: 12 },
       { header: "Kuantitas", key: "kuantitas", width: 12 },
@@ -23,7 +24,7 @@ async function addDetailedWageSheet(workbook, db, userId) {
     sheet.columns = columns;
 
     // Add report title
-    sheet.mergeCells("A1:H1");
+    sheet.mergeCells("A1:I1");
     const titleCell = sheet.getCell("A1");
     titleCell.value = "DAFTAR UPAH TENAGA KERJA";
     titleCell.font = { bold: true, size: 14, color: { argb: "FFFFFF" } };
@@ -48,10 +49,11 @@ async function addDetailedWageSheet(workbook, db, userId) {
     headerRow.height = 25;
 
     const query = `
-            SELECT 
+            SELECT
                 a.kelompok,
                 a.kode_ahs,
                 a.ahs as uraian,
+                m.kode as wage_kode,
                 m.name as wage_name,
                 a.satuan,
                 m.price as harga_satuan,
@@ -96,7 +98,7 @@ async function addDetailedWageSheet(workbook, db, userId) {
           kelompokTotal = 0;
 
           const kelompokRow = sheet.getRow(currentRow);
-          sheet.mergeCells(`A${currentRow}:H${currentRow}`);
+          sheet.mergeCells(`A${currentRow}:I${currentRow}`);
           kelompokRow.getCell(1).value = `KELOMPOK: ${currentKelompok}`;
           kelompokRow.height = 25;
           kelompokRow.eachCell((cell) => {
@@ -116,6 +118,7 @@ async function addDetailedWageSheet(workbook, db, userId) {
           row.kelompok,
           row.kode_ahs,
           row.uraian,
+          row.wage_kode || "-",
           row.wage_name,
           row.satuan,
           row.kuantitas,
@@ -127,7 +130,7 @@ async function addDetailedWageSheet(workbook, db, userId) {
         dataRow.eachCell((cell, colNumber) => {
           cell.border = BORDERS;
           cell.alignment = { vertical: "middle" };
-          if (colNumber === 7 || colNumber === 8) {
+          if (colNumber === 8 || colNumber === 9) {
             cell.numFmt = CURRENCY_FORMAT;
           }
         });
@@ -149,10 +152,10 @@ async function addDetailedWageSheet(workbook, db, userId) {
 
 function addKelompokTotal(sheet, row, kelompok, total) {
   const totalRow = sheet.getRow(row);
-  sheet.mergeCells(`A${row}:G${row}`);
+  sheet.mergeCells(`A${row}:H${row}`);
   totalRow.getCell(1).value = `Total ${kelompok}`;
-  totalRow.getCell(8).value = total;
-  totalRow.getCell(8).numFmt = CURRENCY_FORMAT;
+  totalRow.getCell(9).value = total;
+  totalRow.getCell(9).numFmt = CURRENCY_FORMAT;
   totalRow.height = 25;
   totalRow.eachCell((cell) => {
     Object.assign(cell, STYLES.totalRow);
@@ -162,10 +165,10 @@ function addKelompokTotal(sheet, row, kelompok, total) {
 
 function addGrandTotal(sheet, row, total) {
   const totalRow = sheet.getRow(row);
-  sheet.mergeCells(`A${row}:G${row}`);
+  sheet.mergeCells(`A${row}:H${row}`);
   totalRow.getCell(1).value = "TOTAL BIAYA UPAH";
-  totalRow.getCell(8).value = total;
-  totalRow.getCell(8).numFmt = CURRENCY_FORMAT;
+  totalRow.getCell(9).value = total;
+  totalRow.getCell(9).numFmt = CURRENCY_FORMAT;
   totalRow.height = 30;
   totalRow.eachCell((cell) => {
     Object.assign(cell, {

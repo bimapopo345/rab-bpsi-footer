@@ -60,6 +60,7 @@ function initDatabase() {
           CREATE TABLE IF NOT EXISTS materials (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
+            kode TEXT,
             name TEXT NOT NULL,
             unit TEXT NOT NULL,
             price REAL NOT NULL,
@@ -78,6 +79,18 @@ function initDatabase() {
             console.error("Error checking materials table columns:", err);
             return;
           }
+
+          // Check if kode column exists
+          db.get("SELECT kode FROM materials LIMIT 1", (err) => {
+            if (err) {
+              // Add kode column if it doesn't exist
+              db.run("ALTER TABLE materials ADD COLUMN kode TEXT", (err) => {
+                if (err) {
+                  console.error("Error adding kode column:", err);
+                }
+              });
+            }
+          });
 
           // Check if lokasi column exists
           db.get("SELECT lokasi FROM materials LIMIT 1", (err) => {
