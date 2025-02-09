@@ -127,7 +127,7 @@ function setupMaterialHandlers(ipcMain, db) {
       }
 
       db.run(
-        "UPDATE materials SET name = ?, unit = ?, price = ?, category = ?, lokasi = ?, sumber_data = ? WHERE id = ? AND user_id = ?",
+        "UPDATE materials SET name = ?, unit = ?, price = ?, category = ?, lokasi = ?, sumber_data = ?, created_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?",
         [
           name,
           unit,

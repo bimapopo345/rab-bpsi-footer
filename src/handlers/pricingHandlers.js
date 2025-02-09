@@ -31,7 +31,7 @@ function setupPricingHandlers(ipcMain, db) {
     }
 
     db.all(
-      `SELECT p.*, m.name, m.unit, m.price 
+      `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data 
        FROM pricing p
        JOIN materials m ON p.material_id = m.id
        WHERE p.ahs_id = ? 
@@ -84,7 +84,7 @@ function setupPricingHandlers(ipcMain, db) {
 
             // Get updated pricing data
             db.all(
-              `SELECT p.*, m.name, m.unit, m.price
+              `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data
                FROM pricing p
                JOIN materials m ON p.material_id = m.id
                WHERE p.ahs_id = ?
@@ -128,7 +128,7 @@ function setupPricingHandlers(ipcMain, db) {
 
           // Get updated pricing data
           db.all(
-            `SELECT p.*, m.name, m.unit, m.price
+            `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data
              FROM pricing p
              JOIN materials m ON p.material_id = m.id
              WHERE p.ahs_id = ?

@@ -17,6 +17,8 @@ async function addDetailedAHSSheet(workbook, db, userId) {
       { header: "Satuan", key: "satuan", width: 12 },
       { header: "Koefisien", key: "koefisien", width: 12 },
       { header: "Harga Satuan", key: "harga", width: 20 },
+      { header: "Lokasi", key: "lokasi", width: 20 },
+      { header: "Sumber Data", key: "sumber_data", width: 20 },
       { header: "Jumlah", key: "jumlah", width: 20 },
     ];
 
@@ -36,6 +38,8 @@ async function addDetailedAHSSheet(workbook, db, userId) {
                 a.*,
                 m.name as material_name,
                 m.price as material_price,
+                m.lokasi as material_lokasi,
+                m.sumber_data as material_sumber_data,
                 p.koefisien,
                 m.category as material_category
             FROM ahs a
@@ -71,7 +75,7 @@ async function addDetailedAHSSheet(workbook, db, userId) {
 
             currentKelompok = row.kelompok;
             const kelompokRow = sheet.getRow(currentRow);
-            sheet.mergeCells(`A${currentRow}:G${currentRow}`);
+            sheet.mergeCells(`A${currentRow}:I${currentRow}`);
             kelompokRow.getCell(1).value = `KELOMPOK: ${currentKelompok}`;
             kelompokRow.height = 25;
             kelompokRow.eachCell((cell) => {
@@ -101,6 +105,8 @@ async function addDetailedAHSSheet(workbook, db, userId) {
               "",
               "",
               "",
+              "",
+              "",
             ];
             ahsRow.height = 25;
             ahsRow.eachCell((cell) => {
@@ -123,6 +129,8 @@ async function addDetailedAHSSheet(workbook, db, userId) {
               "",
               row.koefisien,
               row.material_price,
+              row.material_lokasi || "-",
+              row.material_sumber_data || "-",
               amount,
             ];
             itemRow.height = 22;
@@ -130,7 +138,7 @@ async function addDetailedAHSSheet(workbook, db, userId) {
               cell.border = BORDERS;
               cell.alignment = { vertical: "middle" };
               // Format currency columns
-              if (colNumber === 6 || colNumber === 7) {
+              if (colNumber === 6 || colNumber === 9) {
                 cell.numFmt = CURRENCY_FORMAT;
               }
             });
@@ -151,10 +159,10 @@ async function addDetailedAHSSheet(workbook, db, userId) {
 
 function addAHSTotal(sheet, row, total) {
   const totalRow = sheet.getRow(row);
-  sheet.mergeCells(`A${row}:F${row}`);
+  sheet.mergeCells(`A${row}:H${row}`);
   totalRow.getCell(1).value = "HARGA SATUAN PEKERJAAN";
-  totalRow.getCell(7).value = total;
-  totalRow.getCell(7).numFmt = CURRENCY_FORMAT;
+  totalRow.getCell(9).value = total;
+  totalRow.getCell(9).numFmt = CURRENCY_FORMAT;
   totalRow.height = 25;
   totalRow.eachCell((cell) => {
     Object.assign(cell, STYLES.totalRow);

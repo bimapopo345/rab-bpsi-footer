@@ -91,20 +91,29 @@ function displayPricingData(pricingData) {
   const tableBody = document.getElementById("materialDetails");
   tableBody.innerHTML = "";
 
+  // Debug: Log the pricing data
+  console.log("Pricing Data:", pricingData);
+
   pricingData.forEach((item) => {
     const total = item.price * item.koefisien;
     const row = document.createElement("tr");
     row.dataset.pricingId = item.id;
     row.dataset.materialId = item.material_id;
     row.dataset.materialPrice = item.price;
+
+    // Debug: Log each item's category
+    console.log("Item Category:", item.category);
+
     row.innerHTML = `
-      <td>Bahan</td>
+      <td>${item.category || "Bahan"}</td>
       <td>${item.name}</td>
       <td>${item.unit}</td>
       <td><input type="number" value="${
         item.koefisien
       }" onchange="updateKoefisien(this)"></td>
       <td>Rp ${item.price.toLocaleString()}</td>
+      <td>${item.lokasi || "-"}</td>
+      <td>${item.sumber_data || "-"}</td>
       <td>Rp ${total.toLocaleString()}</td>
     `;
     tableBody.appendChild(row);
@@ -113,6 +122,8 @@ function displayPricingData(pricingData) {
 
 // Handle pricing data updates
 ipcRenderer.on("pricing-data", (event, pricingData) => {
+  // Debug: Log the received pricing data
+  console.log("Received Pricing Data:", pricingData);
   displayPricingData(pricingData);
 });
 
@@ -178,17 +189,21 @@ ipcRenderer.on("materials-data", (event, materials) => {
         <td>${material.unit}</td>
         <td>Rp ${material.price.toLocaleString()}</td>
         <td>${material.category}</td>
+        <td>${material.lokasi || "-"}</td>
+        <td>${material.sumber_data || "-"}</td>
         <td><button onclick="selectMaterial(${
           material.id
         }, '${material.name.replace("'", "\\'")}', ${material.price}, '${
       material.unit
+    }', '${material.lokasi || ""}', '${material.sumber_data || ""}', '${
+      material.category
     }')">Pilih</button></td>
       `;
     tableBody.appendChild(row);
   });
 });
 
-function selectMaterial(id, name, price, unit) {
+function selectMaterial(id, name, price, unit, lokasi, sumber_data, category) {
   const userId = checkAuth();
   if (!userId) return;
 
@@ -201,11 +216,13 @@ function selectMaterial(id, name, price, unit) {
   row.dataset.materialId = id;
   row.dataset.materialPrice = price;
   row.innerHTML = `
-    <td>Bahan</td>
+    <td>${category}</td>
     <td>${name}</td>
     <td>${unit}</td>  
     <td><input type="number" value="${koefisien}" onchange="updateKoefisien(this)"></td>
     <td>Rp ${price.toLocaleString()}</td>
+    <td>${lokasi || "-"}</td>
+    <td>${sumber_data || "-"}</td>
     <td>Rp ${total.toLocaleString()}</td>
   `;
   tableBody.appendChild(row);
@@ -246,7 +263,7 @@ function updateKoefisien(input) {
   const newTotal = materialPrice * newKoefisien;
 
   // Update total cell immediately
-  const totalCell = row.cells[5];
+  const totalCell = row.cells[7]; // Update index for total cell
   totalCell.textContent = `Rp ${newTotal.toLocaleString()}`;
 
   // Get pricing ID from dataset
