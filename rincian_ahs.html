@@ -184,13 +184,26 @@
 
         .modal-content {
             background-color: var(--white);
-            margin: 5% auto;
+            margin: 2% auto;
             padding: 30px;
             border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
+            width: 95%;
+            max-width: 1000px;
+            max-height: 90vh;
             position: relative;
             animation: slideIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal-table-container {
+            overflow-x: auto;
+            margin: 15px -15px;
+            padding: 0 15px;
+        }
+
+        .modal-table-container table {
+            min-width: 800px;
+            margin: 0;
         }
 
         @keyframes fadeIn {
@@ -291,14 +304,26 @@
                 padding: 15px;
             }
 
+            .modal-content {
+                width: 98%;
+                margin: 1% auto;
+                padding: 15px;
+            }
+
+            .modal-table-container {
+                margin: 10px -10px;
+                padding: 0 10px;
+            }
+
             th,
             td {
                 padding: 10px;
+                font-size: 13px;
             }
 
-            .modal-content {
-                width: 95%;
-                margin: 10% auto;
+            .action-btn {
+                padding: 8px 16px;
+                font-size: 13px;
             }
         }
     </style>
@@ -449,21 +474,23 @@
                 <input type="text" id="searchMaterialInput" class="search-input" placeholder="Cari Bahan/Upah/Alat..."
                     oninput="searchMaterial()">
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Kode</th>
-                        <th>Nama</th>
-                        <th>Satuan</th>
-                        <th>Harga</th>
-                        <th>Kategori</th>
-                        <th>Lokasi</th>
-                        <th>Sumber Data</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="materialSearchResults"></tbody>
-            </table>
+            <div class="modal-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kode</th>
+                            <th>Nama</th>
+                            <th>Satuan</th>
+                            <th>Harga</th>
+                            <th>Kategori</th>
+                            <th>Lokasi</th>
+                            <th>Sumber Data</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="materialSearchResults"></tbody>
+                </table>
+            </div>
             <div class="modal-buttons">
                 <button class="action-btn" onclick="closeSearchMaterialModal()"
                     style="background-color: var(--accent)">Batal</button>
