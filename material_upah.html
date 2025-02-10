@@ -314,11 +314,19 @@
             </div>
             <div class="form-group">
                 <label for="newName">Nama:</label>
-                <input type="text" id="newName" required placeholder="Masukkan nama" autocomplete="off">
+                <input type="text" id="newName" list="materialNamesList" required placeholder="Masukkan nama"
+                    autocomplete="off">
+                <datalist id="materialNamesList">
+                    <!-- Will be populated dynamically -->
+                </datalist>
             </div>
             <div class="form-group">
                 <label for="newUnit">Satuan:</label>
-                <input type="text" id="newUnit" required placeholder="Masukkan satuan" autocomplete="off">
+                <input type="text" id="newUnit" list="materialUnitsList" required placeholder="Masukkan satuan"
+                    autocomplete="off">
+                <datalist id="materialUnitsList">
+                    <!-- Will be populated dynamically -->
+                </datalist>
             </div>
             <div class="form-group">
                 <label for="newPrice">Harga:</label>
@@ -360,11 +368,11 @@
             </div>
             <div class="form-group">
                 <label for="editName">Nama:</label>
-                <input type="text" id="editName" required placeholder="Masukkan nama">
+                <input type="text" id="editName" list="materialNamesList" required placeholder="Masukkan nama">
             </div>
             <div class="form-group">
                 <label for="editUnit">Satuan:</label>
-                <input type="text" id="editUnit" required placeholder="Masukkan satuan">
+                <input type="text" id="editUnit" list="materialUnitsList" required placeholder="Masukkan satuan">
             </div>
             <div class="form-group">
                 <label for="editPrice">Harga Satuan:</label>

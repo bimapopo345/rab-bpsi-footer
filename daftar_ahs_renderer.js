@@ -73,11 +73,43 @@ ipcRenderer.on("sorted-ahs", (event, ahs) => {
   document.getElementById("ahsCount").textContent = ahs.length;
 });
 
+// Load suggestion data for autocomplete
+function loadSuggestions() {
+  const userId = checkAuth();
+  if (!userId) return;
+  ipcRenderer.send("get-ahs-suggestions", { userId });
+}
+
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
   checkAuth();
   loadAhs();
+  loadSuggestions();
   initializeSearchInput();
+});
+
+// Handle suggestions data
+ipcRenderer.on("ahs-suggestions", (event, { names, units }) => {
+  const namesList = document.getElementById("ahsNamesList");
+  const unitsList = document.getElementById("ahsUnitsList");
+
+  // Clear existing options
+  namesList.innerHTML = "";
+  unitsList.innerHTML = "";
+
+  // Add name suggestions
+  names.forEach((name) => {
+    const option = document.createElement("option");
+    option.value = name;
+    namesList.appendChild(option);
+  });
+
+  // Add unit suggestions
+  units.forEach((unit) => {
+    const option = document.createElement("option");
+    option.value = unit;
+    unitsList.appendChild(option);
+  });
 });
 
 // Initialize search input
@@ -190,6 +222,9 @@ function saveAhs() {
   });
 
   closeAhsModal(); // Close modal after saving
+
+  // Reload suggestions after adding new AHS
+  loadSuggestions();
 }
 
 // Handle AHS added successfully
@@ -288,6 +323,7 @@ ipcRenderer.on("ahs-updated", (event, response) => {
     alert("Error: " + response.error);
   } else {
     loadAhs(); // Reload AHS data after update
+    loadSuggestions(); // Reload suggestions after updating AHS
   }
 });
 

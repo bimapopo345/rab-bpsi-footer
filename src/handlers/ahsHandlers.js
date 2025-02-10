@@ -162,6 +162,45 @@ function setupAHSHandlers(ipcMain, db) {
       event.reply("sorted-ahs", ahs);
     });
   });
+
+  // Get unique AHS names and units for autocomplete
+  ipcMain.on("get-ahs-suggestions", (event, { userId }) => {
+    if (!userId) {
+      event.reply("ahs-suggestions", { names: [], units: [] });
+      return;
+    }
+
+    // Get unique AHS names
+    db.all(
+      "SELECT DISTINCT ahs FROM ahs WHERE user_id = ? ORDER BY ahs",
+      [userId],
+      (err, names) => {
+        if (err) {
+          console.error("Error fetching AHS names:", err);
+          event.reply("ahs-suggestions", { names: [], units: [] });
+          return;
+        }
+
+        // Get unique units
+        db.all(
+          "SELECT DISTINCT satuan FROM ahs WHERE user_id = ? ORDER BY satuan",
+          [userId],
+          (err, units) => {
+            if (err) {
+              console.error("Error fetching AHS units:", err);
+              event.reply("ahs-suggestions", { names: [], units: [] });
+              return;
+            }
+
+            event.reply("ahs-suggestions", {
+              names: names.map((n) => n.ahs),
+              units: units.map((u) => u.satuan),
+            });
+          }
+        );
+      }
+    );
+  });
 }
 
 module.exports = { setupAHSHandlers };

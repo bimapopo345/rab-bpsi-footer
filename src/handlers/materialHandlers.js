@@ -188,6 +188,45 @@ function setupMaterialHandlers(ipcMain, db) {
       event.reply("sorted-materials", materials);
     });
   });
+
+  // Get unique material names and units for autocomplete
+  ipcMain.on("get-material-suggestions", (event, { userId }) => {
+    if (!userId) {
+      event.reply("material-suggestions", { names: [], units: [] });
+      return;
+    }
+
+    // Get unique names
+    db.all(
+      "SELECT DISTINCT name FROM materials WHERE user_id = ? ORDER BY name",
+      [userId],
+      (err, names) => {
+        if (err) {
+          console.error("Error fetching material names:", err);
+          event.reply("material-suggestions", { names: [], units: [] });
+          return;
+        }
+
+        // Get unique units
+        db.all(
+          "SELECT DISTINCT unit FROM materials WHERE user_id = ? ORDER BY unit",
+          [userId],
+          (err, units) => {
+            if (err) {
+              console.error("Error fetching material units:", err);
+              event.reply("material-suggestions", { names: [], units: [] });
+              return;
+            }
+
+            event.reply("material-suggestions", {
+              names: names.map((n) => n.name),
+              units: units.map((u) => u.unit),
+            });
+          }
+        );
+      }
+    );
+  });
 }
 
 module.exports = { setupMaterialHandlers };

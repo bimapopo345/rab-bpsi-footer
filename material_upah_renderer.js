@@ -57,11 +57,43 @@ ipcRenderer.on("sorted-materials", (event, materials) => {
   document.getElementById("materialCount").textContent = materials.length;
 });
 
+// Load suggestion data for autocomplete
+function loadSuggestions() {
+  const userId = checkAuth();
+  if (!userId) return;
+  ipcRenderer.send("get-material-suggestions", { userId });
+}
+
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
   checkAuth();
   loadMaterials();
+  loadSuggestions();
   initializeSearchInput();
+});
+
+// Handle suggestions data
+ipcRenderer.on("material-suggestions", (event, { names, units }) => {
+  const namesList = document.getElementById("materialNamesList");
+  const unitsList = document.getElementById("materialUnitsList");
+
+  // Clear existing options
+  namesList.innerHTML = "";
+  unitsList.innerHTML = "";
+
+  // Add name suggestions
+  names.forEach((name) => {
+    const option = document.createElement("option");
+    option.value = name;
+    namesList.appendChild(option);
+  });
+
+  // Add unit suggestions
+  units.forEach((unit) => {
+    const option = document.createElement("option");
+    option.value = unit;
+    unitsList.appendChild(option);
+  });
 });
 
 // Initialize search input
@@ -234,6 +266,9 @@ function saveMaterial() {
   });
 
   closeAddModal();
+
+  // Reload suggestions after adding new material
+  loadSuggestions();
 }
 
 // Handle responses
@@ -250,6 +285,7 @@ ipcRenderer.on("material-updated", (event, response) => {
     alert("Error: " + response.error);
   } else {
     loadMaterials();
+    loadSuggestions(); // Reload suggestions after updating material
     alert("Material updated successfully");
   }
 });
