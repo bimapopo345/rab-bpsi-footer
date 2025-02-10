@@ -116,7 +116,7 @@ async function addSummarySheet(workbook, db, userId) {
         const overhead = subtotal * 0.1;
         const overheadRow = sheet.getRow(currentRow++);
         sheet.mergeCells(`A${currentRow - 1}:B${currentRow - 1}`);
-        overheadRow.getCell(1).value = "Overhead & Profit (10%)";
+        overheadRow.getCell(1).value = "Profit (10%)";
         overheadRow.getCell(3).value = overhead;
         overheadRow.getCell(3).numFmt = CURRENCY_FORMAT;
         overheadRow.eachCell((cell) => {
@@ -124,9 +124,21 @@ async function addSummarySheet(workbook, db, userId) {
           cell.alignment = { vertical: "middle" };
         });
 
+        // Add PPN 14%
+        const ppn = (subtotal + overhead) * 0.14;
+        const ppnRow = sheet.getRow(currentRow++);
+        sheet.mergeCells(`A${currentRow - 1}:B${currentRow - 1}`);
+        ppnRow.getCell(1).value = "PPN (14%)";
+        ppnRow.getCell(3).value = ppn;
+        ppnRow.getCell(3).numFmt = CURRENCY_FORMAT;
+        ppnRow.eachCell((cell) => {
+          cell.border = BORDERS;
+          cell.alignment = { vertical: "middle" };
+        });
+
         // Add grand total
         currentRow++;
-        const grandTotal = subtotal + overhead;
+        const grandTotal = subtotal + overhead + ppn;
         const grandTotalRow = sheet.getRow(currentRow);
         sheet.mergeCells(`A${currentRow}:B${currentRow}`);
         grandTotalRow.getCell(1).value = "TOTAL";

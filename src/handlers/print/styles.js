@@ -1,4 +1,20 @@
 const STYLES = {
+  projectHeader: {
+    font: {
+      size: 14,
+      bold: true,
+      color: { argb: "1A4F7C" },
+    },
+    alignment: {
+      horizontal: "left",
+      vertical: "middle",
+    },
+    fill: {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "F5F9FF" },
+    },
+  },
   header: {
     fill: {
       type: "pattern",
