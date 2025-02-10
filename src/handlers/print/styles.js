@@ -1,18 +1,19 @@
 const STYLES = {
   projectHeader: {
     font: {
-      size: 14,
+      size: 12,
       bold: true,
-      color: { argb: "1A4F7C" },
+      color: { argb: "FFFFFF" },
     },
     alignment: {
-      horizontal: "left",
+      horizontal: "center",
       vertical: "middle",
+      wrapText: false,
     },
     fill: {
       type: "pattern",
       pattern: "solid",
-      fgColor: { argb: "F5F9FF" },
+      fgColor: { argb: "1A4F7C" },
     },
   },
   header: {
@@ -101,48 +102,18 @@ const CURRENCY_FORMAT = '"Rp"#,##0.00';
 
 // Function to add project header to a worksheet
 function addProjectHeader(worksheet, projectData, columnCount) {
-  worksheet.addRow(["INFORMASI PROYEK"]).eachCell((cell) => {
+  // Add a single line header with all project info
+  const headerText = `${projectData.name} | ${projectData.location} | ${projectData.funding}`;
+  const headerRow = worksheet.addRow([headerText]);
+
+  // Style the header
+  headerRow.height = 25; // Slightly taller for better visibility
+  headerRow.eachCell((cell) => {
     cell.style = STYLES.projectHeader;
   });
+
+  // Merge all columns for the header
   worksheet.mergeCells(`A1:${String.fromCharCode(64 + columnCount)}1`);
-
-  worksheet
-    .addRow([
-      "Nama Proyek:",
-      projectData.name || "-",
-      "", // Empty cells for proper merging
-      "",
-    ])
-    .eachCell((cell) => {
-      cell.style = STYLES.normal;
-    });
-
-  worksheet
-    .addRow([
-      "Lokasi:",
-      projectData.location || "-",
-      "", // Empty cells for proper merging
-      "",
-    ])
-    .eachCell((cell) => {
-      cell.style = STYLES.normal;
-    });
-
-  worksheet
-    .addRow([
-      "Sumber Dana:",
-      projectData.funding || "-",
-      "", // Empty cells for proper merging
-      "",
-    ])
-    .eachCell((cell) => {
-      cell.style = STYLES.normal;
-    });
-
-  // Merge cells for project info
-  worksheet.mergeCells(`B2:${String.fromCharCode(64 + columnCount)}2`);
-  worksheet.mergeCells(`B3:${String.fromCharCode(64 + columnCount)}3`);
-  worksheet.mergeCells(`B4:${String.fromCharCode(64 + columnCount)}4`);
 }
 
 module.exports = {
