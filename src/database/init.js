@@ -191,10 +191,25 @@ function initDatabase() {
             user_id INTEGER NOT NULL,
             name TEXT NOT NULL,
             location TEXT NOT NULL,
+            funding TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
         `);
+
+        // Check if funding column exists in projects table
+        db.get("SELECT funding FROM projects LIMIT 1", (err) => {
+          if (err) {
+            // Add funding column if it doesn't exist
+            db.run("ALTER TABLE projects ADD COLUMN funding TEXT", (err) => {
+              if (err) {
+                console.error("Error adding funding column to projects:", err);
+              } else {
+                console.log("Added funding column to projects table");
+              }
+            });
+          }
+        });
 
         // Check if default user exists and create if not
         db.get(

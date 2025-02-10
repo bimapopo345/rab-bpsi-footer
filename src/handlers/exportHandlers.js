@@ -160,6 +160,7 @@ function setupExportHandlers(ipcMain, db) {
       projectsSheet.columns = [
         { header: "Nama Proyek", key: "name", width: 40 },
         { header: "Lokasi", key: "location", width: 50 },
+        { header: "Sumber Dana", key: "funding", width: 30 },
       ];
 
       // Instructions for projects
@@ -172,9 +173,9 @@ function setupExportHandlers(ipcMain, db) {
       ]);
       projectsSheet.insertRow(4, [""]);
 
-      projectsSheet.mergeCells("A1:B1");
-      projectsSheet.mergeCells("A2:B2");
-      projectsSheet.mergeCells("A3:B3");
+      projectsSheet.mergeCells("A1:C1");
+      projectsSheet.mergeCells("A2:C2");
+      projectsSheet.mergeCells("A3:C3");
       projectsSheet.getCell("A1").style = STYLES.groupHeader;
       [2, 3].forEach((row) => {
         projectsSheet.getRow(row).getCell(1).style = {
@@ -191,7 +192,7 @@ function setupExportHandlers(ipcMain, db) {
 
       await new Promise((resolve, reject) => {
         db.all(
-          "SELECT name, location FROM projects WHERE user_id = ?",
+          "SELECT name, location, funding FROM projects WHERE user_id = ?",
           [userId],
           (err, projects) => {
             if (err) reject(err);

@@ -89,6 +89,7 @@ ipcRenderer.on("project-data", (event, project) => {
       projectDetails.innerHTML = `
         <p><span class="label">Nama Proyek:</span> ${project.name || "-"}</p>
         <p><span class="label">Lokasi:</span> ${project.location || "-"}</p>
+        <p><span class="label">Sumber Dana:</span> ${project.funding || "-"}</p>
       `;
     } else {
       projectDetails.innerHTML = `

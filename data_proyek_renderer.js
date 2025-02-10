@@ -29,12 +29,14 @@ function displayProject(project) {
     projectItem.innerHTML = `
       <h3>${project.name}</h3>
       <p>Lokasi: ${project.location}</p>
+      <p>Sumber Dana: ${project.funding || "-"}</p>
     `;
     projectList.appendChild(projectItem);
 
     // Fill form with existing project data
     document.getElementById("projectName").value = project.name;
     document.getElementById("projectLocation").value = project.location;
+    document.getElementById("projectFunding").value = project.funding || "";
   }
 }
 
@@ -63,8 +65,9 @@ document.getElementById("projectForm").addEventListener("submit", (e) => {
   const projectLocation = document
     .getElementById("projectLocation")
     .value.trim();
+  const projectFunding = document.getElementById("projectFunding").value.trim();
 
-  if (!projectName || !projectLocation) {
+  if (!projectName || !projectLocation || !projectFunding) {
     alert("Mohon isi semua field yang diperlukan");
     return;
   }
@@ -73,6 +76,7 @@ document.getElementById("projectForm").addEventListener("submit", (e) => {
   ipcRenderer.send("save-project", {
     name: projectName,
     location: projectLocation,
+    funding: projectFunding,
     userId,
   });
 });

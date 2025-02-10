@@ -21,7 +21,7 @@ function setupProjectHandlers(ipcMain, db) {
   });
 
   // Save/Update project
-  ipcMain.on("save-project", (event, { name, location, userId }) => {
+  ipcMain.on("save-project", (event, { name, location, funding, userId }) => {
     if (!userId) {
       event.reply("project-saved", {
         success: false,
@@ -44,8 +44,8 @@ function setupProjectHandlers(ipcMain, db) {
         if (existingProject) {
           // Update existing project
           db.run(
-            "UPDATE projects SET name = ?, location = ? WHERE id = ? AND user_id = ?",
-            [name, location, existingProject.id, userId],
+            "UPDATE projects SET name = ?, location = ?, funding = ? WHERE id = ? AND user_id = ?",
+            [name, location, funding, existingProject.id, userId],
             (err) => {
               if (err) {
                 console.error("Error updating project:", err);
@@ -74,8 +74,8 @@ function setupProjectHandlers(ipcMain, db) {
         } else {
           // Create new project
           db.run(
-            "INSERT INTO projects (name, location, user_id) VALUES (?, ?, ?)",
-            [name, location, userId],
+            "INSERT INTO projects (name, location, funding, user_id) VALUES (?, ?, ?, ?)",
+            [name, location, funding, userId],
             function (err) {
               if (err) {
                 console.error("Error saving project:", err);
