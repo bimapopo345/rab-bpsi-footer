@@ -29,7 +29,14 @@ function openAhsModal() {
 
 function closeSearchAhsModal() {
   const modal = document.getElementById("searchAhsModal");
-  if (modal) modal.style.display = "none";
+  if (!modal) {
+    console.warn("Modal element not found");
+    return;
+  }
+
+  console.log("Closing AHS modal...");
+  modal.style.display = "none";
+  console.log("Modal display style:", modal.style.display);
 }
 
 function loadAhs() {
@@ -82,9 +89,95 @@ function selectAhs(id) {
   if (!userId) return;
 
   selectedAhsId = id;
+
+  // Get data and close modal
+  closeSearchAhsModal();
   ipcRenderer.send("get-ahs-by-id", { id, userId });
   ipcRenderer.send("get-pricing", { ahsId: id, userId });
 }
+
+// Handle AHS data response
+ipcRenderer.on("ahs-data-for-edit", (event, ahs) => {
+  if (!ahs) return;
+
+  // Update form fields
+  document.getElementById("kelompok-pekerjaan").value = ahs.kelompok;
+  document.getElementById("satuan").value = ahs.satuan;
+  document.getElementById("analisa-nama").value = ahs.ahs;
+});
+
+// Function to update cost chart
+function updateTotals() {
+  const allRows = document.querySelectorAll("#materialDetails tr");
+  let dataTotals = {
+    bahan: 0,
+    upah: 0,
+    alat: 0,
+  };
+
+  // Calculate totals from each row
+  allRows.forEach((row) => {
+    const category = row.cells[0].textContent.toLowerCase();
+    const totalText = row.cells[8].textContent.replace(/[Rp,.\s]/g, "");
+    const total = parseInt(totalText) || 0;
+
+    if (category.includes("bahan")) dataTotals.bahan += total;
+    else if (category.includes("upah")) dataTotals.upah += total;
+    else if (category.includes("alat")) dataTotals.alat += total;
+  });
+
+  const grandTotal = dataTotals.bahan + dataTotals.upah + dataTotals.alat;
+
+  // Show chart if there's data
+  if (grandTotal > 0) {
+    document.getElementById("cost-chart").style.display = "block";
+  }
+
+  // Format function
+  const formatRupiah = (num) =>
+    num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+  // Update values and bars
+  ["bahan", "upah", "alat"].forEach((type) => {
+    const value = dataTotals[type];
+    const percentage =
+      value > 0 ? ((value / grandTotal) * 100).toFixed(1) : "0.0";
+
+    // Update value
+    document.getElementById(`${type}-value`).textContent = formatRupiah(value);
+
+    // Update bar
+    const bar = document.getElementById(`${type}-bar`);
+    bar.style.width = percentage + "%";
+    bar.querySelector(".percentage").textContent = percentage + "%";
+  });
+
+  // Update total
+  document.getElementById("total-value").textContent = formatRupiah(grandTotal);
+}
+
+// Handle AHS data response
+ipcRenderer.on("ahs-data-for-edit", (event, ahs) => {
+  if (ahs) {
+    document.getElementById("kelompok-pekerjaan").value = ahs.kelompok;
+    document.getElementById("satuan").value = ahs.satuan;
+    document.getElementById("analisa-nama").value = ahs.ahs;
+    closeSearchAhsModal();
+  }
+});
+
+// Handle pricing data updates
+ipcRenderer.on("pricing-data", (event, pricingData) => {
+  // Display data and show chart
+  displayPricingData(pricingData);
+  document.getElementById("cost-chart").style.display =
+    pricingData.length > 0 ? "block" : "none";
+
+  // Update chart values
+  if (pricingData.length > 0) {
+    updateTotals();
+  }
+});
 
 // Display pricing data in table
 function displayPricingData(pricingData) {
@@ -123,18 +216,10 @@ function displayPricingData(pricingData) {
 
 // Handle pricing data updates
 ipcRenderer.on("pricing-data", (event, pricingData) => {
-  // Debug: Log the received pricing data
-  console.log("Received Pricing Data:", pricingData);
+  // Display data in table
   displayPricingData(pricingData);
-});
-
-ipcRenderer.on("ahs-data-for-edit", (event, ahs) => {
-  if (ahs) {
-    document.getElementById("kelompok-pekerjaan").value = ahs.kelompok;
-    document.getElementById("satuan").value = ahs.satuan;
-    document.getElementById("analisa-nama").value = ahs.ahs;
-    closeSearchAhsModal();
-  }
+  // Update chart
+  updateTotals();
 });
 
 function addBahanUpah() {
@@ -248,16 +333,20 @@ function selectMaterial(
   });
 
   closeSearchMaterialModal();
+  updateTotals(); // Update chart after adding new material
 }
 
 // Handle successful pricing addition
 ipcRenderer.on("pricing-added", (event, response) => {
   if (response && response.error) {
     alert("Error: " + response.error);
+    console.error("Error adding pricing:", response.error);
   } else {
+    console.log("Material added successfully");
     // Refresh pricing data
     const userId = checkAuth();
     if (userId) {
+      console.log("Requesting fresh pricing data...");
       ipcRenderer.send("get-pricing", { ahsId: selectedAhsId, userId });
     }
   }
@@ -275,8 +364,11 @@ function updateKoefisien(input) {
   const newTotal = materialPrice * newKoefisien;
 
   // Update total cell immediately
-  const totalCell = row.cells[7]; // Update index for total cell
+  const totalCell = row.cells[8]; // Index 8 for total column
   totalCell.textContent = `Rp ${newTotal.toLocaleString()}`;
+
+  // Update chart after total change
+  updateTotals();
 
   // Get pricing ID from dataset
   const pricingId = row.dataset.pricingId;
@@ -299,6 +391,9 @@ ipcRenderer.on("pricing-updated", (event, response) => {
     if (userId) {
       ipcRenderer.send("get-pricing", { ahsId: selectedAhsId, userId });
     }
+  } else {
+    // Update chart after successful update
+    updateTotals();
   }
 });
 
@@ -328,6 +423,14 @@ function deleteMaterial() {
 
   const pricingId = selectedRow.dataset.pricingId;
   if (pricingId) {
+    // Remove row immediately for better UX
+    selectedRow.remove();
+
+    // Update chart before server response
+    updateTotals();
+    console.log("Chart updated after row removal");
+
+    // Send delete request to server
     ipcRenderer.send("delete-pricing", { id: parseInt(pricingId, 10), userId });
   }
 }
@@ -335,6 +438,14 @@ function deleteMaterial() {
 ipcRenderer.on("pricing-deleted", (event, response) => {
   if (response && response.error) {
     alert("Gagal menghapus: " + response.error);
+  } else {
+    // Update chart first with current data
+    updateTotals();
+    // Then get fresh pricing data
+    const userId = checkAuth();
+    if (userId) {
+      ipcRenderer.send("get-pricing", { ahsId: selectedAhsId, userId });
+    }
   }
 });
 
@@ -356,6 +467,141 @@ function logout() {
 
 function goBack() {
   window.location.href = "index.html";
+}
+
+// Function to calculate and update cost breakdown
+function updateTotals() {
+  console.log("Starting updateTotals...");
+
+  const chartElement = document.getElementById("cost-chart");
+  chartElement.style.display = "block";
+
+  // Get all rows and verify
+  const allRows = document.querySelectorAll("#materialDetails tr");
+  console.log(`Found ${allRows.length} rows to process`);
+  let dataTotals = {
+    bahan: 0,
+    upah: 0,
+    alat: 0,
+  };
+
+  // Debug start of calculation
+  console.log("Starting row calculations");
+
+  // Calculate totals from the last cell (total) of each row
+  allRows.forEach((row, index) => {
+    const category = row.cells[0].textContent.toLowerCase();
+    // Get and parse total value with detailed logging
+    const rawValue = row.cells[8].textContent;
+    console.log("Processing row:", {
+      rowCategory: category,
+      rawValue: rawValue,
+    });
+
+    const totalText = rawValue
+      .replace(/Rp\s?/g, "") // Remove 'Rp' and space
+      .replace(/[.,]/g, ""); // Remove dots and commas
+    const total = parseInt(totalText) || 0;
+
+    console.log("Parsed value:", {
+      category,
+      cleaned: totalText,
+      parsed: total,
+      originalHtml: row.cells[8].innerHTML,
+    });
+
+    // Debug total calculation
+    console.log(
+      `Category: ${category}, Raw Text: ${row.cells[8].textContent}, Parsed: ${total}`
+    );
+
+    // Add to appropriate category
+    if (category.includes("bahan")) dataTotals.bahan += total;
+    else if (category.includes("upah")) dataTotals.upah += total;
+    else if (category.includes("alat")) dataTotals.alat += total;
+  });
+
+  // Log subtotals before final calculation
+  console.log("Category totals:", {
+    bahan: dataTotals.bahan,
+    upah: dataTotals.upah,
+    alat: dataTotals.alat,
+  });
+
+  const grandTotal = dataTotals.bahan + dataTotals.upah + dataTotals.alat;
+  console.log("Grand total calculated:", grandTotal);
+
+  // Update values and bars
+  if (grandTotal > 0) {
+    const formatRupiah = (num) => {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+
+    // Update values with proper formatting
+    document.getElementById("bahan-value").textContent = formatRupiah(
+      dataTotals.bahan
+    );
+    document.getElementById("upah-value").textContent = formatRupiah(
+      dataTotals.upah
+    );
+    document.getElementById("alat-value").textContent = formatRupiah(
+      dataTotals.alat
+    );
+    document.getElementById("total-value").textContent =
+      formatRupiah(grandTotal);
+
+    // Debug total values before updating bars
+    console.log("Totals:", {
+      bahan: dataTotals.bahan,
+      upah: dataTotals.upah,
+      alat: dataTotals.alat,
+      grand: grandTotal,
+    });
+
+    // Update bars with animation
+    ["bahan", "upah", "alat"].forEach((type) => {
+      const value = dataTotals[type];
+      const percentage =
+        value > 0 ? ((value / grandTotal) * 100).toFixed(1) : "0.0";
+      const bar = document.getElementById(`${type}-bar`);
+
+      // Debug calculation
+      console.log(`Processing ${type}:`, {
+        currentValue: value,
+        totalValue: grandTotal,
+        calculatedPercentage: (value / grandTotal) * 100,
+        formattedPercentage: percentage,
+      });
+
+      // Set color and transition
+      const colors = {
+        bahan: "#8b5cf6",
+        upah: "#a78bfa",
+        alat: "#c4b5fd",
+      };
+
+      // Apply styles
+      bar.style.transition = "width 0.3s ease-out";
+      bar.style.backgroundColor = colors[type];
+      bar.style.width = percentage + "%";
+
+      // Update percentage text
+      bar.querySelector(".percentage").textContent = percentage + "%";
+
+      // Verify bar update
+      console.log(`${type} bar updated:`, {
+        width: bar.style.width,
+        color: bar.style.backgroundColor,
+        text: bar.querySelector(".percentage").textContent,
+      });
+    });
+
+    // Always show total as 100%
+    document.getElementById("total-bar").style.width = "100%";
+    document
+      .getElementById("total-bar")
+      .querySelector(".percentage").textContent = "100%";
+  }
 }
 
 // Add CSS for selected row

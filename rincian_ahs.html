@@ -326,6 +326,58 @@
             <input type="text" id="satuan" disabled>
         </div>
 
+        <!-- Cost Breakdown Chart -->
+        <div id="cost-chart"
+            style="display: none; margin: 20px 0; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <!-- Bahan -->
+            <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px;">
+                <span style="width: 80px;">Bahan</span>
+                <div style="flex: 1; background: var(--background); border-radius: 4px; overflow: hidden;">
+                    <div id="bahan-bar" style="width: 0%; height: 24px; background: #8b5cf6; position: relative;">
+                        <span class="percentage"
+                            style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white;">0%</span>
+                    </div>
+                </div>
+                <span style="width: 150px; text-align: right;">Rp. <span id="bahan-value">0</span></span>
+            </div>
+
+            <!-- Upah -->
+            <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px;">
+                <span style="width: 80px;">Upah</span>
+                <div style="flex: 1; background: var(--background); border-radius: 4px; overflow: hidden;">
+                    <div id="upah-bar" style="width: 0%; height: 24px; background: #a78bfa; position: relative;">
+                        <span class="percentage"
+                            style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white;">0%</span>
+                    </div>
+                </div>
+                <span style="width: 150px; text-align: right;">Rp. <span id="upah-value">0</span></span>
+            </div>
+
+            <!-- Alat -->
+            <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px;">
+                <span style="width: 80px;">Alat</span>
+                <div style="flex: 1; background: var(--background); border-radius: 4px; overflow: hidden;">
+                    <div id="alat-bar" style="width: 0%; height: 24px; background: #c4b5fd; position: relative;">
+                        <span class="percentage"
+                            style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white;">0%</span>
+                    </div>
+                </div>
+                <span style="width: 150px; text-align: right;">Rp. <span id="alat-value">0</span></span>
+            </div>
+
+            <!-- Total -->
+            <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px;">
+                <span style="width: 80px;">Total</span>
+                <div style="flex: 1; background: var(--background); border-radius: 4px; overflow: hidden;">
+                    <div id="total-bar" style="width: 100%; height: 24px; background: #1e40af; position: relative;">
+                        <span class="percentage"
+                            style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white;">100%</span>
+                    </div>
+                </div>
+                <span style="width: 150px; text-align: right;">Rp. <span id="total-value">0</span></span>
+            </div>
+        </div>
+
         <!-- Table for material details -->
         <table>
             <thead>
