@@ -43,6 +43,9 @@ ipcRenderer.on("project-data", (event, project) => {
   document.getElementById("projectLocation").textContent = project
     ? project.location
     : "Belum ada lokasi";
+  document.getElementById("projectFunding").textContent = project
+    ? project.funding
+    : "Belum ada sumber dana";
 });
 
 // Show loading indicator
