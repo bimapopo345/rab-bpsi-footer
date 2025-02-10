@@ -242,6 +242,37 @@
             box-shadow: 0 0 0 3px var(--shadow);
         }
 
+        /* Group selection styles */
+        .group-selection {
+            margin-bottom: 20px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: var(--white);
+            cursor: pointer;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        .manual-input {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .manual-input.show {
+            display: block;
+        }
+
         .modal-buttons {
             display: flex;
             justify-content: flex-end;
@@ -327,7 +358,37 @@
             <h2 style="color: var(--primary); margin-bottom: 25px;">Tambah AHS Baru</h2>
             <div class="form-group">
                 <label for="newKelompok">Kelompok:</label>
-                <input type="text" id="newKelompok" required placeholder="Masukkan kelompok AHS">
+                <select id="newKelompok" onchange="toggleManualInput('new')" required>
+                    <option value="">Pilih Kelompok</option>
+                    <option value="PEKERJAAN PERSIAPAN">PEKERJAAN PERSIAPAN</option>
+                    <option value="PEKERJAAN TANAH">PEKERJAAN TANAH</option>
+                    <option value="PEKERJAAN PONDASI">PEKERJAAN PONDASI</option>
+                    <option value="PEKERJAAN BETON">PEKERJAAN BETON</option>
+                    <option value="PEKERJAAN BETON DAN PRACETAK">PEKERJAAN BETON DAN PRACETAK</option>
+                    <option value="PEKERJAAN BESI DAN ALUMUNIUM">PEKERJAAN BESI DAN ALUMUNIUM</option>
+                    <option value="PEKERJAAN PASANGAN DINDING">PEKERJAAN PASANGAN DINDING</option>
+                    <option value="PEKERJAAN PLESTERAN">PEKERJAAN PLESTERAN</option>
+                    <option value="PEKERJAAN PENUTUP LANTAI DAN PENUTUP DINDING">PEKERJAAN PENUTUP LANTAI DAN PENUTUP
+                        DINDING</option>
+                    <option value="PEKERJAAN LANGIT-LANGIT ( PLAFOND)">PEKERJAAN LANGIT-LANGIT ( PLAFOND)</option>
+                    <option value="PEKERJAAN PENUTUP ATAP">PEKERJAAN PENUTUP ATAP</option>
+                    <option value="PEKERJAAN KAYU">PEKERJAAN KAYU</option>
+                    <option value="PEKERJAAN KUNCI DAN KACA">PEKERJAAN KUNCI DAN KACA</option>
+                    <option value="PEKERJAAN PENGECATAN">PEKERJAAN PENGECATAN</option>
+                    <option value="PEKERJAAN SANITASI DALAM GEDUNG">PEKERJAAN SANITASI DALAM GEDUNG</option>
+                    <option value="PEKERJAAN PEMASANGAN PIPA DI LUAR GEDUNG">PEKERJAAN PEMASANGAN PIPA DI LUAR GEDUNG
+                    </option>
+                    <option value="PEKERJAAN PEMOTONGAN PIPA">PEKERJAAN PEMOTONGAN PIPA</option>
+                    <option value="PEMASANGAN AKSESORIS PIPA">PEMASANGAN AKSESORIS PIPA</option>
+                    <option value="PEKERJAAN PENYAMBUNGAN PIPA BARU KE PIPA LAMA">PEKERJAAN PENYAMBUNGAN PIPA BARU KE
+                        PIPA LAMA</option>
+                    <option value="PEKERJAAN PENGETESAN PIPA">PEKERJAAN PENGETESAN PIPA</option>
+                    <option value="PEKERJAAN ELEKTRIKAL">PEKERJAAN ELEKTRIKAL</option>
+                    <option value="manual">Lainnya (Input Manual)</option>
+                </select>
+                <div id="newManualInput" class="manual-input">
+                    <input type="text" id="newKelompokManual" placeholder="Masukkan kelompok custom">
+                </div>
             </div>
             <div class="form-group">
                 <label for="newKodeAhs">Kode AHS:</label>
@@ -356,7 +417,37 @@
             <h2 style="color: var(--primary); margin-bottom: 25px;">Edit AHS</h2>
             <div class="form-group">
                 <label for="editKelompok">Kelompok:</label>
-                <input type="text" id="editKelompok" required placeholder="Masukkan kelompok AHS">
+                <select id="editKelompok" onchange="toggleManualInput('edit')" required>
+                    <option value="">Pilih Kelompok</option>
+                    <option value="PEKERJAAN PERSIAPAN">PEKERJAAN PERSIAPAN</option>
+                    <option value="PEKERJAAN TANAH">PEKERJAAN TANAH</option>
+                    <option value="PEKERJAAN PONDASI">PEKERJAAN PONDASI</option>
+                    <option value="PEKERJAAN BETON">PEKERJAAN BETON</option>
+                    <option value="PEKERJAAN BETON DAN PRACETAK">PEKERJAAN BETON DAN PRACETAK</option>
+                    <option value="PEKERJAAN BESI DAN ALUMUNIUM">PEKERJAAN BESI DAN ALUMUNIUM</option>
+                    <option value="PEKERJAAN PASANGAN DINDING">PEKERJAAN PASANGAN DINDING</option>
+                    <option value="PEKERJAAN PLESTERAN">PEKERJAAN PLESTERAN</option>
+                    <option value="PEKERJAAN PENUTUP LANTAI DAN PENUTUP DINDING">PEKERJAAN PENUTUP LANTAI DAN PENUTUP
+                        DINDING</option>
+                    <option value="PEKERJAAN LANGIT-LANGIT ( PLAFOND)">PEKERJAAN LANGIT-LANGIT ( PLAFOND)</option>
+                    <option value="PEKERJAAN PENUTUP ATAP">PEKERJAAN PENUTUP ATAP</option>
+                    <option value="PEKERJAAN KAYU">PEKERJAAN KAYU</option>
+                    <option value="PEKERJAAN KUNCI DAN KACA">PEKERJAAN KUNCI DAN KACA</option>
+                    <option value="PEKERJAAN PENGECATAN">PEKERJAAN PENGECATAN</option>
+                    <option value="PEKERJAAN SANITASI DALAM GEDUNG">PEKERJAAN SANITASI DALAM GEDUNG</option>
+                    <option value="PEKERJAAN PEMASANGAN PIPA DI LUAR GEDUNG">PEKERJAAN PEMASANGAN PIPA DI LUAR GEDUNG
+                    </option>
+                    <option value="PEKERJAAN PEMOTONGAN PIPA">PEKERJAAN PEMOTONGAN PIPA</option>
+                    <option value="PEMASANGAN AKSESORIS PIPA">PEMASANGAN AKSESORIS PIPA</option>
+                    <option value="PEKERJAAN PENYAMBUNGAN PIPA BARU KE PIPA LAMA">PEKERJAAN PENYAMBUNGAN PIPA BARU KE
+                        PIPA LAMA</option>
+                    <option value="PEKERJAAN PENGETESAN PIPA">PEKERJAAN PENGETESAN PIPA</option>
+                    <option value="PEKERJAAN ELEKTRIKAL">PEKERJAAN ELEKTRIKAL</option>
+                    <option value="manual">Lainnya (Input Manual)</option>
+                </select>
+                <div id="editManualInput" class="manual-input">
+                    <input type="text" id="editKelompokManual" placeholder="Masukkan kelompok custom">
+                </div>
             </div>
             <div class="form-group">
                 <label for="editKodeAhs">Kode AHS:</label>

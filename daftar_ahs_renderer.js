@@ -18,6 +18,30 @@ function checkAuth() {
   return userId;
 }
 
+// Toggle manual input based on dropdown selection
+function toggleManualInput(mode) {
+  const select = document.getElementById(`${mode}Kelompok`);
+  const manualInput = document.getElementById(`${mode}ManualInput`);
+  const manualField = document.getElementById(`${mode}KelompokManual`);
+
+  if (select.value === "manual") {
+    manualInput.classList.add("show");
+    manualField.required = true;
+  } else {
+    manualInput.classList.remove("show");
+    manualField.required = false;
+    manualField.value = "";
+  }
+}
+
+// Get kelompok value from either dropdown or manual input
+function getKelompokValue(mode) {
+  const select = document.getElementById(`${mode}Kelompok`);
+  const manualField = document.getElementById(`${mode}KelompokManual`);
+
+  return select.value === "manual" ? manualField.value.trim() : select.value;
+}
+
 function sortTable(column) {
   const userId = checkAuth();
   if (!userId) return;
@@ -127,6 +151,8 @@ function addNewAhs() {
   document.getElementById("newKodeAhs").value = "";
   document.getElementById("newAhs").value = "";
   document.getElementById("newSatuan").value = "";
+  document.getElementById("newKelompokManual").value = "";
+  document.getElementById("newManualInput").classList.remove("show");
 
   modal.style.display = "block";
 }
@@ -142,7 +168,7 @@ function saveAhs() {
   const userId = checkAuth();
   if (!userId) return;
 
-  const kelompok = document.getElementById("newKelompok").value.trim();
+  const kelompok = getKelompokValue("new");
   const kodeAhs = document.getElementById("newKodeAhs").value.trim();
   const ahs = document.getElementById("newAhs").value.trim();
   const satuan = document.getElementById("newSatuan").value.trim();
@@ -184,10 +210,32 @@ function editAhs(id) {
   ipcRenderer.send("get-ahs-by-id", { id, userId }); // Send request for specific AHS by ID
 }
 
+// Set kelompok dropdown and manual input based on value
+function setKelompokField(mode, value) {
+  const select = document.getElementById(`${mode}Kelompok`);
+  const manualInput = document.getElementById(`${mode}ManualInput`);
+  const manualField = document.getElementById(`${mode}KelompokManual`);
+
+  // Check if value matches any option
+  const option = Array.from(select.options).find((opt) => opt.value === value);
+
+  if (option) {
+    select.value = value;
+    manualInput.classList.remove("show");
+    manualField.required = false;
+    manualField.value = "";
+  } else {
+    select.value = "manual";
+    manualInput.classList.add("show");
+    manualField.required = true;
+    manualField.value = value;
+  }
+}
+
 // Handle the AHS data for editing modal
 ipcRenderer.on("ahs-data-for-edit", (event, ahs) => {
   if (ahs && ahs.id === currentAhsId) {
-    document.getElementById("editKelompok").value = ahs.kelompok;
+    setKelompokField("edit", ahs.kelompok);
     document.getElementById("editKodeAhs").value = ahs.kode_ahs;
     document.getElementById("editAhs").value = ahs.ahs;
     document.getElementById("editSatuan").value = ahs.satuan;
@@ -209,7 +257,7 @@ function updateAhs() {
   const userId = checkAuth();
   if (!userId) return;
 
-  const kelompok = document.getElementById("editKelompok").value.trim();
+  const kelompok = getKelompokValue("edit");
   const kodeAhs = document.getElementById("editKodeAhs").value.trim();
   const ahs = document.getElementById("editAhs").value.trim();
   const satuan = document.getElementById("editSatuan").value.trim();
