@@ -1,0 +1,115 @@
+Untuk sekarang saya ingin kamu mehamhi seluruh file dan kodingan yg ada di project ini!!! karena nanti berkesinmabungan antara 1 file ke file lainnya
+
+jawab dalam indonesia
+--=-
+nah sekarang tugas kamu, perhatiin juga nanti ke cetak juga ya, karena sinambung dan data upah dll semua fitur perhatiin karena update 1 fitur ke yg lain pasti ngaruh
+
+Bim.. ada revisian lagi, diminta nambahin 2 kolom lagi di menu upah (setelah updatrle terakhir) kolomnya berisi lokasi sama sumber data,
+
+Brarti ntar yg di tambah data/edit juga dikasih
+
+
+
+-==
+
+Bisakah formnya aga dikecilkan yang di tambah/edit di material? G bisa di scrol ke bawah, jadi pilihan simpannya g muncul, sama tambah kolom kode setelah nama ya
+
+dan kode ya saya ingin itu muncul uga di material, rincian_ahs pas ditekan, dan cetak_ahs, cetak_all
+
+
+-=-= 
+
+nah sekarang tugas kamu, perhatiin juga nanti ke cetak juga ya, karena sinambung dan data upah dll semua fitur perhatiin karena update 1 fitur ke yg lain pasti ngaruh
+
+Revisi : di AHS tambahin kolom harga ya, Sama lokasi dan sumberdata
+
+>> perhatikan ni juga dong : rincian_ahs pas ditekan, dan cetak_ahs, cetak_all
+
+>> kalau di ahs udah, perhatikan kodingan dirincian ahs, sama cetak semua dan dll, karena berkesinambungan
+
+
+-== 
+
+Ingat perintah ini untuk kedepannya!!! Dan selalu jawab dalam indo dan perhatikan appi renspose limit long
+reak down the changes into smaller chunks to avoid API length limits. because the api cant do response too long
+
+duh gimana bilangnya ya, kalau kamu ngoding sekali 200 bari lebih dia bakal error response too long, sebab ai nya ga bisa , makanya cut chunk api nya biar ga error response too long
+
+I'll break it into smaller parts to stay within API limits.
+
+This may indicate a failure in his thought process or inability to use a tool properly, which can be mitigated with some user guidance (e.g. "Try breaking down the task into smaller steps").
+
+
+-=-=-= 
+
+C:\Users\bimap\OneDrive\Desktop\Ku\rab-bpsi\rab-bldsp\bg-PINTU-AIR.png
+
+>> saya ingin masukin ini jadi background nya aja yg di login.html
+
+-=-=- 
+
+
+bukan balikin lagi!! saya cumin mau ganti background login aja!!!
+
+>> yang panduan sudah jangan di tarok di login dan jangan di otak atik udah benar panduan di index bukan di login!!!  jangan tambahin aneh aneh ke login, saya cumin mau masukin background
+
+C:\Users\bimap\OneDrive\Desktop\Ku\rab-bpsi\rab-bldsp\bg-PINTU-AIR.png
+
+>> saya ingin masukin ini jadi background nya aja yg di login.html 
+
+
+-==-= 
+
+- Ditambahin grafik di rincian AHS
+>> balikin ke rincian_ahs.html biasa aja deh yg sebelum ini berhasil js nya juga, padahal yg biasa tadi malasahanya cumin input pemilihan double doang kenapa malah buat yang new
+
+nah di rincian ahs, pas dah milih ahs nih, harusnya munculin grafik gitu
+
+Ditambahin grafik di rincian AHS >> ini dibawah contoh bentuk grafik bar kesamping gitu maunya
+contoh :
+- Bahan - bar warna ungu - total biaya - berapa persen keseluruhan
+- Upah - bar warna ungu Muda - total biaya - berapa persen keseluruhan
+- Alat - bar warna ungu lebih Muda Lagi - total biaya - berapa persen keseluruhan
+- Total - bar warna biru gelap - total biaya - berapa persen keseluruhan (100%)
+
+jadi ikutin contoh diatas, dia itu menyamping barnya, gitu itukan dijumlah dari material yg ditambahibn setelah pilih ahs gitu lho
+
+sekarang malah makin aneh ngentooooooooood, padahal saya cuman mau minta tampilin chart setelah ditekan!!!!!!!!!!!! ngerti ga sih ,setelah milih, sekarang malah error modal closenya, malah lebih baik pake yg awal semula berhasil tanpa aneh, padahal saya cuman minta tambahin chart aja ngentod
+
+- di daftar lokasi, tambahin kolom sumber dana >> jangan lupain pas cetak semua kan ada sheet informasi proyek, nah tambahin koolom nya sumber dana nanti pas export all
+
+
+
+
+- Tambah judul project, lokasi, sumber dana di header pada excel tiap halaman yang kaya di sheet ahs, material, upah, rekapitulasi (headernya gedein tuliusannya) >> ini pas dicetak
+
+Contoh dalam 1 baris aja >> 
+
+Pembangunan Masjid
+Desa Kancil
+APBN 
+
+>> itu dalam 1 baris tapi gede dan keenter gitu tiapnya tapi masih 1 baris
+
+lho aneh, saya coba export kan pas cek ga ada headernya jir
+
+dan juga di sheet pertama yang informasi proyek, kok ga ada baris sumber dana nya
+
+terus di kolom rekapitulasi itukan tulisannya ppn? ganti jadi profit aja karena 10%, dibawah baris dia masukin ppn 14%, terus di total
+
+ini pas print cetak semua kan ada rekapitulasi nah saya ingin dibawahnya tambahin ppn 14%, diatasnya ada profit 10%
+
+- Menambahkan ppn 14%
+
+
+
+
+
+- Menu export import  di material dan daftar ahs >> jadi di fitur material.html dan daftar_ahs.html ada fitur export dan import, kadang di pc A nih udh input data 200, di pc b udh input data 300, jadi saya ingin data pc b di gabung ke pc A biar jadi 500
+
+- Perbaikan desain menu rincian_ahs pas ditekan button +upah karena dia ga responsive dibeberapa laptop kaya keluar gitu designnya, table nya yg di modal +bahan di rincian_ahs gitu aneh keluar gitu jelek
+
+
+--=
+
+nah saya sekarang bingung nih pas cek dibagian cetak semua, pas saya liat excel nya tuh, kok kenapa ya jelek banget headernya dan itu jadi 3 baris?? kan saya mintanya 1 baris, dan tulisan mereka bolt gitu 24 PX mungkin
