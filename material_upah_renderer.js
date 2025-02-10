@@ -317,6 +317,45 @@ document.addEventListener("click", function (event) {
   }
 });
 
+async function exportData() {
+  const userId = checkAuth();
+  if (!userId) return;
+
+  try {
+    const result = await ipcRenderer.invoke("export-materials", { userId });
+    if (result.success) {
+      alert("Data berhasil di-export!");
+    } else {
+      alert("Error: " + result.error);
+    }
+  } catch (error) {
+    alert("Error mengekspor data: " + error.message);
+  }
+}
+
+async function importData() {
+  const userId = checkAuth();
+  if (!userId) return;
+
+  if (
+    confirm(
+      "Import akan menggabungkan data yang di-import dengan data yang sudah ada. Lanjutkan?"
+    )
+  ) {
+    try {
+      const result = await ipcRenderer.invoke("import-materials", { userId });
+      if (result.success) {
+        alert("Data berhasil di-import!");
+        loadMaterials(); // Reload the table
+      } else {
+        alert("Error: " + result.error);
+      }
+    } catch (error) {
+      alert("Error mengimpor data: " + error.message);
+    }
+  }
+}
+
 function logout() {
   localStorage.removeItem("userId");
   window.location.href = "login.html";

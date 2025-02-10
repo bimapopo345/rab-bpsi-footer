@@ -551,6 +551,171 @@ function setupExportHandlers(ipcMain, db) {
       };
     }
   });
+
+  // Export materials
+  ipcMain.handle("export-materials", async (event, { userId }) => {
+    try {
+      const materials = await new Promise((resolve, reject) => {
+        db.all(
+          "SELECT id, kode, name, unit, price, category, lokasi, sumber_data, created_at FROM materials WHERE user_id = ?",
+          [userId],
+          (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+          }
+        );
+      });
+
+      const { filePath } = await dialog.showSaveDialog({
+        title: "Export Materials",
+        defaultPath: `materials_export_${
+          new Date().toISOString().split("T")[0]
+        }.json`,
+        filters: [{ name: "JSON Files", extensions: ["json"] }],
+      });
+
+      if (filePath) {
+        fs.writeFileSync(filePath, JSON.stringify(materials, null, 2));
+        return { success: true };
+      }
+      return { success: false, error: "Export cancelled" };
+    } catch (error) {
+      console.error("Material export error:", error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Import materials
+  ipcMain.handle("import-materials", async (event, { userId }) => {
+    try {
+      const { filePaths } = await dialog.showOpenDialog({
+        title: "Import Materials",
+        filters: [{ name: "JSON Files", extensions: ["json"] }],
+        properties: ["openFile"],
+      });
+
+      if (filePaths.length === 0) {
+        return { success: false, error: "No file selected" };
+      }
+
+      const fileContent = fs.readFileSync(filePaths[0], "utf8");
+      const materials = JSON.parse(fileContent);
+
+      // Insert/update materials one by one
+      await Promise.all(
+        materials.map((material) => {
+          return new Promise((resolve, reject) => {
+            const { id, created_at, ...materialData } = material;
+            db.run(
+              `INSERT OR REPLACE INTO materials 
+            (kode, name, unit, price, category, lokasi, sumber_data, user_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              [
+                materialData.kode,
+                materialData.name,
+                materialData.unit,
+                materialData.price,
+                materialData.category,
+                materialData.lokasi,
+                materialData.sumber_data,
+                userId,
+              ],
+              (err) => {
+                if (err) reject(err);
+                else resolve();
+              }
+            );
+          });
+        })
+      );
+
+      return { success: true };
+    } catch (error) {
+      console.error("Material import error:", error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Export AHS
+  ipcMain.handle("export-ahs", async (event, { userId }) => {
+    try {
+      const ahs = await new Promise((resolve, reject) => {
+        db.all(
+          "SELECT id, kelompok, kode_ahs, ahs, satuan, created_at FROM ahs WHERE user_id = ?",
+          [userId],
+          (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+          }
+        );
+      });
+
+      const { filePath } = await dialog.showSaveDialog({
+        title: "Export AHS",
+        defaultPath: `ahs_export_${
+          new Date().toISOString().split("T")[0]
+        }.json`,
+        filters: [{ name: "JSON Files", extensions: ["json"] }],
+      });
+
+      if (filePath) {
+        fs.writeFileSync(filePath, JSON.stringify(ahs, null, 2));
+        return { success: true };
+      }
+      return { success: false, error: "Export cancelled" };
+    } catch (error) {
+      console.error("AHS export error:", error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Import AHS
+  ipcMain.handle("import-ahs", async (event, { userId }) => {
+    try {
+      const { filePaths } = await dialog.showOpenDialog({
+        title: "Import AHS",
+        filters: [{ name: "JSON Files", extensions: ["json"] }],
+        properties: ["openFile"],
+      });
+
+      if (filePaths.length === 0) {
+        return { success: false, error: "No file selected" };
+      }
+
+      const fileContent = fs.readFileSync(filePaths[0], "utf8");
+      const ahsItems = JSON.parse(fileContent);
+
+      // Insert/update AHS one by one
+      await Promise.all(
+        ahsItems.map((ahs) => {
+          return new Promise((resolve, reject) => {
+            const { id, created_at, ...ahsData } = ahs;
+            db.run(
+              `INSERT OR REPLACE INTO ahs 
+              (kelompok, kode_ahs, ahs, satuan, user_id) 
+              VALUES (?, ?, ?, ?, ?)`,
+              [
+                ahsData.kelompok,
+                ahsData.kode_ahs,
+                ahsData.ahs,
+                ahsData.satuan,
+                userId,
+              ],
+              (err) => {
+                if (err) reject(err);
+                else resolve();
+              }
+            );
+          });
+        })
+      );
+
+      return { success: true };
+    } catch (error) {
+      console.error("AHS import error:", error);
+      return { success: false, error: error.message };
+    }
+  });
 }
 
 module.exports = { setupExportHandlers };

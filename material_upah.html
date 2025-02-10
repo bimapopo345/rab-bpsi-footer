@@ -234,9 +234,17 @@
         <div class="search-bar">
             <input type="text" id="searchInput" class="search-input" placeholder="Cari Bahan / Upah / Alat"
                 autocomplete="off">
-            <button class="action-btn" onclick="addNewMaterial()">
-                <span>+</span> Tambah Baru
-            </button>
+            <div style="display: flex; gap: 10px;">
+                <button class="action-btn" onclick="exportData()" style="background-color: var(--primary);">
+                    Export Data
+                </button>
+                <button class="action-btn" onclick="importData()" style="background-color: var(--accent);">
+                    Import Data
+                </button>
+                <button class="action-btn" onclick="addNewMaterial()">
+                    <span>+</span> Tambah Baru
+                </button>
+            </div>
         </div>
 
         <table>

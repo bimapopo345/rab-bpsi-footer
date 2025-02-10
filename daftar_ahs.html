@@ -308,9 +308,17 @@
         <div class="search-bar">
             <input type="text" id="searchInput" class="search-input" placeholder="Cari AHS Pekerjaan"
                 autocomplete="off">
-            <button class="action-btn" onclick="addNewAhs()">
-                <span>+</span> Tambah AHS
-            </button>
+            <div style="display: flex; gap: 10px;">
+                <button class="action-btn" onclick="exportData()" style="background-color: var(--primary);">
+                    Export Data
+                </button>
+                <button class="action-btn" onclick="importData()" style="background-color: var(--accent);">
+                    Import Data
+                </button>
+                <button class="action-btn" onclick="addNewAhs()">
+                    <span>+</span> Tambah AHS
+                </button>
+            </div>
         </div>
 
         <div class="table-container">
