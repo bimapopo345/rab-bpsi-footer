@@ -44,6 +44,16 @@
             font-size: 24px;
         }
 
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        /* Button styles */
         .back-btn {
             background-color: transparent;
             border: 2px solid var(--white);
@@ -57,38 +67,6 @@
         .back-btn:hover {
             background-color: var(--white);
             color: var(--primary);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 30px;
-            background-color: var(--white);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px var(--shadow);
-        }
-
-        .search-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            gap: 15px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--shadow);
         }
 
         .action-btn {
@@ -110,7 +88,12 @@
             transform: translateY(-1px);
         }
 
-        /* Table styling */
+        /* Table styles */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: separate;
@@ -118,7 +101,7 @@
             margin: 25px 0;
             box-shadow: 0 2px 4px var(--shadow);
             border-radius: 8px;
-            overflow: hidden;
+            min-width: 1000px;
         }
 
         th,
@@ -126,6 +109,7 @@
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid var(--border);
+            white-space: nowrap;
         }
 
         th {
@@ -151,6 +135,40 @@
             background-color: #f0f4f8;
         }
 
+        .sort-icon {
+            opacity: 0.5;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        th:hover .sort-icon {
+            opacity: 1;
+        }
+
+        /* Search bar */
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
         /* Modal styles */
         .modal {
             display: none;
@@ -162,6 +180,7 @@
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             animation: fadeIn 0.3s ease;
+            overflow-y: auto;
         }
 
         .modal-content {
@@ -244,51 +263,6 @@
         .close:hover {
             color: var(--primary);
         }
-
-        /* Footer styling */
-        .footer {
-            margin-top: 30px;
-            padding: 20px;
-            text-align: center;
-            color: var(--accent);
-            border-top: 1px solid var(--border);
-        }
-
-        .sort-icon {
-            opacity: 0.5;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-
-        th:hover .sort-icon {
-            opacity: 1;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 15px;
-                padding: 15px;
-            }
-
-            .search-bar {
-                flex-direction: column;
-            }
-
-            .search-input {
-                width: 100%;
-            }
-
-            th,
-            td {
-                padding: 10px;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 10% auto;
-            }
-        }
     </style>
 </head>
 
@@ -308,39 +282,41 @@
             </button>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th onclick="sortTable('kelompok')">
-                        <div style="display: flex; align-items: center;">
-                            KELOMPOK <span class="sort-icon">↕</span>
-                        </div>
-                    </th>
-                    <th onclick="sortTable('kode_ahs')">
-                        <div style="display: flex; align-items: center;">
-                            KODE AHS <span class="sort-icon">↕</span>
-                        </div>
-                    </th>
-                    <th onclick="sortTable('ahs')">
-                        <div style="display: flex; align-items: center;">
-                            AHS <span class="sort-icon">↕</span>
-                        </div>
-                    </th>
-                    <th onclick="sortTable('satuan')">
-                        <div style="display: flex; align-items: center;">
-                            SATUAN <span class="sort-icon">↕</span>
-                        </div>
-                    </th>
-                    <th>AKSI</th>
-                </tr>
-            </thead>
-            <tbody id="ahsTableBody">
-                <!-- Data rows will be populated here -->
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('kelompok')">
+                            <div style="display: flex; align-items: center;">
+                                KELOMPOK <span class="sort-icon">↕</span>
+                            </div>
+                        </th>
+                        <th onclick="sortTable('kode_ahs')">
+                            <div style="display: flex; align-items: center;">
+                                KODE AHS <span class="sort-icon">↕</span>
+                            </div>
+                        </th>
+                        <th onclick="sortTable('ahs')">
+                            <div style="display: flex; align-items: center;">
+                                AHS <span class="sort-icon">↕</span>
+                            </div>
+                        </th>
+                        <th onclick="sortTable('satuan')">
+                            <div style="display: flex; align-items: center;">
+                                SATUAN <span class="sort-icon">↕</span>
+                            </div>
+                        </th>
+                        <th>AKSI</th>
+                    </tr>
+                </thead>
+                <tbody id="ahsTableBody">
+                    <!-- Data rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
 
         <div class="footer">
-            <p>Total: <span id="ahsCount" style="font-weight: 600; color: var(--white)">0</span> AHS</p>
+            <p>Total: <span id="ahsCount" style="font-weight: 600; color: var(--accent)">0</span> AHS</p>
         </div>
     </div>
 
@@ -404,53 +380,6 @@
     </div>
 
     <script src="daftar_ahs_renderer.js"></script>
-    <footer class="footer">
-        <div>Balai Besar Pengujian Standar Instrumen Sumberdaya Lahan Pertanian</div>
-        <div class="social-links">
-            <a href="https://www.facebook.com/BBSDLP/?locale=id_ID" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
-            </a>
-            <a href="https://www.instagram.com/bsip_sdlp/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
-            </a>
-            <a href="https://www.youtube.com/@bbsdlp5005/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
-            </a>
-            <a href="https://sdlp.bsip.pertanian.go.id/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website">
-            </a>
-        </div>
-    </footer>
-
-    <style>
-        .footer {
-            background-color: var(--primary);
-            color: var(--white);
-            text-align: center;
-            padding: 20px;
-            margin-top: auto;
-        }
-
-        .social-links {
-            margin-top: 10px;
-        }
-
-        .social-links a {
-            display: inline-block;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            transform: translateY(-2px);
-            opacity: 0.8;
-        }
-
-        .social-links img {
-            width: 24px;
-            height: 24px;
-        }
-    </style>
 </body>
 
 </html>

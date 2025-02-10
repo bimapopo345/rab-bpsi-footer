@@ -120,7 +120,7 @@ function initDatabase() {
           });
         });
 
-        // Create AHS table with user_id
+        // Create AHS table with user_id and new columns
         db.run(`
           CREATE TABLE IF NOT EXISTS ahs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -129,10 +129,44 @@ function initDatabase() {
             kode_ahs TEXT NOT NULL,
             ahs TEXT NOT NULL,
             satuan TEXT NOT NULL,
+            lokasi TEXT,
+            sumber_data TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
         `);
+
+        // Add new columns to existing AHS table if they don't exist
+        db.get("PRAGMA table_info(ahs)", (err, rows) => {
+          if (err) {
+            console.error("Error checking AHS table columns:", err);
+            return;
+          }
+
+          // Check if lokasi column exists
+          db.get("SELECT lokasi FROM ahs LIMIT 1", (err) => {
+            if (err) {
+              // Add lokasi column if it doesn't exist
+              db.run("ALTER TABLE ahs ADD COLUMN lokasi TEXT", (err) => {
+                if (err) {
+                  console.error("Error adding lokasi column to AHS:", err);
+                }
+              });
+            }
+          });
+
+          // Check if sumber_data column exists
+          db.get("SELECT sumber_data FROM ahs LIMIT 1", (err) => {
+            if (err) {
+              // Add sumber_data column if it doesn't exist
+              db.run("ALTER TABLE ahs ADD COLUMN sumber_data TEXT", (err) => {
+                if (err) {
+                  console.error("Error adding sumber_data column to AHS:", err);
+                }
+              });
+            }
+          });
+        });
 
         // Create pricing table with user_id
         db.run(`

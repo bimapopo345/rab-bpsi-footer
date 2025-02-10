@@ -41,6 +41,7 @@ async function addDetailedAHSSheet(workbook, db, userId) {
                 m.price as material_price,
                 m.lokasi as material_lokasi,
                 m.sumber_data as material_sumber_data,
+                m.unit as material_unit,
                 p.koefisien,
                 m.category as material_category
             FROM ahs a
@@ -92,7 +93,9 @@ async function addDetailedAHSSheet(workbook, db, userId) {
           if (currentAHS !== row.kode_ahs) {
             if (currentAHS !== "") {
               // Add previous AHS total
-              addAHSTotal(sheet, currentRow++, ahsTotal);
+              if (ahsTotal > 0) {
+                addAHSTotal(sheet, currentRow++, ahsTotal);
+              }
               ahsTotal = 0;
             }
 
@@ -102,12 +105,12 @@ async function addDetailedAHSSheet(workbook, db, userId) {
               row.kelompok,
               row.kode_ahs,
               row.ahs,
-              row.satuan,
-              "",
-              "",
-              "",
-              "",
-              "",
+              row.satuan || "-",
+              null,
+              null,
+              null,
+              null,
+              null,
             ];
             ahsRow.height = 25;
             ahsRow.eachCell((cell) => {
@@ -129,7 +132,7 @@ async function addDetailedAHSSheet(workbook, db, userId) {
               `- ${row.material_kode ? `[${row.material_kode}] ` : ""}${
                 row.material_name
               } (${row.material_category})`,
-              "",
+              row.material_unit || "-",
               row.koefisien,
               row.material_price,
               row.material_lokasi || "-",

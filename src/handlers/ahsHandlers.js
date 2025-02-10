@@ -136,6 +136,19 @@ function setupAHSHandlers(ipcMain, db) {
       return;
     }
 
+    // Validate column name to prevent SQL injection
+    const validColumns = [
+      "kelompok",
+      "kode_ahs",
+      "ahs",
+      "satuan",
+      "created_at",
+    ];
+    if (!validColumns.includes(column)) {
+      event.reply("sorted-ahs", []);
+      return;
+    }
+
     const query = `SELECT * FROM ahs WHERE user_id = ? ORDER BY ${column} ${
       direction === "asc" ? "ASC" : "DESC"
     }`;
