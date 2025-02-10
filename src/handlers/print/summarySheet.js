@@ -1,6 +1,6 @@
 const { STYLES, BORDERS, CURRENCY_FORMAT } = require("./styles");
 
-async function addSummarySheet(workbook, db, userId) {
+async function addSummarySheet(workbook, db, userId, project) {
   return new Promise((resolve, reject) => {
     if (!userId) {
       reject(new Error("User ID is required"));
@@ -9,6 +9,35 @@ async function addSummarySheet(workbook, db, userId) {
 
     const sheet = workbook.addWorksheet("Rekapitulasi");
 
+    // Add project header (3 rows)
+    sheet.mergeCells("A1:C1");
+    sheet.mergeCells("A2:C2");
+    sheet.mergeCells("A3:C3");
+
+    const headerFont = { bold: true, size: 14, color: { argb: "1A4F7C" } };
+
+    const projNameCell = sheet.getCell("A1");
+    projNameCell.value = project.name;
+    projNameCell.font = headerFont;
+    projNameCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    const projLocCell = sheet.getCell("A2");
+    projLocCell.value = project.location;
+    projLocCell.font = headerFont;
+    projLocCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    const projFundCell = sheet.getCell("A3");
+    projFundCell.value = project.funding;
+    projFundCell.font = headerFont;
+    projFundCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    sheet.getRow(1).height = 30;
+    sheet.getRow(2).height = 30;
+    sheet.getRow(3).height = 30;
+
+    // Add a blank row for spacing
+    sheet.getRow(4).height = 15;
+
     // Set columns
     sheet.columns = [
       { header: "No.", key: "no", width: 8 },
@@ -16,9 +45,9 @@ async function addSummarySheet(workbook, db, userId) {
       { header: "Jumlah (Rp)", key: "jumlah", width: 25 },
     ];
 
-    // Add title
-    sheet.mergeCells("A1:C1");
-    const titleCell = sheet.getCell("A1");
+    // Add title at row 5
+    sheet.mergeCells("A5:C5");
+    const titleCell = sheet.getCell("A5");
     titleCell.value = "REKAPITULASI RENCANA ANGGARAN BIAYA";
     titleCell.font = { bold: true, size: 14, color: { argb: "FFFFFF" } };
     titleCell.fill = {
@@ -27,10 +56,10 @@ async function addSummarySheet(workbook, db, userId) {
       fgColor: { argb: "1A4F7C" },
     };
     titleCell.alignment = { horizontal: "center", vertical: "middle" };
-    sheet.getRow(1).height = 30;
+    sheet.getRow(5).height = 30;
 
-    // Style header row
-    const headerRow = sheet.getRow(2);
+    // Style header row at row 6
+    const headerRow = sheet.getRow(6);
     headerRow.height = 25;
     headerRow.eachCell((cell) => {
       Object.assign(cell, STYLES.header);
@@ -57,7 +86,7 @@ async function addSummarySheet(workbook, db, userId) {
             AND m.user_id = ?
         `;
 
-    let currentRow = 3;
+    let currentRow = 7; // Start after header rows
 
     // Get both totals
     Promise.all([

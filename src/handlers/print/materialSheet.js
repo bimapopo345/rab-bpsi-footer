@@ -1,6 +1,6 @@
 const { STYLES, BORDERS, CURRENCY_FORMAT } = require("./styles");
 
-async function addDetailedMaterialSheet(workbook, db, userId) {
+async function addDetailedMaterialSheet(workbook, db, userId, project) {
   return new Promise((resolve, reject) => {
     if (!userId) {
       reject(new Error("User ID is required"));
@@ -24,9 +24,39 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
     ];
 
     sheet.columns = columns;
-    // Add report title
+
+    // Add project header (3 rows)
     sheet.mergeCells("A1:K1");
-    const titleCell = sheet.getCell("A1");
+    sheet.mergeCells("A2:K2");
+    sheet.mergeCells("A3:K3");
+
+    const headerFont = { bold: true, size: 14, color: { argb: "1A4F7C" } };
+
+    const projNameCell = sheet.getCell("A1");
+    projNameCell.value = project.name;
+    projNameCell.font = headerFont;
+    projNameCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    const projLocCell = sheet.getCell("A2");
+    projLocCell.value = project.location;
+    projLocCell.font = headerFont;
+    projLocCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    const projFundCell = sheet.getCell("A3");
+    projFundCell.value = project.funding;
+    projFundCell.font = headerFont;
+    projFundCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    sheet.getRow(1).height = 30;
+    sheet.getRow(2).height = 30;
+    sheet.getRow(3).height = 30;
+
+    // Add a blank row for spacing
+    sheet.getRow(4).height = 15;
+
+    // Add report title at row 5
+    sheet.mergeCells("A5:K5");
+    const titleCell = sheet.getCell("A5");
     titleCell.value = "DAFTAR HARGA BAHAN / MATERIAL";
     titleCell.font = { bold: true, size: 14, color: { argb: "FFFFFF" } };
     titleCell.fill = {
@@ -35,10 +65,10 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
       fgColor: { argb: "1A4F7C" },
     };
     titleCell.alignment = { horizontal: "center", vertical: "middle" };
-    sheet.getRow(1).height = 30;
+    sheet.getRow(5).height = 30;
 
-    // Add column headers
-    const headerRow = sheet.getRow(2);
+    // Add column headers at row 6
+    const headerRow = sheet.getRow(6);
     columns.forEach((column, idx) => {
       const cell = headerRow.getCell(idx + 1);
       cell.value = column.header;
@@ -49,6 +79,7 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
       };
     });
     headerRow.height = 25;
+
     const query = `
         SELECT
             a.kelompok,
@@ -78,7 +109,7 @@ async function addDetailedMaterialSheet(workbook, db, userId) {
         return;
       }
 
-      let currentRow = 5;
+      let currentRow = 7; // Start after headers
       let currentKelompok = "";
       let kelompokTotal = 0;
       let grandTotal = 0;

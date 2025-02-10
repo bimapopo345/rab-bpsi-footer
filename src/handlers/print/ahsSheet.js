@@ -1,6 +1,6 @@
 const { STYLES, BORDERS, CURRENCY_FORMAT } = require("./styles");
 
-async function addDetailedAHSSheet(workbook, db, userId) {
+async function addDetailedAHSSheet(workbook, db, userId, project) {
   return new Promise((resolve, reject) => {
     if (!userId) {
       reject(new Error("User ID is required"));
@@ -9,7 +9,36 @@ async function addDetailedAHSSheet(workbook, db, userId) {
 
     const sheet = workbook.addWorksheet("Analisa Harga Satuan");
 
-    // Set column headers
+    // Add project header (3 rows)
+    sheet.mergeCells("A1:I1");
+    sheet.mergeCells("A2:I2");
+    sheet.mergeCells("A3:I3");
+
+    const headerFont = { bold: true, size: 14, color: { argb: "1A4F7C" } };
+
+    const projNameCell = sheet.getCell("A1");
+    projNameCell.value = project.name;
+    projNameCell.font = headerFont;
+    projNameCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    const projLocCell = sheet.getCell("A2");
+    projLocCell.value = project.location;
+    projLocCell.font = headerFont;
+    projLocCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    const projFundCell = sheet.getCell("A3");
+    projFundCell.value = project.funding;
+    projFundCell.font = headerFont;
+    projFundCell.alignment = { horizontal: "center", vertical: "middle" };
+
+    sheet.getRow(1).height = 30;
+    sheet.getRow(2).height = 30;
+    sheet.getRow(3).height = 30;
+
+    // Add a blank row for spacing
+    sheet.getRow(4).height = 15;
+
+    // Set columns
     const columns = [
       { header: "Kelompok", key: "kelompok", width: 20 },
       { header: "Kode AHS", key: "kode_ahs", width: 15 },
@@ -25,7 +54,7 @@ async function addDetailedAHSSheet(workbook, db, userId) {
     sheet.columns = columns;
 
     // Style header row
-    const headerRow = sheet.getRow(1);
+    const headerRow = sheet.getRow(5);
     headerRow.height = 30;
     headerRow.eachCell((cell) => {
       Object.assign(cell, STYLES.header);
@@ -59,7 +88,7 @@ async function addDetailedAHSSheet(workbook, db, userId) {
           return;
         }
 
-        let currentRow = 2;
+        let currentRow = 6; // Start after header row
         let currentKelompok = "";
         let currentAHS = "";
         let ahsTotal = 0;

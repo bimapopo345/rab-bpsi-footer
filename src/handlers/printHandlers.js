@@ -38,26 +38,26 @@ function setupPrintHandlers(ipcMain, db) {
           // Project info sheet
           await addProjectSheet(workbook, project);
           // Summary sheet first for overview
-          await addSummarySheet(workbook, db, userId);
+          await addSummarySheet(workbook, db, userId, project);
           // Detailed sheets
-          await addDetailedAHSSheet(workbook, db, userId);
-          await addDetailedMaterialSheet(workbook, db, userId);
-          await addDetailedWageSheet(workbook, db, userId);
+          await addDetailedAHSSheet(workbook, db, userId, project);
+          await addDetailedMaterialSheet(workbook, db, userId, project);
+          await addDetailedWageSheet(workbook, db, userId, project);
           break;
 
         case "wages":
           await addProjectSheet(workbook, project);
-          await addDetailedWageSheet(workbook, db, userId);
+          await addDetailedWageSheet(workbook, db, userId, project);
           break;
 
         case "materials":
           await addProjectSheet(workbook, project);
-          await addDetailedMaterialSheet(workbook, db, userId);
+          await addDetailedMaterialSheet(workbook, db, userId, project);
           break;
 
         case "ahs":
           await addProjectSheet(workbook, project);
-          await addDetailedAHSSheet(workbook, db, userId);
+          await addDetailedAHSSheet(workbook, db, userId, project);
           break;
       }
 
