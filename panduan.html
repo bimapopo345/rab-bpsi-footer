@@ -29,6 +29,11 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            transition: margin-right 0.3s ease;
+        }
+
+        .container.nav-open {
+            margin-right: 250px;
         }
 
         header {
@@ -117,13 +122,19 @@
         .nav-section {
             position: fixed;
             top: 0;
-            right: 0;
+            right: -250px;
             width: 250px;
             height: 100vh;
             background: var(--white);
             padding: 20px;
             box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1000;
+        }
+
+        .nav-section.show {
+            right: 0;
         }
 
         .nav-section ul {
@@ -149,13 +160,6 @@
             color: var(--primary);
         }
 
-        @media (max-width: 768px) {
-            .nav-section {
-                display: none;
-            }
-        }
-
-        /* Button styles */
         .back-btn {
             background-color: transparent;
             border: 2px solid var(--white);
@@ -172,6 +176,22 @@
             color: var(--primary);
         }
 
+        .toggle-nav {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .toggle-nav:hover {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
         .top-bar {
             background-color: var(--primary);
             color: var(--white);
@@ -180,11 +200,25 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 4px var(--shadow);
+            position: relative;
+            z-index: 1001;
         }
 
         .top-bar h1 {
             margin: 0;
             font-size: 24px;
+        }
+
+        .nav-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
         }
     </style>
 </head>
@@ -193,11 +227,12 @@
     <div class="top-bar">
         <button class="back-btn" onclick="goBack()">← Kembali</button>
         <h1>Panduan Penggunaan RAB</h1>
-        <div style="width: 80px"><!-- Spacer for alignment --></div>
+        <button class="toggle-nav" onclick="toggleNav()">☰ Menu</button>
     </div>
 
-    <div class="container">
-        <aside class="nav-section">
+    <div class="container" id="mainContainer">
+        <aside class="nav-section" id="navSection">
+            <button class="nav-close" onclick="toggleNav()">×</button>
             <h3>Daftar Isi</h3>
             <ul>
                 <li><a href="#pengenalan">Pengenalan RAB</a></li>
@@ -268,38 +303,6 @@
                     <li>Kepala Tukang</li>
                     <li>Mandor</li>
                 </ul>
-
-                <div class="example">
-                    <h4>Contoh Komponen dalam AHS:</h4>
-                    <table>
-                        <tr>
-                            <th>Komponen</th>
-                            <th>Satuan</th>
-                            <th>Keterangan</th>
-                        </tr>
-                        <tr>
-                            <td>Semen Portland</td>
-                            <td>kg</td>
-                            <td>Bahan material</td>
-                        </tr>
-                        <tr>
-                            <td>Tukang Batu</td>
-                            <td>OH (Orang Hari)</td>
-                            <td>Tenaga kerja</td>
-                        </tr>
-                        <tr>
-                            <td>Pekerja</td>
-                            <td>OH</td>
-                            <td>Tenaga kerja</td>
-                        </tr>
-                    </table>
-                </div>
-
-                <div class="warning">
-                    <strong>Penting!</strong>
-                    <p>Semua komponen harus dihitung dengan teliti dan menggunakan satuan yang tepat untuk menghindari
-                        kesalahan perhitungan.</p>
-                </div>
             </div>
         </section>
 
@@ -322,33 +325,7 @@ Komponen:
 1. Material
    - [Jenis Material] × [Koefisien] × [Harga Satuan]
 2. Tenaga Kerja
-   - [Jenis Tenaga] × [Koefisien] × [Harga Satuan]
-                    </code></pre>
-                </div>
-
-                <h3>Koefisien dalam AHS</h3>
-                <p>Koefisien adalah angka yang menunjukkan kebutuhan bahan/tenaga kerja untuk menyelesaikan per-satuan
-                    pekerjaan.</p>
-
-                <div class="example">
-                    <h4>Contoh Koefisien:</h4>
-                    <table>
-                        <tr>
-                            <th>Uraian</th>
-                            <th>Koefisien</th>
-                            <th>Penjelasan</th>
-                        </tr>
-                        <tr>
-                            <td>Semen untuk 1 m² plesteran</td>
-                            <td>0.208 zak</td>
-                            <td>Dibutuhkan 0.208 zak semen untuk 1 m² plesteran</td>
-                        </tr>
-                        <tr>
-                            <td>Tukang untuk 1 m² pengecatan</td>
-                            <td>0.063 OH</td>
-                            <td>Dibutuhkan 0.063 hari kerja tukang untuk 1 m² pengecatan</td>
-                        </tr>
-                    </table>
+   - [Jenis Tenaga] × [Koefisien] × [Harga Satuan]</code></pre>
                 </div>
             </div>
         </section>
@@ -387,18 +364,9 @@ Komponen:
                         <p>Total Biaya = 100 m² × Rp55,000 = <strong>Rp5,500,000</strong></p>
                     </div>
                 </div>
-
-                <div class="warning">
-                    <strong>Tips Perhitungan:</strong>
-                    <ul>
-                        <li>Selalu verifikasi koefisien dengan standar yang berlaku</li>
-                        <li>Gunakan harga material terkini</li>
-                        <li>Pertimbangkan faktor lokasi dan kondisi lapangan</li>
-                        <li>Sertakan biaya tak terduga jika diperlukan</li>
-                    </ul>
-                </div>
             </div>
         </section>
+
         <section id="penggunaan">
             <h2>Panduan Penggunaan Aplikasi</h2>
             <div class="card">
@@ -413,16 +381,6 @@ Komponen:
                         <li>Tentukan satuan pengukuran (m², m³, dll)</li>
                         <li>Klik "Simpan"</li>
                     </ol>
-                </div>
-
-                <div class="example">
-                    <h4>Edit/Hapus AHS:</h4>
-                    <ul>
-                        <li>Klik tombol "Edit" pada data yang ingin diubah</li>
-                        <li>Ubah informasi yang diperlukan</li>
-                        <li>Klik "Update" untuk menyimpan perubahan</li>
-                        <li>Untuk menghapus, klik tombol "Hapus" dan konfirmasi</li>
-                    </ul>
                 </div>
 
                 <h3>2. Input Material dan Upah</h3>
@@ -446,23 +404,6 @@ Komponen:
                         </li>
                     </ol>
                 </div>
-
-                <h3>3. Pencarian dan Filter</h3>
-                <ul>
-                    <li>Gunakan kotak pencarian untuk mencari AHS berdasarkan nama atau kelompok</li>
-                    <li>Klik header tabel untuk mengurutkan data</li>
-                    <li>Filter berdasarkan kelompok pekerjaan</li>
-                </ul>
-
-                <div class="warning">
-                    <strong>Penting!</strong>
-                    <ul>
-                        <li>Pastikan semua koefisien diisi dengan benar</li>
-                        <li>Verifikasi harga material dan upah secara berkala</li>
-                        <li>Backup data secara rutin</li>
-                        <li>Update harga sesuai kondisi pasar terkini</li>
-                    </ul>
-                </div>
             </div>
         </section>
 
@@ -485,14 +426,6 @@ Komponen:
                     <li>Update harga realtime</li>
                 </ul>
 
-                <h3>3. Laporan</h3>
-                <ul>
-                    <li>Cetak rincian AHS</li>
-                    <li>Cetak RAB</li>
-                    <li>Export ke Excel</li>
-                    <li>Rekapitulasi material dan upah</li>
-                </ul>
-
                 <div class="example">
                     <h4>Keunggulan Fitur:</h4>
                     <ul>
@@ -504,30 +437,10 @@ Komponen:
                 </div>
             </div>
         </section>
+
         <section id="tips">
             <h2>Tips dan Trik</h2>
             <div class="card">
-                <h3>Tips Penggunaan Aplikasi</h3>
-                <div class="example">
-                    <h4>1. Input Data</h4>
-                    <ul>
-                        <li>Buat standardisasi penamaan kode AHS (misal: CAT.001 untuk pengecatan)</li>
-                        <li>Kelompokkan AHS berdasarkan jenis pekerjaan untuk memudahkan pencarian</li>
-                        <li>Selalu isi deskripsi dengan jelas dan detail</li>
-                        <li>Gunakan satuan yang konsisten untuk setiap jenis pekerjaan</li>
-                    </ul>
-                </div>
-
-                <div class="example">
-                    <h4>2. Perhitungan</h4>
-                    <ul>
-                        <li>Verifikasi ulang semua input koefisien</li>
-                        <li>Gunakan angka yang tepat untuk perhitungan (jangan dibulatkan terlalu dini)</li>
-                        <li>Cek harga material dari beberapa supplier untuk perbandingan</li>
-                        <li>Pertimbangkan faktor lokasi dalam penentuan harga</li>
-                    </ul>
-                </div>
-
                 <h3>Best Practices</h3>
                 <div class="note">
                     <h4>Dalam Penggunaan RAB:</h4>
@@ -546,13 +459,6 @@ Komponen:
                                 <li>Verifikasi koefisien dengan SNI</li>
                             </ul>
                         </li>
-                        <li>Dokumentasi:
-                            <ul>
-                                <li>Catat setiap perubahan harga</li>
-                                <li>Dokumentasikan sumber data</li>
-                                <li>Simpan history perhitungan</li>
-                            </ul>
-                        </li>
                     </ol>
                 </div>
 
@@ -565,17 +471,6 @@ Komponen:
                         <li>Menggunakan harga material yang sudah kedaluwarsa</li>
                     </ul>
                 </div>
-
-                <h3>Shortcuts & Effisiensi</h3>
-                <div class="example">
-                    <h4>Tips Mempercepat Pekerjaan:</h4>
-                    <ul>
-                        <li>Gunakan template untuk AHS yang sering digunakan</li>
-                        <li>Manfaatkan fitur duplikat untuk AHS serupa</li>
-                        <li>Buat database material dan upah yang komprehensif</li>
-                        <li>Gunakan fitur import/export untuk data yang berulang</li>
-                    </ul>
-                </div>
             </div>
         </section>
     </div>
@@ -585,8 +480,26 @@ Komponen:
             window.location.href = 'index.html';
         }
 
+        // Toggle navigation visibility
+        function toggleNav() {
+            const navSection = document.getElementById('navSection');
+            const mainContainer = document.getElementById('mainContainer');
+            const isVisible = navSection.classList.contains('show');
+
+            if (isVisible) {
+                navSection.classList.remove('show');
+                mainContainer.classList.remove('nav-open');
+                localStorage.setItem('navVisible', 'false');
+            } else {
+                navSection.classList.add('show');
+                mainContainer.classList.add('nav-open');
+                localStorage.setItem('navVisible', 'true');
+            }
+        }
+
         // Add smooth scroll behavior for navigation links
         document.addEventListener('DOMContentLoaded', () => {
+            // Set up smooth scrolling
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -595,6 +508,15 @@ Komponen:
                     });
                 });
             });
+
+            // Initialize nav state from localStorage
+            const navVisible = localStorage.getItem('navVisible') === 'true';
+            const navSection = document.getElementById('navSection');
+            const mainContainer = document.getElementById('mainContainer');
+            if (navVisible) {
+                navSection.classList.add('show');
+                mainContainer.classList.add('nav-open');
+            }
         });
     </script>
 </body>
