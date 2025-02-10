@@ -73,28 +73,49 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Handle suggestions data
-ipcRenderer.on("material-suggestions", (event, { names, units }) => {
-  const namesList = document.getElementById("materialNamesList");
-  const unitsList = document.getElementById("materialUnitsList");
+ipcRenderer.on(
+  "material-suggestions",
+  (event, { names, units, lokasi, sumber_data }) => {
+    const namesList = document.getElementById("materialNamesList");
+    const unitsList = document.getElementById("materialUnitsList");
+    const lokasiList = document.getElementById("materialLokasiList");
+    const sumberDataList = document.getElementById("materialSumberDataList");
 
-  // Clear existing options
-  namesList.innerHTML = "";
-  unitsList.innerHTML = "";
+    // Clear existing options
+    namesList.innerHTML = "";
+    unitsList.innerHTML = "";
+    lokasiList.innerHTML = "";
+    sumberDataList.innerHTML = "";
 
-  // Add name suggestions
-  names.forEach((name) => {
-    const option = document.createElement("option");
-    option.value = name;
-    namesList.appendChild(option);
-  });
+    // Add name suggestions
+    names.forEach((name) => {
+      const option = document.createElement("option");
+      option.value = name;
+      namesList.appendChild(option);
+    });
 
-  // Add unit suggestions
-  units.forEach((unit) => {
-    const option = document.createElement("option");
-    option.value = unit;
-    unitsList.appendChild(option);
-  });
-});
+    // Add unit suggestions
+    units.forEach((unit) => {
+      const option = document.createElement("option");
+      option.value = unit;
+      unitsList.appendChild(option);
+    });
+
+    // Add lokasi suggestions
+    lokasi.forEach((loc) => {
+      const option = document.createElement("option");
+      option.value = loc;
+      lokasiList.appendChild(option);
+    });
+
+    // Add sumber data suggestions
+    sumber_data.forEach((src) => {
+      const option = document.createElement("option");
+      option.value = src;
+      sumberDataList.appendChild(option);
+    });
+  }
+);
 
 // Initialize search input
 function initializeSearchInput() {

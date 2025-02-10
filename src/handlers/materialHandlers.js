@@ -218,10 +218,51 @@ function setupMaterialHandlers(ipcMain, db) {
               return;
             }
 
-            event.reply("material-suggestions", {
-              names: names.map((n) => n.name),
-              units: units.map((u) => u.unit),
-            });
+            // Get unique lokasi
+            db.all(
+              "SELECT DISTINCT lokasi FROM materials WHERE user_id = ? AND lokasi IS NOT NULL ORDER BY lokasi",
+              [userId],
+              (err, lokasi) => {
+                if (err) {
+                  console.error("Error fetching material lokasi:", err);
+                  event.reply("material-suggestions", {
+                    names: [],
+                    units: [],
+                    lokasi: [],
+                    sumber_data: [],
+                  });
+                  return;
+                }
+
+                // Get unique sumber data
+                db.all(
+                  "SELECT DISTINCT sumber_data FROM materials WHERE user_id = ? AND sumber_data IS NOT NULL ORDER BY sumber_data",
+                  [userId],
+                  (err, sumber_data) => {
+                    if (err) {
+                      console.error(
+                        "Error fetching material sumber_data:",
+                        err
+                      );
+                      event.reply("material-suggestions", {
+                        names: [],
+                        units: [],
+                        lokasi: [],
+                        sumber_data: [],
+                      });
+                      return;
+                    }
+
+                    event.reply("material-suggestions", {
+                      names: names.map((n) => n.name),
+                      units: units.map((u) => u.unit),
+                      lokasi: lokasi.map((l) => l.lokasi),
+                      sumber_data: sumber_data.map((s) => s.sumber_data),
+                    });
+                  }
+                );
+              }
+            );
           }
         );
       }

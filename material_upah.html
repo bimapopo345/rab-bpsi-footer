@@ -342,11 +342,19 @@
             </div>
             <div class="form-group">
                 <label for="newLokasi">Lokasi:</label>
-                <input type="text" id="newLokasi" placeholder="Masukkan lokasi" autocomplete="off">
+                <input type="text" id="newLokasi" list="materialLokasiList" placeholder="Masukkan lokasi"
+                    autocomplete="off">
+                <datalist id="materialLokasiList">
+                    <!-- Will be populated dynamically -->
+                </datalist>
             </div>
             <div class="form-group">
                 <label for="newSumberData">Sumber Data:</label>
-                <input type="text" id="newSumberData" placeholder="Masukkan sumber data" autocomplete="off">
+                <input type="text" id="newSumberData" list="materialSumberDataList" placeholder="Masukkan sumber data"
+                    autocomplete="off">
+                <datalist id="materialSumberDataList">
+                    <!-- Will be populated dynamically -->
+                </datalist>
             </div>
             <div class="modal-buttons">
                 <button class="action-btn" onclick="closeAddModal()"
@@ -388,11 +396,11 @@
             </div>
             <div class="form-group">
                 <label for="editLokasi">Lokasi:</label>
-                <input type="text" id="editLokasi" placeholder="Masukkan lokasi">
+                <input type="text" id="editLokasi" list="materialLokasiList" placeholder="Masukkan lokasi">
             </div>
             <div class="form-group">
                 <label for="editSumberData">Sumber Data:</label>
-                <input type="text" id="editSumberData" placeholder="Masukkan sumber data">
+                <input type="text" id="editSumberData" list="materialSumberDataList" placeholder="Masukkan sumber data">
             </div>
             <div class="modal-buttons">
                 <button class="action-btn" onclick="closeEditModal()"
