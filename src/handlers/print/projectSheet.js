@@ -31,6 +31,7 @@ async function addProjectSheet(workbook, project) {
   const details = [
     ["Nama Proyek", project.name],
     ["Lokasi", project.location],
+    ["Sumber Dana", project.funding || "-"],
     [
       "Tanggal Dibuat",
       new Date().toLocaleDateString("id-ID", {
