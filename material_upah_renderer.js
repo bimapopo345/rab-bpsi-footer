@@ -47,8 +47,12 @@ ipcRenderer.on("sorted-materials", (event, materials) => {
       <td>${material.sumber_data || "-"}</td>
       <td>${new Date(material.created_at).toLocaleDateString()}</td>
       <td>
-        <button onclick="editMaterial(${material.id})">Edit</button>
-        <button onclick="deleteMaterial(${material.id})">Hapus</button>
+        <button class="action-btn edit" onclick="editMaterial(${
+          material.id
+        })">Edit</button>
+        <button class="action-btn delete" onclick="deleteMaterial(${
+          material.id
+        })">Hapus</button>
       </td>
     `;
     tableBody.appendChild(row);
@@ -183,8 +187,12 @@ ipcRenderer.on("materials-data", (event, materials) => {
       <td>${material.sumber_data || "-"}</td>
       <td>${new Date(material.created_at).toLocaleDateString()}</td>
       <td>
-        <button onclick="editMaterial(${material.id})">Edit</button>
-        <button onclick="deleteMaterial(${material.id})">Hapus</button>
+        <button class="action-btn edit" onclick="editMaterial(${
+          material.id
+        })">Edit</button>
+        <button class="action-btn delete" onclick="deleteMaterial(${
+          material.id
+        })">Hapus</button>
       </td>
     `;
     tableBody.appendChild(row);

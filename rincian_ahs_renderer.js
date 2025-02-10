@@ -78,7 +78,7 @@ ipcRenderer.on("ahs-data", (event, ahs) => {
       <td>${item.kode_ahs}</td>
       <td>${item.ahs}</td>
       <td>${item.satuan}</td>
-      <td><button onclick="selectAhs(${item.id})">Pilih</button></td>
+      <td><button class="action-btn" onclick="selectAhs(${item.id})" style="background-color: var(--success)">Pilih</button></td>
     `;
     tableBody.appendChild(row);
   });
@@ -278,13 +278,15 @@ ipcRenderer.on("materials-data", (event, materials) => {
         <td>${material.category}</td>
         <td>${material.lokasi || "-"}</td>
         <td>${material.sumber_data || "-"}</td>
-        <td><button onclick="selectMaterial(${material.id}, '${
-      material.kode || ""
-    }', '${material.name.replace("'", "\\'")}', ${material.price}, '${
-      material.unit
-    }', '${material.lokasi || ""}', '${material.sumber_data || ""}', '${
+        <td><button class="action-btn" onclick="selectMaterial(${
+          material.id
+        }, '${material.kode || ""}', '${material.name.replace("'", "\\'")}', ${
+      material.price
+    }, '${material.unit}', '${material.lokasi || ""}', '${
+      material.sumber_data || ""
+    }', '${
       material.category
-    }')">Pilih</button></td>
+    }')" style="background-color: var(--success)">Pilih</button></td>
       `;
     tableBody.appendChild(row);
   });

@@ -63,8 +63,8 @@ ipcRenderer.on("sorted-ahs", (event, ahs) => {
       <td>${item.ahs}</td>
       <td>${item.satuan}</td>
       <td>
-        <button onclick="editAhs(${item.id})">Edit</button>
-        <button onclick="deleteAhs(${item.id})">Hapus</button>
+        <button class="action-btn edit" onclick="editAhs(${item.id})">Edit</button>
+        <button class="action-btn delete" onclick="deleteAhs(${item.id})">Hapus</button>
       </td>
     `;
     tableBody.appendChild(row);
@@ -164,8 +164,8 @@ ipcRenderer.on("ahs-data", (event, ahs) => {
       <td>${item.ahs}</td>
       <td>${item.satuan}</td>
       <td>
-        <button onclick="editAhs(${item.id})">Edit</button>
-        <button onclick="deleteAhs(${item.id})">Hapus</button>
+        <button class="action-btn edit" onclick="editAhs(${item.id})">Edit</button>
+        <button class="action-btn delete" onclick="deleteAhs(${item.id})">Hapus</button>
       </td>
     `;
     tableBody.appendChild(row);

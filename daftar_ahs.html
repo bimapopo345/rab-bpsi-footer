@@ -17,6 +17,7 @@
             --hover: #183f62;
             --error: #dc3545;
             --success: #28a745;
+            --warning: #ffc107;
         }
 
         body {
@@ -84,8 +85,16 @@
         }
 
         .action-btn:hover {
-            background-color: #e55511;
             transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .action-btn.edit {
+            background-color: var(--warning);
+        }
+
+        .action-btn.delete {
+            background-color: var(--error);
         }
 
         /* Table styles */
@@ -478,8 +487,7 @@
             <div class="modal-buttons">
                 <button class="action-btn" onclick="closeEditAhsModal()"
                     style="background-color: var(--accent)">Batal</button>
-                <button class="action-btn" onclick="updateAhs()"
-                    style="background-color: var(--primary)">Update</button>
+                <button class="action-btn edit" onclick="updateAhs()">Update</button>
             </div>
         </div>
     </div>

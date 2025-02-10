@@ -17,6 +17,7 @@
             --hover: #183f62;
             --error: #dc3545;
             --success: #28a745;
+            --warning: #ffc107;
         }
 
         body {
@@ -208,6 +209,14 @@
         .action-btn:hover {
             transform: translateY(-1px);
             opacity: 0.9;
+        }
+
+        .action-btn.edit {
+            background-color: var(--warning);
+        }
+
+        .action-btn.delete {
+            background-color: var(--error);
         }
 
         .close {
@@ -405,8 +414,7 @@
             <div class="modal-buttons">
                 <button class="action-btn" onclick="closeEditModal()"
                     style="background-color: var(--accent)">Batal</button>
-                <button class="action-btn" onclick="updateMaterial()"
-                    style="background-color: var(--primary)">Update</button>
+                <button class="action-btn edit" onclick="updateMaterial()">Update</button>
             </div>
         </div>
     </div>
