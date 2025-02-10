@@ -99,8 +99,55 @@ const BORDERS = {
 // Currency format
 const CURRENCY_FORMAT = '"Rp"#,##0.00';
 
+// Function to add project header to a worksheet
+function addProjectHeader(worksheet, projectData, columnCount) {
+  worksheet.addRow(["INFORMASI PROYEK"]).eachCell((cell) => {
+    cell.style = STYLES.projectHeader;
+  });
+  worksheet.mergeCells(`A1:${String.fromCharCode(64 + columnCount)}1`);
+
+  worksheet
+    .addRow([
+      "Nama Proyek:",
+      projectData.name || "-",
+      "", // Empty cells for proper merging
+      "",
+    ])
+    .eachCell((cell) => {
+      cell.style = STYLES.normal;
+    });
+
+  worksheet
+    .addRow([
+      "Lokasi:",
+      projectData.location || "-",
+      "", // Empty cells for proper merging
+      "",
+    ])
+    .eachCell((cell) => {
+      cell.style = STYLES.normal;
+    });
+
+  worksheet
+    .addRow([
+      "Sumber Dana:",
+      projectData.funding || "-",
+      "", // Empty cells for proper merging
+      "",
+    ])
+    .eachCell((cell) => {
+      cell.style = STYLES.normal;
+    });
+
+  // Merge cells for project info
+  worksheet.mergeCells(`B2:${String.fromCharCode(64 + columnCount)}2`);
+  worksheet.mergeCells(`B3:${String.fromCharCode(64 + columnCount)}3`);
+  worksheet.mergeCells(`B4:${String.fromCharCode(64 + columnCount)}4`);
+}
+
 module.exports = {
   STYLES,
   BORDERS,
   CURRENCY_FORMAT,
+  addProjectHeader,
 };
