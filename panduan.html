@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Penggunaan RAB</title>
+    <style>
+        :root {
+            --primary: #1a4f7c;
+            --secondary: #f26522;
+            --accent: #58595b;
+            --background: #f5f5f5;
+            --white: #ffffff;
+            --border: #dde1e4;
+            --text: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--background);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        h3 {
+            color: var(--secondary);
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .example {
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .note {
+            background-color: #e7f3fe;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .nav-section {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 100vh;
+            background: var(--white);
+            padding: 20px;
+            box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .nav-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-section li {
+            margin-bottom: 10px;
+        }
+
+        .nav-section a {
+            color: var(--text);
+            text-decoration: none;
+            display: block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-section a:hover {
+            background-color: var(--background);
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .nav-section {
+                display: none;
+            }
+        }
+
+        /* Button styles */
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
+        .top-bar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()">← Kembali</button>
+        <h1>Panduan Penggunaan RAB</h1>
+        <div style="width: 80px"><!-- Spacer for alignment --></div>
+    </div>
+
+    <div class="container">
+        <aside class="nav-section">
+            <h3>Daftar Isi</h3>
+            <ul>
+                <li><a href="#pengenalan">Pengenalan RAB</a></li>
+                <li><a href="#komponen">Komponen Utama</a></li>
+                <li><a href="#ahs">Analisis Harga Satuan (AHS)</a></li>
+                <li><a href="#perhitungan">Cara Perhitungan</a></li>
+                <li><a href="#penggunaan">Panduan Penggunaan</a></li>
+                <li><a href="#contoh">Contoh Perhitungan</a></li>
+                <li><a href="#fitur">Fitur Aplikasi</a></li>
+                <li><a href="#tips">Tips dan Trik</a></li>
+            </ul>
+        </aside>
+
+        <section id="pengenalan">
+            <h2>Pengenalan RAB</h2>
+            <div class="card">
+                <p>RAB (Rencana Anggaran Biaya) adalah sebuah dokumen perencanaan yang berisi perhitungan besarnya biaya
+                    yang diperlukan untuk bahan dan upah, serta biaya-biaya lain yang berhubungan dengan pelaksanaan
+                    proyek atau pekerjaan konstruksi.</p>
+
+                <h3>Tujuan RAB</h3>
+                <ul>
+                    <li>Memberikan gambaran biaya yang diperlukan</li>
+                    <li>Menjadi acuan dalam pengambilan keputusan</li>
+                    <li>Membantu dalam perencanaan penggunaan material</li>
+                    <li>Mengoptimalkan penggunaan sumber daya</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Catatan Penting:</strong>
+                    <p>RAB yang akurat sangat penting untuk:</p>
+                    <ul>
+                        <li>Menghindari pembengkakan biaya</li>
+                        <li>Memastikan ketersediaan dana yang cukup</li>
+                        <li>Meningkatkan efisiensi penggunaan material</li>
+                        <li>Memudahkan monitoring progress pekerjaan</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="komponen">
+            <h2>Komponen Utama</h2>
+            <div class="card">
+                <h3>1. Analisis Harga Satuan (AHS)</h3>
+                <p>AHS adalah perhitungan biaya yang diperlukan untuk membuat satu satuan pekerjaan konstruksi. Komponen
+                    AHS meliputi:</p>
+                <ul>
+                    <li>Kebutuhan Material</li>
+                    <li>Kebutuhan Tenaga Kerja</li>
+                    <li>Kebutuhan Peralatan</li>
+                    <li>Biaya Satuan per Komponen</li>
+                </ul>
+
+                <h3>2. Material</h3>
+                <p>Mencakup semua bahan yang digunakan dalam konstruksi:</p>
+                <ul>
+                    <li>Bahan Bangunan (semen, pasir, batu, dll)</li>
+                    <li>Bahan Finishing (cat, keramik, dll)</li>
+                    <li>Material Pendukung</li>
+                </ul>
+
+                <h3>3. Upah</h3>
+                <p>Meliputi biaya tenaga kerja yang terlibat:</p>
+                <ul>
+                    <li>Pekerja</li>
+                    <li>Tukang</li>
+                    <li>Kepala Tukang</li>
+                    <li>Mandor</li>
+                </ul>
+
+                <div class="example">
+                    <h4>Contoh Komponen dalam AHS:</h4>
+                    <table>
+                        <tr>
+                            <th>Komponen</th>
+                            <th>Satuan</th>
+                            <th>Keterangan</th>
+                        </tr>
+                        <tr>
+                            <td>Semen Portland</td>
+                            <td>kg</td>
+                            <td>Bahan material</td>
+                        </tr>
+                        <tr>
+                            <td>Tukang Batu</td>
+                            <td>OH (Orang Hari)</td>
+                            <td>Tenaga kerja</td>
+                        </tr>
+                        <tr>
+                            <td>Pekerja</td>
+                            <td>OH</td>
+                            <td>Tenaga kerja</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="warning">
+                    <strong>Penting!</strong>
+                    <p>Semua komponen harus dihitung dengan teliti dan menggunakan satuan yang tepat untuk menghindari
+                        kesalahan perhitungan.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ahs">
+            <h2>Analisis Harga Satuan (AHS)</h2>
+            <div class="card">
+                <h3>Pengertian dan Fungsi</h3>
+                <p>AHS adalah metode perhitungan harga satuan pekerjaan konstruksi yang dijabarkan dalam perkalian
+                    kebutuhan bahan, upah, dan peralatan dengan harga satuan untuk menyelesaikan per-satuan pekerjaan
+                    konstruksi.</p>
+
+                <h3>Struktur AHS</h3>
+                <div class="example">
+                    <h4>Format Dasar AHS:</h4>
+                    <pre><code>
+[Kode AHS] - [Nama Pekerjaan]
+Satuan: [Satuan Pengukuran]
+
+Komponen:
+1. Material
+   - [Jenis Material] × [Koefisien] × [Harga Satuan]
+2. Tenaga Kerja
+   - [Jenis Tenaga] × [Koefisien] × [Harga Satuan]
+                    </code></pre>
+                </div>
+
+                <h3>Koefisien dalam AHS</h3>
+                <p>Koefisien adalah angka yang menunjukkan kebutuhan bahan/tenaga kerja untuk menyelesaikan per-satuan
+                    pekerjaan.</p>
+
+                <div class="example">
+                    <h4>Contoh Koefisien:</h4>
+                    <table>
+                        <tr>
+                            <th>Uraian</th>
+                            <th>Koefisien</th>
+                            <th>Penjelasan</th>
+                        </tr>
+                        <tr>
+                            <td>Semen untuk 1 m² plesteran</td>
+                            <td>0.208 zak</td>
+                            <td>Dibutuhkan 0.208 zak semen untuk 1 m² plesteran</td>
+                        </tr>
+                        <tr>
+                            <td>Tukang untuk 1 m² pengecatan</td>
+                            <td>0.063 OH</td>
+                            <td>Dibutuhkan 0.063 hari kerja tukang untuk 1 m² pengecatan</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="perhitungan">
+            <h2>Cara Perhitungan</h2>
+            <div class="card">
+                <h3>Rumus Dasar</h3>
+                <div class="example">
+                    <p><strong>Total Biaya = Volume × Harga Satuan</strong></p>
+                    <p>Dimana Harga Satuan adalah hasil dari:</p>
+                    <ul>
+                        <li>Jumlah (Koefisien × Harga) material</li>
+                        <li>Jumlah (Koefisien × Harga) upah</li>
+                        <li>Jumlah (Koefisien × Harga) alat</li>
+                    </ul>
+                </div>
+
+                <h3>Contoh Perhitungan Detail</h3>
+                <div class="example">
+                    <h4>Pekerjaan Plesteran 1 m²</h4>
+                    <p><strong>Kebutuhan Material:</strong></p>
+                    <ul>
+                        <li>Semen: 0.208 zak × Rp50,000 = Rp10,400</li>
+                        <li>Pasir: 0.028 m³ × Rp200,000 = Rp5,600</li>
+                    </ul>
+                    <p><strong>Kebutuhan Tenaga Kerja:</strong></p>
+                    <ul>
+                        <li>Tukang: 0.150 OH × Rp100,000 = Rp15,000</li>
+                        <li>Pekerja: 0.300 OH × Rp80,000 = Rp24,000</li>
+                    </ul>
+                    <p><strong>Total Harga Satuan = Rp55,000 per m²</strong></p>
+
+                    <div class="note">
+                        <p>Jika volume pekerjaan adalah 100 m², maka:</p>
+                        <p>Total Biaya = 100 m² × Rp55,000 = <strong>Rp5,500,000</strong></p>
+                    </div>
+                </div>
+
+                <div class="warning">
+                    <strong>Tips Perhitungan:</strong>
+                    <ul>
+                        <li>Selalu verifikasi koefisien dengan standar yang berlaku</li>
+                        <li>Gunakan harga material terkini</li>
+                        <li>Pertimbangkan faktor lokasi dan kondisi lapangan</li>
+                        <li>Sertakan biaya tak terduga jika diperlukan</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section id="penggunaan">
+            <h2>Panduan Penggunaan Aplikasi</h2>
+            <div class="card">
+                <h3>1. Management Data AHS</h3>
+                <div class="example">
+                    <h4>Tambah AHS Baru:</h4>
+                    <ol>
+                        <li>Klik tombol "Tambah AHS"</li>
+                        <li>Pilih kelompok pekerjaan dari dropdown atau input manual</li>
+                        <li>Isi kode AHS (contoh: CAT.001)</li>
+                        <li>Isi nama AHS (contoh: Pengecatan Dinding)</li>
+                        <li>Tentukan satuan pengukuran (m², m³, dll)</li>
+                        <li>Klik "Simpan"</li>
+                    </ol>
+                </div>
+
+                <div class="example">
+                    <h4>Edit/Hapus AHS:</h4>
+                    <ul>
+                        <li>Klik tombol "Edit" pada data yang ingin diubah</li>
+                        <li>Ubah informasi yang diperlukan</li>
+                        <li>Klik "Update" untuk menyimpan perubahan</li>
+                        <li>Untuk menghapus, klik tombol "Hapus" dan konfirmasi</li>
+                    </ul>
+                </div>
+
+                <h3>2. Input Material dan Upah</h3>
+                <div class="note">
+                    <p>Untuk setiap AHS, Anda perlu menambahkan:</p>
+                    <ol>
+                        <li>Material yang dibutuhkan:
+                            <ul>
+                                <li>Nama material</li>
+                                <li>Satuan (kg, m³, lembar, dll)</li>
+                                <li>Harga satuan</li>
+                                <li>Koefisien kebutuhan</li>
+                            </ul>
+                        </li>
+                        <li>Tenaga kerja yang diperlukan:
+                            <ul>
+                                <li>Jenis tenaga kerja</li>
+                                <li>Upah per hari</li>
+                                <li>Koefisien kebutuhan (OH)</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <h3>3. Pencarian dan Filter</h3>
+                <ul>
+                    <li>Gunakan kotak pencarian untuk mencari AHS berdasarkan nama atau kelompok</li>
+                    <li>Klik header tabel untuk mengurutkan data</li>
+                    <li>Filter berdasarkan kelompok pekerjaan</li>
+                </ul>
+
+                <div class="warning">
+                    <strong>Penting!</strong>
+                    <ul>
+                        <li>Pastikan semua koefisien diisi dengan benar</li>
+                        <li>Verifikasi harga material dan upah secara berkala</li>
+                        <li>Backup data secara rutin</li>
+                        <li>Update harga sesuai kondisi pasar terkini</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="fitur">
+            <h2>Fitur Aplikasi</h2>
+            <div class="card">
+                <h3>1. Management Data</h3>
+                <ul>
+                    <li>CRUD (Create, Read, Update, Delete) untuk AHS</li>
+                    <li>Pengelompokan AHS berdasarkan jenis pekerjaan</li>
+                    <li>Manajemen data material dan upah</li>
+                    <li>Import/Export data</li>
+                </ul>
+
+                <h3>2. Perhitungan Otomatis</h3>
+                <ul>
+                    <li>Kalkulasi harga satuan</li>
+                    <li>Total biaya per item pekerjaan</li>
+                    <li>Rekapitulasi biaya</li>
+                    <li>Update harga realtime</li>
+                </ul>
+
+                <h3>3. Laporan</h3>
+                <ul>
+                    <li>Cetak rincian AHS</li>
+                    <li>Cetak RAB</li>
+                    <li>Export ke Excel</li>
+                    <li>Rekapitulasi material dan upah</li>
+                </ul>
+
+                <div class="example">
+                    <h4>Keunggulan Fitur:</h4>
+                    <ul>
+                        <li>Interface yang user-friendly</li>
+                        <li>Perhitungan yang akurat</li>
+                        <li>Penyimpanan data yang aman</li>
+                        <li>Mudah dalam maintenance</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section id="tips">
+            <h2>Tips dan Trik</h2>
+            <div class="card">
+                <h3>Tips Penggunaan Aplikasi</h3>
+                <div class="example">
+                    <h4>1. Input Data</h4>
+                    <ul>
+                        <li>Buat standardisasi penamaan kode AHS (misal: CAT.001 untuk pengecatan)</li>
+                        <li>Kelompokkan AHS berdasarkan jenis pekerjaan untuk memudahkan pencarian</li>
+                        <li>Selalu isi deskripsi dengan jelas dan detail</li>
+                        <li>Gunakan satuan yang konsisten untuk setiap jenis pekerjaan</li>
+                    </ul>
+                </div>
+
+                <div class="example">
+                    <h4>2. Perhitungan</h4>
+                    <ul>
+                        <li>Verifikasi ulang semua input koefisien</li>
+                        <li>Gunakan angka yang tepat untuk perhitungan (jangan dibulatkan terlalu dini)</li>
+                        <li>Cek harga material dari beberapa supplier untuk perbandingan</li>
+                        <li>Pertimbangkan faktor lokasi dalam penentuan harga</li>
+                    </ul>
+                </div>
+
+                <h3>Best Practices</h3>
+                <div class="note">
+                    <h4>Dalam Penggunaan RAB:</h4>
+                    <ol>
+                        <li>Update Data:
+                            <ul>
+                                <li>Perbarui harga material secara berkala</li>
+                                <li>Sesuaikan upah dengan standar daerah</li>
+                                <li>Backup database secara rutin</li>
+                            </ul>
+                        </li>
+                        <li>Validasi Data:
+                            <ul>
+                                <li>Cross-check hasil perhitungan</li>
+                                <li>Bandingkan dengan standar yang ada</li>
+                                <li>Verifikasi koefisien dengan SNI</li>
+                            </ul>
+                        </li>
+                        <li>Dokumentasi:
+                            <ul>
+                                <li>Catat setiap perubahan harga</li>
+                                <li>Dokumentasikan sumber data</li>
+                                <li>Simpan history perhitungan</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="warning">
+                    <strong>Hal yang Perlu Dihindari:</strong>
+                    <ul>
+                        <li>Menggunakan koefisien tanpa verifikasi</li>
+                        <li>Mengabaikan faktor lokasi dalam perhitungan</li>
+                        <li>Tidak melakukan backup data secara rutin</li>
+                        <li>Menggunakan harga material yang sudah kedaluwarsa</li>
+                    </ul>
+                </div>
+
+                <h3>Shortcuts & Effisiensi</h3>
+                <div class="example">
+                    <h4>Tips Mempercepat Pekerjaan:</h4>
+                    <ul>
+                        <li>Gunakan template untuk AHS yang sering digunakan</li>
+                        <li>Manfaatkan fitur duplikat untuk AHS serupa</li>
+                        <li>Buat database material dan upah yang komprehensif</li>
+                        <li>Gunakan fitur import/export untuk data yang berulang</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        // Function to go back to main page
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Add smooth scroll behavior for navigation links
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
