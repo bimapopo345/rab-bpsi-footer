@@ -346,6 +346,30 @@ ipcRenderer.on("ahs-deleted", (event, response) => {
   }
 });
 
+// Delete all AHS
+function deleteAllAhs() {
+  const userId = checkAuth();
+  if (!userId) return;
+
+  if (
+    confirm(
+      "Apakah Anda yakin ingin menghapus SEMUA AHS? Tindakan ini tidak dapat dibatalkan!"
+    )
+  ) {
+    ipcRenderer.send("delete-all-ahs", { userId });
+  }
+}
+
+// Handle all AHS deleted
+ipcRenderer.on("all-ahs-deleted", (event, response) => {
+  if (response && response.error) {
+    alert("Error: " + response.error);
+  } else {
+    alert("Semua AHS berhasil dihapus!");
+    loadAhs(); // Reload AHS data after deletion
+  }
+});
+
 // Logout function
 function logout() {
   localStorage.removeItem("userId");
