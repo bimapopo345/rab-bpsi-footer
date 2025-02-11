@@ -239,7 +239,27 @@ function setupExportHandlers(ipcMain, db) {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("Materials");
 
-      // Add rows directly without headers
+      // Add column headers with styling
+      const headerRow = worksheet.addRow([
+        "KODE",
+        "NAMA",
+        "SATUAN",
+        "HARGA",
+        "KATEGORI",
+        "LOKASI",
+        "SUMBER DATA",
+      ]);
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true };
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFE0E0E0" },
+        };
+        cell.alignment = { horizontal: "center" };
+      });
+
+      // Add data rows
       for (const material of materials) {
         worksheet.addRow([
           material.kode || "",
@@ -299,8 +319,8 @@ function setupExportHandlers(ipcMain, db) {
           "INSERT INTO materials (kode, name, unit, price, category, lokasi, sumber_data, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
-        // Process rows
-        for (let i = 1; i <= worksheet.rowCount; i++) {
+        // Process rows (skip header row)
+        for (let i = 2; i <= worksheet.rowCount; i++) {
           const row = worksheet.getRow(i);
           if (!row.getCell(2).value) continue; // Skip if no name (second column)
 
@@ -366,7 +386,24 @@ function setupExportHandlers(ipcMain, db) {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("AHS");
 
-      // Add rows directly without headers
+      // Add column headers with styling
+      const headerRow = worksheet.addRow([
+        "KELOMPOK",
+        "KODE AHS",
+        "AHS",
+        "SATUAN",
+      ]);
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true };
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFE0E0E0" },
+        };
+        cell.alignment = { horizontal: "center" };
+      });
+
+      // Add data rows
       for (const item of ahs) {
         worksheet.addRow([item.kelompok, item.kode_ahs, item.ahs, item.satuan]);
       }
@@ -418,8 +455,8 @@ function setupExportHandlers(ipcMain, db) {
           "INSERT INTO ahs (kelompok, kode_ahs, ahs, satuan, user_id) VALUES (?, ?, ?, ?, ?)"
         );
 
-        // Process rows
-        for (let i = 1; i <= worksheet.rowCount; i++) {
+        // Process rows (skip header row)
+        for (let i = 2; i <= worksheet.rowCount; i++) {
           const row = worksheet.getRow(i);
           if (!row.getCell(3).value) continue; // Skip if no AHS description (third column)
 
