@@ -107,6 +107,23 @@ function setupAHSHandlers(ipcMain, db) {
     );
   });
 
+  // Delete all AHS for a specific user
+  ipcMain.on("delete-all-ahs", (event, { userId }) => {
+    if (!userId) {
+      event.reply("all-ahs-deleted", { error: "User ID is required" });
+      return;
+    }
+
+    db.run("DELETE FROM ahs WHERE user_id = ?", [userId], (err) => {
+      if (err) {
+        console.error("Error deleting all AHS:", err);
+        event.reply("all-ahs-deleted", { error: err.message });
+        return;
+      }
+      event.reply("all-ahs-deleted", { success: true });
+    });
+  });
+
   // Search AHS for a specific user
   ipcMain.on("search-ahs", (event, { searchTerm, userId }) => {
     if (!userId) {

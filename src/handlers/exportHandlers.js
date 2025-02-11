@@ -277,11 +277,38 @@ function setupExportHandlers(ipcMain, db) {
         column.width = 15;
       });
 
+      // Get current project data
+      const projectData = await new Promise((resolve, reject) => {
+        db.get(
+          "SELECT name, location FROM projects WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+          [userId],
+          (err, project) => {
+            if (err) reject(err);
+            else
+              resolve(project || { name: "NoProject", location: "NoLocation" });
+          }
+        );
+      });
+
+      // Format current date-time
+      const now = new Date();
+      const timestamp = `${now.getFullYear()}_${String(
+        now.getMonth() + 1
+      ).padStart(2, "0")}_${String(now.getDate()).padStart(2, "0")}-${String(
+        now.getHours()
+      ).padStart(2, "0")}_${String(now.getMinutes()).padStart(2, "0")}_${String(
+        now.getSeconds()
+      ).padStart(2, "0")}`;
+
       const { filePath } = await dialog.showSaveDialog({
         title: "Export Materials",
-        defaultPath: `materials_export_${
-          new Date().toISOString().split("T")[0]
-        }.xlsx`,
+        defaultPath: `${projectData.name.replace(
+          /[^a-zA-Z0-9]/g,
+          "_"
+        )}-${projectData.location.replace(
+          /[^a-zA-Z0-9]/g,
+          "_"
+        )}-Materials-${timestamp}.xlsx`,
         filters: [{ name: "Excel Files", extensions: ["xlsx"] }],
       });
 
@@ -413,11 +440,38 @@ function setupExportHandlers(ipcMain, db) {
         column.width = index === 2 ? 50 : 20; // Make AHS description column wider
       });
 
+      // Get current project data
+      const projectData = await new Promise((resolve, reject) => {
+        db.get(
+          "SELECT name, location FROM projects WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+          [userId],
+          (err, project) => {
+            if (err) reject(err);
+            else
+              resolve(project || { name: "NoProject", location: "NoLocation" });
+          }
+        );
+      });
+
+      // Format current date-time
+      const now = new Date();
+      const timestamp = `${now.getFullYear()}_${String(
+        now.getMonth() + 1
+      ).padStart(2, "0")}_${String(now.getDate()).padStart(2, "0")}-${String(
+        now.getHours()
+      ).padStart(2, "0")}_${String(now.getMinutes()).padStart(2, "0")}_${String(
+        now.getSeconds()
+      ).padStart(2, "0")}`;
+
       const { filePath } = await dialog.showSaveDialog({
         title: "Export AHS",
-        defaultPath: `ahs_export_${
-          new Date().toISOString().split("T")[0]
-        }.xlsx`,
+        defaultPath: `${projectData.name.replace(
+          /[^a-zA-Z0-9]/g,
+          "_"
+        )}-${projectData.location.replace(
+          /[^a-zA-Z0-9]/g,
+          "_"
+        )}-AHS-${timestamp}.xlsx`,
         filters: [{ name: "Excel Files", extensions: ["xlsx"] }],
       });
 
