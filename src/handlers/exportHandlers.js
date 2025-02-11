@@ -221,72 +221,99 @@ function setupExportHandlers(ipcMain, db) {
     }
   });
 
-  // Export materials
+  // Export materials to Excel
   ipcMain.handle("export-materials", async (event, { userId }) => {
     try {
       const materials = await new Promise((resolve, reject) => {
         db.all(
-          "SELECT id, kode, name, unit, price, category, lokasi, sumber_data, created_at FROM materials WHERE user_id = ?",
+          "SELECT kode, name, unit, price, category, lokasi, sumber_data FROM materials WHERE user_id = ? ORDER BY category, name",
           [userId],
           (err, rows) => {
             if (err) reject(err);
             else resolve(rows);
           }
         );
+      });
+
+      // Create workbook and worksheet
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Materials");
+
+      // Add rows directly without headers
+      for (const material of materials) {
+        worksheet.addRow([
+          material.kode || "",
+          material.name,
+          material.unit,
+          material.price,
+          material.category,
+          material.lokasi || "",
+          material.sumber_data || "",
+        ]);
+      }
+
+      // Auto-width columns
+      worksheet.columns.forEach((column) => {
+        column.width = 15;
       });
 
       const { filePath } = await dialog.showSaveDialog({
         title: "Export Materials",
         defaultPath: `materials_export_${
           new Date().toISOString().split("T")[0]
-        }.json`,
-        filters: [{ name: "JSON Files", extensions: ["json"] }],
+        }.xlsx`,
+        filters: [{ name: "Excel Files", extensions: ["xlsx"] }],
       });
 
       if (filePath) {
-        fs.writeFileSync(filePath, JSON.stringify(materials, null, 2));
+        await workbook.xlsx.writeFile(filePath);
         return { success: true };
       }
-      return { success: false, error: "Export cancelled" };
+      return { success: false, error: "Export dibatalkan" };
     } catch (error) {
       console.error("Material export error:", error);
       return { success: false, error: error.message };
     }
   });
 
-  // Import materials
+  // Import materials from Excel
   ipcMain.handle("import-materials", async (event, { userId }) => {
     try {
       const { filePaths } = await dialog.showOpenDialog({
         title: "Import Materials",
-        filters: [{ name: "JSON Files", extensions: ["json"] }],
+        filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
         properties: ["openFile"],
       });
 
       if (filePaths.length === 0) {
-        return { success: false, error: "No file selected" };
+        return { success: false, error: "Tidak ada file yang dipilih" };
       }
 
-      const fileContent = fs.readFileSync(filePaths[0], "utf8");
-      const materials = JSON.parse(fileContent);
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filePaths[0]);
+      const worksheet = workbook.worksheets[0];
 
-      // Insert/update materials one by one
-      await Promise.all(
-        materials.map((material) => {
-          return new Promise((resolve, reject) => {
-            const { id, created_at, ...materialData } = material;
-            db.run(
-              `INSERT OR REPLACE INTO materials 
-            (kode, name, unit, price, category, lokasi, sumber_data, user_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      try {
+        // Prepare statement outside transaction
+        const stmt = db.prepare(
+          "INSERT INTO materials (kode, name, unit, price, category, lokasi, sumber_data, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        );
+
+        // Process rows
+        for (let i = 1; i <= worksheet.rowCount; i++) {
+          const row = worksheet.getRow(i);
+          if (!row.getCell(2).value) continue; // Skip if no name (second column)
+
+          await new Promise((resolve, reject) => {
+            stmt.run(
               [
-                materialData.kode,
-                materialData.name,
-                materialData.unit,
-                materialData.price,
-                materialData.category,
-                materialData.lokasi,
-                materialData.sumber_data,
+                row.getCell(1).value || "", // kode
+                row.getCell(2).value, // name
+                row.getCell(3).value, // unit
+                parseFloat(row.getCell(4).value) || 0, // price
+                row.getCell(5).value || "Bahan", // category
+                row.getCell(6).value || "", // lokasi
+                row.getCell(7).value || "", // sumber_data
                 userId,
               ],
               (err) => {
@@ -295,22 +322,38 @@ function setupExportHandlers(ipcMain, db) {
               }
             );
           });
-        })
-      );
+        }
 
-      return { success: true };
+        // Finalize statement
+        await new Promise((resolve, reject) => {
+          stmt.finalize((err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
+
+        return { success: true };
+      } catch (error) {
+        // Make sure statement is finalized on error
+        try {
+          if (stmt) stmt.finalize();
+        } catch (e) {
+          console.error("Error finalizing statement:", e);
+        }
+        throw error;
+      }
     } catch (error) {
       console.error("Material import error:", error);
       return { success: false, error: error.message };
     }
   });
 
-  // Export AHS
+  // Export AHS to Excel
   ipcMain.handle("export-ahs", async (event, { userId }) => {
     try {
       const ahs = await new Promise((resolve, reject) => {
         db.all(
-          "SELECT id, kelompok, kode_ahs, ahs, satuan, created_at FROM ahs WHERE user_id = ?",
+          "SELECT kelompok, kode_ahs, ahs, satuan FROM ahs WHERE user_id = ? ORDER BY kelompok, kode_ahs",
           [userId],
           (err, rows) => {
             if (err) reject(err);
@@ -319,55 +362,74 @@ function setupExportHandlers(ipcMain, db) {
         );
       });
 
+      // Create workbook and worksheet
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("AHS");
+
+      // Add rows directly without headers
+      for (const item of ahs) {
+        worksheet.addRow([item.kelompok, item.kode_ahs, item.ahs, item.satuan]);
+      }
+
+      // Auto-width columns
+      worksheet.columns.forEach((column, index) => {
+        column.width = index === 2 ? 50 : 20; // Make AHS description column wider
+      });
+
       const { filePath } = await dialog.showSaveDialog({
         title: "Export AHS",
         defaultPath: `ahs_export_${
           new Date().toISOString().split("T")[0]
-        }.json`,
-        filters: [{ name: "JSON Files", extensions: ["json"] }],
+        }.xlsx`,
+        filters: [{ name: "Excel Files", extensions: ["xlsx"] }],
       });
 
       if (filePath) {
-        fs.writeFileSync(filePath, JSON.stringify(ahs, null, 2));
+        await workbook.xlsx.writeFile(filePath);
         return { success: true };
       }
-      return { success: false, error: "Export cancelled" };
+      return { success: false, error: "Export dibatalkan" };
     } catch (error) {
       console.error("AHS export error:", error);
       return { success: false, error: error.message };
     }
   });
 
-  // Import AHS
+  // Import AHS from Excel
   ipcMain.handle("import-ahs", async (event, { userId }) => {
     try {
       const { filePaths } = await dialog.showOpenDialog({
         title: "Import AHS",
-        filters: [{ name: "JSON Files", extensions: ["json"] }],
+        filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
         properties: ["openFile"],
       });
 
       if (filePaths.length === 0) {
-        return { success: false, error: "No file selected" };
+        return { success: false, error: "Tidak ada file yang dipilih" };
       }
 
-      const fileContent = fs.readFileSync(filePaths[0], "utf8");
-      const ahsItems = JSON.parse(fileContent);
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filePaths[0]);
+      const worksheet = workbook.worksheets[0];
 
-      // Insert/update AHS one by one
-      await Promise.all(
-        ahsItems.map((ahs) => {
-          return new Promise((resolve, reject) => {
-            const { id, created_at, ...ahsData } = ahs;
-            db.run(
-              `INSERT OR REPLACE INTO ahs 
-              (kelompok, kode_ahs, ahs, satuan, user_id) 
-              VALUES (?, ?, ?, ?, ?)`,
+      try {
+        // Prepare statement outside transaction
+        const stmt = db.prepare(
+          "INSERT INTO ahs (kelompok, kode_ahs, ahs, satuan, user_id) VALUES (?, ?, ?, ?, ?)"
+        );
+
+        // Process rows
+        for (let i = 1; i <= worksheet.rowCount; i++) {
+          const row = worksheet.getRow(i);
+          if (!row.getCell(3).value) continue; // Skip if no AHS description (third column)
+
+          await new Promise((resolve, reject) => {
+            stmt.run(
               [
-                ahsData.kelompok,
-                ahsData.kode_ahs,
-                ahsData.ahs,
-                ahsData.satuan,
+                row.getCell(1).value || "", // kelompok
+                row.getCell(2).value || "", // kode_ahs
+                row.getCell(3).value, // ahs
+                row.getCell(4).value || "", // satuan
                 userId,
               ],
               (err) => {
@@ -376,10 +438,26 @@ function setupExportHandlers(ipcMain, db) {
               }
             );
           });
-        })
-      );
+        }
 
-      return { success: true };
+        // Finalize statement
+        await new Promise((resolve, reject) => {
+          stmt.finalize((err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
+
+        return { success: true };
+      } catch (error) {
+        // Make sure statement is finalized on error
+        try {
+          if (stmt) stmt.finalize();
+        } catch (e) {
+          console.error("Error finalizing statement:", e);
+        }
+        throw error;
+      }
     } catch (error) {
       console.error("AHS import error:", error);
       return { success: false, error: error.message };
