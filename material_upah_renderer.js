@@ -421,6 +421,28 @@ async function importData() {
   }
 }
 
+function deleteAllMaterials() {
+  const userId = checkAuth();
+  if (!userId) return;
+
+  if (
+    confirm(
+      "PERHATIAN: Semua data material dan referensinya di rincian AHS akan dihapus. Anda yakin ingin melanjutkan?"
+    )
+  ) {
+    ipcRenderer.send("delete-all-materials", { userId });
+  }
+}
+
+ipcRenderer.on("materials-deleted", (event, response) => {
+  if (response && response.error) {
+    alert("Error: " + response.error);
+  } else {
+    alert("Semua material berhasil dihapus");
+    loadMaterials(); // Reload the empty table
+  }
+});
+
 function logout() {
   localStorage.removeItem("userId");
   window.location.href = "login.html";

@@ -72,6 +72,25 @@ function setupMaterialHandlers(ipcMain, db) {
     );
   });
 
+  // Delete all materials for a user
+  ipcMain.on("delete-all-materials", (event, { userId }) => {
+    if (!userId) {
+      event.reply("materials-deleted", { error: "User ID is required" });
+      return;
+    }
+
+    db.run("DELETE FROM materials WHERE user_id = ?", [userId], (err) => {
+      if (err) {
+        console.error("Error deleting all materials:", err);
+        event.reply("materials-deleted", { error: err.message });
+        return;
+      }
+      event.reply("materials-deleted", { success: true });
+      // Refresh the material list
+      event.reply("focus-search");
+    });
+  });
+
   // Delete material
   ipcMain.on("delete-material", (event, { id, userId }) => {
     if (!userId) {
