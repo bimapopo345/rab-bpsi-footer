@@ -225,7 +225,7 @@ function setupImportHandlers(ipcMain, db) {
             }
 
             const stmt = db.prepare(
-              "INSERT OR IGNORE INTO materials (user_id, name, unit, price, category, description) VALUES (?, ?, ?, ?, ?, ?)"
+              "INSERT OR IGNORE INTO materials (user_id, kode, name, unit, price, category, description) VALUES (?, ?, ?, ?, ?, ?, ?)"
             );
 
             for (const material of materials) {
@@ -233,6 +233,7 @@ function setupImportHandlers(ipcMain, db) {
               stmt.run(
                 [
                   userId,
+                  material.kode || "",
                   material.name,
                   material.unit,
                   material.price,
