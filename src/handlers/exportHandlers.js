@@ -475,7 +475,7 @@ function setupExportHandlers(ipcMain, db) {
                   values.push(parseFloat(value) || 0);
                   break;
                 case 5: // category
-                  values.push(value?.toString() || "Bahan");
+                  values.push(value?.toString() || "");
                   break;
                 case 6: // lokasi
                   values.push(value?.toString() || "");
