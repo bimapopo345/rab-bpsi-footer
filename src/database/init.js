@@ -17,11 +17,11 @@ function initDatabase() {
         db.run(
           `
           CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            username TEXT UNIQUE NOT NULL,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             hint TEXT,
-            role TEXT NOT NULL DEFAULT 'user'
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
           )
         `,
           (err) => {
@@ -31,10 +31,10 @@ function initDatabase() {
             }
             console.log("Users table created");
 
-            // Create default admin user with TEXT id
+            // Create default admin user
             db.run(
-              "INSERT OR IGNORE INTO users (id, username, password, hint, role) VALUES (?, ?, ?, ?, ?)",
-              ["admin-1", "admin", "admin", "Default admin account", "admin"],
+              "INSERT OR IGNORE INTO users (username, password, hint) VALUES (?, ?, ?)",
+              ["admin", "admin", "Default admin account"],
               (err) => {
                 if (err) {
                   console.error("Error creating default admin user:", err);
@@ -59,7 +59,7 @@ function initDatabase() {
             lokasi TEXT,
             sumber_data TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            user_id TEXT NOT NULL,
+            user_id INTEGER NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
         `,
@@ -77,11 +77,14 @@ function initDatabase() {
           `
           CREATE TABLE IF NOT EXISTS ahs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            kode_ahs TEXT,
-            kelompok TEXT,
+            kelompok TEXT NOT NULL,
+            kode_ahs TEXT NOT NULL,
             ahs TEXT NOT NULL,
-            satuan TEXT,
-            user_id TEXT NOT NULL,
+            satuan TEXT NOT NULL,
+            user_id INTEGER NOT NULL,
+            lokasi TEXT,
+            sumber_data TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
         `,
@@ -103,7 +106,8 @@ function initDatabase() {
             material_id INTEGER NOT NULL,
             quantity REAL DEFAULT 0,
             koefisien REAL DEFAULT 0,
-            user_id TEXT NOT NULL,
+            user_id INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (ahs_id) REFERENCES ahs(id),
             FOREIGN KEY (material_id) REFERENCES materials(id),
             FOREIGN KEY (user_id) REFERENCES users(id)
@@ -123,11 +127,11 @@ function initDatabase() {
           `
           CREATE TABLE IF NOT EXISTS projects (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
             name TEXT NOT NULL,
             location TEXT,
             funding TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            user_id TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
         `,
@@ -140,7 +144,7 @@ function initDatabase() {
           }
         );
 
-        // Create BQ table
+        // Create BQ table (if needed)
         db.run(
           `
           CREATE TABLE IF NOT EXISTS bq (
@@ -151,7 +155,7 @@ function initDatabase() {
             volume REAL NOT NULL,
             total_price REAL NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            user_id TEXT NOT NULL,
+            user_id INTEGER NOT NULL,
             FOREIGN KEY (ahs_id) REFERENCES ahs(id),
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
