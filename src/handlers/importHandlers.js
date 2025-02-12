@@ -225,21 +225,23 @@ function setupImportHandlers(ipcMain, db) {
             }
 
             const stmt = db.prepare(
-              "INSERT OR IGNORE INTO materials (user_id, kode, name, unit, price, category, description, sumber_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+              "INSERT OR IGNORE INTO materials (user_id, kode, name, unit, price, category, description, lokasi, sumber_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
             );
 
             for (const material of materials) {
               const userId = material.user_id || defaultAdminId;
+              // Allow empty/null values for optional fields
               stmt.run(
                 [
                   userId,
-                  material.kode || "",
-                  material.name,
-                  material.unit,
-                  material.price,
-                  material.category,
-                  material.description,
-                  material.sumber_data || "",
+                  material.kode || null,
+                  material.name || "Untitled",
+                  material.unit || "Unit",
+                  material.price || 0,
+                  material.category || null,
+                  material.description || null,
+                  material.lokasi || null,
+                  material.sumber_data || null,
                 ],
                 (err) => {
                   if (err)
@@ -270,7 +272,7 @@ function setupImportHandlers(ipcMain, db) {
             }
 
             const stmt = db.prepare(
-              "INSERT OR IGNORE INTO ahs (user_id, kelompok, kode_ahs, ahs, satuan, sumber_data) VALUES (?, ?, ?, ?, ?, ?)"
+              "INSERT OR IGNORE INTO ahs (user_id, kelompok, kode_ahs, ahs, satuan, lokasi, sumber_data) VALUES (?, ?, ?, ?, ?, ?, ?)"
             );
 
             for (const ahs of ahsItems) {
@@ -278,11 +280,12 @@ function setupImportHandlers(ipcMain, db) {
               stmt.run(
                 [
                   userId,
-                  ahs.kelompok,
-                  ahs.kode_ahs,
-                  ahs.ahs,
-                  ahs.satuan,
-                  ahs.sumber_data || "",
+                  ahs.kelompok || "Uncategorized",
+                  ahs.kode_ahs || null,
+                  ahs.ahs || "Untitled",
+                  ahs.satuan || "Unit",
+                  ahs.lokasi || null,
+                  ahs.sumber_data || null,
                 ],
                 (err) => {
                   if (err)
@@ -313,17 +316,25 @@ function setupImportHandlers(ipcMain, db) {
             }
 
             const stmt = db.prepare(
-              "INSERT OR IGNORE INTO projects (user_id, name, location) VALUES (?, ?, ?)"
+              "INSERT OR IGNORE INTO projects (user_id, name, location, funding) VALUES (?, ?, ?, ?)"
             );
 
             for (const project of projects) {
               const userId = project.user_id || defaultAdminId;
-              stmt.run([userId, project.name, project.location], (err) => {
-                if (err)
-                  console.warn(
-                    `Warning: Could not import project ${project.name}: ${err.message}`
-                  );
-              });
+              stmt.run(
+                [
+                  userId,
+                  project.name || "Untitled Project",
+                  project.location || null,
+                  project.funding || null,
+                ],
+                (err) => {
+                  if (err)
+                    console.warn(
+                      `Warning: Could not import project ${project.name}: ${err.message}`
+                    );
+                }
+              );
             }
 
             stmt.finalize((err) => {

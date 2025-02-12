@@ -9,9 +9,20 @@ function initDatabase() {
         return;
       }
 
+      console.log("Database opened successfully, initializing tables...");
+
       db.serialize(() => {
+        // Drop existing tables if they exist to ensure clean slate
+        db.run("DROP TABLE IF EXISTS pricing");
+        db.run("DROP TABLE IF EXISTS materials");
+        db.run("DROP TABLE IF EXISTS ahs");
+        db.run("DROP TABLE IF EXISTS projects");
+        db.run("DROP TABLE IF EXISTS users");
+        console.log("Dropped existing tables");
+
         // Create users table first
-        db.run(`
+        db.run(
+          `
           CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
@@ -19,7 +30,28 @@ function initDatabase() {
             hint TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
           )
-        `);
+        `,
+          (err) => {
+            if (err) {
+              console.error("Error creating users table:", err);
+              return;
+            }
+            console.log("Users table created");
+
+            // Create default admin user immediately after table creation
+            db.run(
+              "INSERT OR REPLACE INTO users (username, password, hint) VALUES (?, ?, ?)",
+              ["admin", "admin", "Default admin account"],
+              (err) => {
+                if (err) {
+                  console.error("Error creating default admin user:", err);
+                  return;
+                }
+                console.log("Default admin user created/verified");
+              }
+            );
+          }
+        );
 
         // Check if admin table exists and migrate data
         db.get(
@@ -55,23 +87,32 @@ function initDatabase() {
           }
         );
 
-        // Create materials table with user_id and new columns
-        db.run(`
+        // Create materials table with all columns properly defined
+        db.run(
+          `
           CREATE TABLE IF NOT EXISTS materials (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
-            kode TEXT,
+            kode TEXT DEFAULT NULL,
             name TEXT NOT NULL,
             unit TEXT NOT NULL,
             price REAL NOT NULL,
-            category TEXT NOT NULL,
-            description TEXT,
-            lokasi TEXT,
-            sumber_data TEXT,
+            category TEXT DEFAULT NULL,
+            description TEXT DEFAULT NULL,
+            lokasi TEXT DEFAULT NULL,
+            sumber_data TEXT DEFAULT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
-        `);
+        `,
+          (err) => {
+            if (err) {
+              console.error("Error creating materials table:", err);
+              return;
+            }
+            console.log("Materials table created with all columns");
+          }
+        );
 
         // Add new columns to existing materials table if they don't exist
         db.get("PRAGMA table_info(materials)", (err, rows) => {
@@ -120,8 +161,9 @@ function initDatabase() {
           });
         });
 
-        // Create AHS table with user_id and new columns
-        db.run(`
+        // Create AHS table with proper null handling
+        db.run(
+          `
           CREATE TABLE IF NOT EXISTS ahs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -129,73 +171,67 @@ function initDatabase() {
             kode_ahs TEXT NOT NULL,
             ahs TEXT NOT NULL,
             satuan TEXT NOT NULL,
-            lokasi TEXT,
-            sumber_data TEXT,
+            lokasi TEXT DEFAULT NULL,
+            sumber_data TEXT DEFAULT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
           )
-        `);
-
-        // Add new columns to existing AHS table if they don't exist
-        db.get("PRAGMA table_info(ahs)", (err, rows) => {
-          if (err) {
-            console.error("Error checking AHS table columns:", err);
-            return;
+        `,
+          (err) => {
+            if (err) {
+              console.error("Error creating AHS table:", err);
+              return;
+            }
+            console.log("AHS table created with all columns");
           }
+        );
 
-          // Check if lokasi column exists
-          db.get("SELECT lokasi FROM ahs LIMIT 1", (err) => {
-            if (err) {
-              // Add lokasi column if it doesn't exist
-              db.run("ALTER TABLE ahs ADD COLUMN lokasi TEXT", (err) => {
-                if (err) {
-                  console.error("Error adding lokasi column to AHS:", err);
-                }
-              });
-            }
-          });
-
-          // Check if sumber_data column exists
-          db.get("SELECT sumber_data FROM ahs LIMIT 1", (err) => {
-            if (err) {
-              // Add sumber_data column if it doesn't exist
-              db.run("ALTER TABLE ahs ADD COLUMN sumber_data TEXT", (err) => {
-                if (err) {
-                  console.error("Error adding sumber_data column to AHS:", err);
-                }
-              });
-            }
-          });
-        });
-
-        // Create pricing table with user_id
-        db.run(`
+        // Create pricing table with proper constraints
+        db.run(
+          `
           CREATE TABLE IF NOT EXISTS pricing (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             ahs_id INTEGER NOT NULL,
             material_id INTEGER NOT NULL,
-            quantity REAL NOT NULL,
-            koefisien REAL NOT NULL,
+            quantity REAL NOT NULL DEFAULT 0,
+            koefisien REAL NOT NULL DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (ahs_id) REFERENCES ahs(id),
-            FOREIGN KEY (material_id) REFERENCES materials(id)
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (ahs_id) REFERENCES ahs(id) ON DELETE CASCADE,
+            FOREIGN KEY (material_id) REFERENCES materials(id) ON DELETE CASCADE
           )
-        `);
+        `,
+          (err) => {
+            if (err) {
+              console.error("Error creating pricing table:", err);
+              return;
+            }
+            console.log("Pricing table created with all columns");
+          }
+        );
 
-        // Create projects table with user_id
-        db.run(`
+        // Create projects table with proper null handling
+        db.run(
+          `
           CREATE TABLE IF NOT EXISTS projects (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             name TEXT NOT NULL,
-            location TEXT NOT NULL,
-            funding TEXT,
+            location TEXT DEFAULT NULL,
+            funding TEXT DEFAULT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
           )
-        `);
+        `,
+          (err) => {
+            if (err) {
+              console.error("Error creating projects table:", err);
+              return;
+            }
+            console.log("Projects table created with all columns");
+          }
+        );
 
         // Check if funding column exists in projects table
         db.get("SELECT funding FROM projects LIMIT 1", (err) => {
