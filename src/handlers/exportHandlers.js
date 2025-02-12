@@ -323,78 +323,6 @@ function setupExportHandlers(ipcMain, db) {
     }
   });
 
-  // Import materials from Excel
-  ipcMain.handle("import-materials", async (event, { userId }) => {
-    try {
-      const { filePaths } = await dialog.showOpenDialog({
-        title: "Import Materials",
-        filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
-        properties: ["openFile"],
-      });
-
-      if (filePaths.length === 0) {
-        return { success: false, error: "Tidak ada file yang dipilih" };
-      }
-
-      const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.readFile(filePaths[0]);
-      const worksheet = workbook.worksheets[0];
-
-      try {
-        // Prepare statement outside transaction
-        const stmt = db.prepare(
-          "INSERT INTO materials (kode, name, unit, price, category, lokasi, sumber_data, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        );
-
-        // Process rows (skip header row)
-        for (let i = 2; i <= worksheet.rowCount; i++) {
-          const row = worksheet.getRow(i);
-          if (!row.getCell(2).value) continue; // Skip if no name (second column)
-
-          await new Promise((resolve, reject) => {
-            stmt.run(
-              [
-                row.getCell(1).value || "", // kode
-                row.getCell(2).value, // name
-                row.getCell(3).value, // unit
-                parseFloat(row.getCell(4).value) || 0, // price
-                row.getCell(5).value || "Bahan", // category
-                row.getCell(6).value || "", // lokasi
-                row.getCell(7).value || "", // sumber_data
-                userId,
-              ],
-              (err) => {
-                if (err) reject(err);
-                else resolve();
-              }
-            );
-          });
-        }
-
-        // Finalize statement
-        await new Promise((resolve, reject) => {
-          stmt.finalize((err) => {
-            if (err) reject(err);
-            else resolve();
-          });
-        });
-
-        return { success: true };
-      } catch (error) {
-        // Make sure statement is finalized on error
-        try {
-          if (stmt) stmt.finalize();
-        } catch (e) {
-          console.error("Error finalizing statement:", e);
-        }
-        throw error;
-      }
-    } catch (error) {
-      console.error("Material import error:", error);
-      return { success: false, error: error.message };
-    }
-  });
-
   // Export AHS to Excel
   ipcMain.handle("export-ahs", async (event, { userId }) => {
     try {
@@ -486,7 +414,135 @@ function setupExportHandlers(ipcMain, db) {
     }
   });
 
-  // Import AHS from Excel
+  // Import materials from Excel with better error handling
+  ipcMain.handle("import-materials", async (event, { userId }) => {
+    try {
+      const { filePaths } = await dialog.showOpenDialog({
+        title: "Import Materials",
+        filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
+        properties: ["openFile"],
+      });
+
+      if (filePaths.length === 0) {
+        return { success: false, error: "Tidak ada file yang dipilih" };
+      }
+
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filePaths[0]);
+      const worksheet = workbook.worksheets[0];
+
+      let stmt;
+      let importedCount = 0;
+      let skippedCount = 0;
+
+      try {
+        stmt = db.prepare(
+          "INSERT INTO materials (kode, name, unit, price, category, lokasi, sumber_data, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        );
+
+        // Process rows (skip header row)
+        for (let i = 2; i <= worksheet.rowCount; i++) {
+          const row = worksheet.getRow(i);
+
+          // Check if row has any non-empty cell
+          let hasValue = false;
+          for (let j = 1; j <= 7; j++) {
+            if (row.getCell(j).value) {
+              hasValue = true;
+              break;
+            }
+          }
+          if (!hasValue) continue; // Skip completely empty rows
+
+          try {
+            const values = [];
+            // Get values with proper type handling and defaults
+            for (let j = 1; j <= 7; j++) {
+              const cell = row.getCell(j);
+              const value = cell.value;
+
+              switch (j) {
+                case 1: // kode
+                  values.push(value?.toString() || "");
+                  break;
+                case 2: // name
+                  values.push(value?.toString()?.trim() || "-");
+                  break;
+                case 3: // unit
+                  values.push(value?.toString() || "-");
+                  break;
+                case 4: // price
+                  values.push(parseFloat(value) || 0);
+                  break;
+                case 5: // category
+                  values.push(value?.toString() || "Bahan");
+                  break;
+                case 6: // lokasi
+                  values.push(value?.toString() || "");
+                  break;
+                case 7: // sumber_data
+                  values.push(value?.toString() || "");
+                  break;
+              }
+            }
+            values.push(userId); // Add userId as the last parameter
+
+            await new Promise((resolve, reject) => {
+              stmt.run(values, (err) => {
+                if (err) {
+                  console.warn(`Row ${i} error:`, err.message);
+                  skippedCount++;
+                  resolve(); // Continue despite error
+                } else {
+                  importedCount++;
+                  resolve();
+                }
+              });
+            });
+          } catch (rowError) {
+            console.warn(`Error processing row ${i}:`, rowError);
+            skippedCount++;
+            continue;
+          }
+        }
+
+        if (stmt) {
+          await new Promise((resolve, reject) => {
+            stmt.finalize((err) => {
+              if (err) {
+                console.error("Error finalizing statement:", err);
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+          });
+        }
+
+        return {
+          success: true,
+          message: `Berhasil import ${importedCount} data${
+            skippedCount > 0 ? `, ${skippedCount} data dilewati` : ""
+          }`,
+        };
+      } catch (error) {
+        console.error("Import error:", error);
+        if (stmt) {
+          try {
+            await new Promise((resolve) => stmt.finalize(() => resolve()));
+          } catch (e) {
+            console.error("Error finalizing statement:", e);
+          }
+        }
+        throw error;
+      }
+    } catch (error) {
+      console.error("Material import error:", error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Import AHS from Excel with better error handling
   ipcMain.handle("import-ahs", async (event, { userId }) => {
     try {
       const { filePaths } = await dialog.showOpenDialog({
@@ -503,49 +559,84 @@ function setupExportHandlers(ipcMain, db) {
       await workbook.xlsx.readFile(filePaths[0]);
       const worksheet = workbook.worksheets[0];
 
+      let stmt;
+      let importedCount = 0;
+      let skippedCount = 0;
+
       try {
-        // Prepare statement outside transaction
-        const stmt = db.prepare(
+        stmt = db.prepare(
           "INSERT INTO ahs (kelompok, kode_ahs, ahs, satuan, user_id) VALUES (?, ?, ?, ?, ?)"
         );
 
         // Process rows (skip header row)
         for (let i = 2; i <= worksheet.rowCount; i++) {
           const row = worksheet.getRow(i);
-          if (!row.getCell(3).value) continue; // Skip if no AHS description (third column)
 
+          // Check if row has any non-empty cell
+          let hasValue = false;
+          for (let j = 1; j <= 4; j++) {
+            if (row.getCell(j).value) {
+              hasValue = true;
+              break;
+            }
+          }
+          if (!hasValue) continue; // Skip completely empty rows
+
+          try {
+            const params = [
+              row.getCell(1).value?.toString() || "-", // kelompok
+              row.getCell(2).value?.toString() || "-", // kode_ahs
+              row.getCell(3).value?.toString() || "-", // ahs
+              row.getCell(4).value?.toString() || "-", // satuan
+              userId,
+            ];
+
+            await new Promise((resolve, reject) => {
+              stmt.run(params, (err) => {
+                if (err) {
+                  console.warn(`Row ${i} error:`, err.message);
+                  skippedCount++;
+                  resolve(); // Continue despite error
+                } else {
+                  importedCount++;
+                  resolve();
+                }
+              });
+            });
+          } catch (rowError) {
+            console.warn(`Error processing row ${i}:`, rowError);
+            skippedCount++;
+            continue;
+          }
+        }
+
+        if (stmt) {
           await new Promise((resolve, reject) => {
-            stmt.run(
-              [
-                row.getCell(1).value || "", // kelompok
-                row.getCell(2).value || "", // kode_ahs
-                row.getCell(3).value, // ahs
-                row.getCell(4).value || "", // satuan
-                userId,
-              ],
-              (err) => {
-                if (err) reject(err);
-                else resolve();
+            stmt.finalize((err) => {
+              if (err) {
+                console.error("Error finalizing statement:", err);
+                reject(err);
+              } else {
+                resolve();
               }
-            );
+            });
           });
         }
 
-        // Finalize statement
-        await new Promise((resolve, reject) => {
-          stmt.finalize((err) => {
-            if (err) reject(err);
-            else resolve();
-          });
-        });
-
-        return { success: true };
+        return {
+          success: true,
+          message: `Berhasil import ${importedCount} AHS${
+            skippedCount > 0 ? `, ${skippedCount} data dilewati` : ""
+          }`,
+        };
       } catch (error) {
-        // Make sure statement is finalized on error
-        try {
-          if (stmt) stmt.finalize();
-        } catch (e) {
-          console.error("Error finalizing statement:", e);
+        console.error("Import error:", error);
+        if (stmt) {
+          try {
+            await new Promise((resolve) => stmt.finalize(() => resolve()));
+          } catch (e) {
+            console.error("Error finalizing statement:", e);
+          }
         }
         throw error;
       }
