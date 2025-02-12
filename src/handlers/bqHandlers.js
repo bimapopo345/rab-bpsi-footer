@@ -10,7 +10,7 @@ function setupBQHandlers(ipcMain, db) {
           a.id,
           a.kode_ahs,
           a.ahs,
-          SUM(m.price * p.quantity * p.koefisien) as total_price
+          SUM(m.price * p.koefisien) as total_price
         FROM ahs a
         INNER JOIN pricing p ON p.ahs_id = a.id
         INNER JOIN materials m ON m.id = p.material_id
@@ -39,7 +39,11 @@ function setupBQHandlers(ipcMain, db) {
         SELECT 
           b.*,
           a.kode_ahs,
-          a.ahs
+          a.ahs,
+          (SELECT SUM(m.price * p.koefisien) * b.volume
+           FROM pricing p
+           INNER JOIN materials m ON m.id = p.material_id
+           WHERE p.ahs_id = b.ahs_id) as total_price
         FROM bq b
         INNER JOIN ahs a ON a.id = b.ahs_id
         WHERE b.user_id = ?
@@ -70,9 +74,8 @@ function setupBQHandlers(ipcMain, db) {
           shape,
           dimensions,
           volume,
-          total_price,
           created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        ) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
       `,
         [
           bqItem.userId,
@@ -80,11 +83,36 @@ function setupBQHandlers(ipcMain, db) {
           bqItem.shape,
           bqItem.dimensions,
           bqItem.volume,
-          bqItem.totalPrice,
         ],
-        (err) => {
+        function (err) {
           if (err) {
             console.error("Error saving BQ item:", err);
+            reject(err);
+            return;
+          }
+          resolve(this.lastID);
+        }
+      );
+    });
+  });
+
+  // Update BQ item
+  ipcMain.handle("update-bq-item", async (event, bqItem) => {
+    if (!bqItem.id) throw new Error("Item ID is required");
+
+    return new Promise((resolve, reject) => {
+      db.run(
+        `
+        UPDATE bq 
+        SET shape = ?,
+            dimensions = ?,
+            volume = ?
+        WHERE id = ?
+      `,
+        [bqItem.shape, bqItem.dimensions, bqItem.volume, bqItem.id],
+        (err) => {
+          if (err) {
+            console.error("Error updating BQ item:", err);
             reject(err);
             return;
           }

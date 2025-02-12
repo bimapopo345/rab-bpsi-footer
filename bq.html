@@ -5,6 +5,90 @@
     <title>Bill of Quantity - RAB</title>
     <link rel="stylesheet" href="src/styles/main.css">
     <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px var(--shadow);
+            flex: 1;
+        }
+
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--accent);
+        }
+
+        .btn-danger {
+            background-color: var(--error);
+            color: var(--white);
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -13,238 +97,152 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 20px;
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 30px;
             border-radius: 8px;
-            width: 80%;
+            width: 90%;
             max-width: 600px;
-            max-height: 70vh;
-            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
         }
 
-        .shape-form {
-            display: none;
-            margin-top: 20px;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
-        .shape-form.active {
-            display: block;
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
-        .input-group {
-            margin-bottom: 15px;
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            cursor: pointer;
+            transition: color 0.3s ease;
         }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
+        .close:hover {
             color: var(--primary);
         }
 
-        .input-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-        }
-
         .ahs-list {
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
             border: 1px solid var(--border);
-            border-radius: 4px;
-            margin-bottom: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
         }
 
         .ahs-item {
-            padding: 10px;
+            padding: 15px;
             border-bottom: 1px solid var(--border);
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         .ahs-item:hover {
             background-color: var(--background);
         }
 
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        .shape-form {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .shape-form.active {
+            display: block;
         }
 
         .results-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-top: 20px;
-        }
-
-        .results-table th,
-        .results-table td {
-            padding: 12px;
-            border: 1px solid var(--border);
-            text-align: left;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px var(--shadow);
         }
 
         .results-table th {
             background-color: var(--primary);
             color: var(--white);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
         }
-    </style>
-</head>
 
-<body>
-    <div class="top-bar">
-        <h1>Bill of Quantity</h1>
-        <button class="back-btn" onclick="window.history.back()">Kembali</button>
-    </div>
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--white);
+        }
 
-    <div class="container">
-        <div class="action-bar">
-            <button class="btn btn-primary" onclick="openAHSModal()">
-                <i class="fas fa-plus"></i> Tambah AHS
-            </button>
-        </div>
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
 
-        <table class="results-table">
-            <thead>
-                <tr>
-                    <th>Kode AHS</th>
-                    <th>AHS</th>
-                    <th>Bentuk</th>
-                    <th>Volume</th>
-                    <th>Total Harga</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="bqTableBody">
-                <!-- Data will be populated here -->
-            </tbody>
-        </table>
+        .results-table tr:hover td {
+            background-color: var(--background);
+        }
 
-        <!-- AHS Selection Modal -->
-        <div id="ahsModal" class="modal">
-            <div class="modal-content">
-                <h2>Pilih AHS</h2>
-                <div class="ahs-list" id="ahsList">
-                    <!-- AHS items will be populated here -->
-                </div>
-            </div>
-        </div>
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
 
-        <!-- Shape Selection Modal -->
-        <div id="shapeModal" class="modal">
-            <div class="modal-content">
-                <h2>Pilih Bentuk</h2>
-                <select id="shapeSelect" onchange="showShapeForm()">
-                    <option value="">Pilih Bentuk...</option>
-                    <option value="persegi">Persegi</option>
-                    <option value="persegiPanjang">Persegi Panjang</option>
-                    <option value="trapesium">Trapesium</option>
-                    <option value="lingkaran">Lingkaran</option>
-                    <option value="kubus">Kubus</option>
-                    <option value="balok">Balok</option>
-                </select>
-
-                <!-- Persegi Form -->
-                <div id="persegiForm" class="shape-form">
-                    <div class="input-group">
-                        <label>Sisi (m)</label>
-                        <input type="number" id="sisiPersegi" step="0.01">
-                    </div>
-                </div>
-
-                <!-- Persegi Panjang Form -->
-                <div id="persegiPanjangForm" class="shape-form">
-                    <div class="input-group">
-                        <label>Panjang (m)</label>
-                        <input type="number" id="panjangPersegiPanjang" step="0.01">
-                    </div>
-                    <div class="input-group">
-                        <label>Lebar (m)</label>
-                        <input type="number" id="lebarPersegiPanjang" step="0.01">
-                    </div>
-                </div>
-
-                <!-- Trapesium Form -->
-                <div id="trapesiumForm" class="shape-form">
-                    <div class="input-group">
-                        <label>Sisi Atas (m)</label>
-                        <input type="number" id="sisiAtasTrapesium" step="0.01">
-                    </div>
-                    <div class="input-group">
-                        <label>Sisi Bawah (m)</label>
-                        <input type="number" id="sisiBawahTrapesium" step="0.01">
-                    </div>
-                    <div class="input-group">
-                        <label>Tinggi (m)</label>
-                        <input type="number" id="tinggiTrapesium" step="0.01">
-                    </div>
-                </div>
-
-                <!-- Lingkaran Form -->
-                <div id="lingkaranForm" class="shape-form">
-                    <div class="input-group">
-                        <label>Jari-jari (m)</label>
-                        <input type="number" id="jariLingkaran" step="0.01">
-                    </div>
-                </div>
-
-                <!-- Kubus Form -->
-                <div id="kubusForm" class="shape-form">
-                    <div class="input-group">
-                        <label>Sisi (m)</label>
-                        <input type="number" id="sisiKubus" step="0.01">
-                    </div>
-                </div>
-
-                <!-- Balok Form -->
-                <div id="balokForm" class="shape-form">
-                    <div class="input-group">
-                        <label>Panjang (m)</label>
-                        <input type="number" id="panjangBalok" step="0.01">
-                    </div>
-                    <div class="input-group">
-                        <label>Lebar (m)</label>
-                        <input type="number" id="lebarBalok" step="0.01">
-                    </div>
-                    <div class="input-group">
-                        <label>Tinggi (m)</label>
-                        <input type="number" id="tinggiBalok" step="0.01">
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="closeShapeModal()">Batal</button>
-                    <button class="btn btn-primary" onclick="calculateAndSave()">Selesai</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="bq_renderer.js"></script>
-    <footer class="footer">
-        <div>Balai Besar Pengujian Standar Instrumen Sumberdaya Lahan Pertanian</div>
-        <div class="social-links">
-            <a href="https://www.facebook.com/BBSDLP/?locale=id_ID" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
-            </a>
-            <a href="https://www.instagram.com/bsip_sdlp/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
-            </a>
-            <a href="https://www.youtube.com/@bbsdlp5005/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
-            </a>
-            <a href="https://sdlp.bsip.pertanian.go.id/" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website">
-            </a>
-        </div>
-    </footer>
-
-    <style>
         .footer {
             background-color: var(--primary);
             color: var(--white);
@@ -263,16 +261,194 @@
             transition: all 0.3s ease;
         }
 
-        .social-links a:hover {
-            transform: translateY(-2px);
-            opacity: 0.8;
-        }
-
         .social-links img {
             width: 24px;
             height: 24px;
         }
     </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <h1>Bill of Quantity</h1>
+        <button class="back-btn" onclick="window.history.back()">← Kembali</button>
+    </div>
+
+    <div class="container">
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="openAHSModal()">
+                + Tambah AHS
+            </button>
+        </div>
+
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Kode AHS</th>
+                    <th>AHS</th>
+                    <th>Bentuk</th>
+                    <th>Volume</th>
+                    <th>Total Harga</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="bqTableBody">
+                <!-- Data will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- AHS Selection Modal -->
+    <div id="ahsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAHSModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">Pilih AHS</h2>
+            <div class="ahs-list" id="ahsList">
+                <!-- AHS items will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Shape Selection Modal -->
+    <div id="shapeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeShapeModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">Pilih Bentuk</h2>
+
+            <div class="form-group">
+                <label for="shapeSelect">Bentuk:</label>
+                <select id="shapeSelect" onchange="showShapeForm()">
+                    <option value="">Pilih Bentuk...</option>
+                    <option value="persegi">Persegi</option>
+                    <option value="persegiPanjang">Persegi Panjang</option>
+                    <option value="trapesium">Trapesium</option>
+                    <option value="lingkaran">Lingkaran</option>
+                    <option value="kubus">Kubus</option>
+                    <option value="balok">Balok</option>
+                </select>
+            </div>
+
+            <!-- Shape Forms -->
+            <div id="persegiForm" class="shape-form">
+                <div class="form-group">
+                    <label>Sisi (m)</label>
+                    <input type="number" id="sisiPersegi" step="0.01">
+                </div>
+            </div>
+
+            <div id="persegiPanjangForm" class="shape-form">
+                <div class="form-group">
+                    <label>Panjang (m)</label>
+                    <input type="number" id="panjangPersegiPanjang" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Lebar (m)</label>
+                    <input type="number" id="lebarPersegiPanjang" step="0.01">
+                </div>
+            </div>
+
+            <div id="trapesiumForm" class="shape-form">
+                <div class="form-group">
+                    <label>Sisi Atas (m)</label>
+                    <input type="number" id="sisiAtasTrapesium" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Sisi Bawah (m)</label>
+                    <input type="number" id="sisiBawahTrapesium" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Tinggi (m)</label>
+                    <input type="number" id="tinggiTrapesium" step="0.01">
+                </div>
+            </div>
+
+            <div id="lingkaranForm" class="shape-form">
+                <div class="form-group">
+                    <label>Jari-jari (m)</label>
+                    <input type="number" id="jariLingkaran" step="0.01">
+                </div>
+            </div>
+
+            <div id="kubusForm" class="shape-form">
+                <div class="form-group">
+                    <label>Sisi (m)</label>
+                    <input type="number" id="sisiKubus" step="0.01">
+                </div>
+            </div>
+
+            <div id="balokForm" class="shape-form">
+                <div class="form-group">
+                    <label>Panjang (m)</label>
+                    <input type="number" id="panjangBalok" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Lebar (m)</label>
+                    <input type="number" id="lebarBalok" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Tinggi (m)</label>
+                    <input type="number" id="tinggiBalok" step="0.01">
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn" onclick="closeShapeModal()"
+                    style="background-color: var(--accent); color: white;">Batal</button>
+                <button class="btn btn-primary" onclick="calculateAndSave()">Selesai</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">Edit Volume</h2>
+
+            <div class="form-group">
+                <label for="editShapeSelect">Bentuk:</label>
+                <select id="editShapeSelect" onchange="showEditShapeForm()">
+                    <option value="persegi">Persegi</option>
+                    <option value="persegiPanjang">Persegi Panjang</option>
+                    <option value="trapesium">Trapesium</option>
+                    <option value="lingkaran">Lingkaran</option>
+                    <option value="kubus">Kubus</option>
+                    <option value="balok">Balok</option>
+                </select>
+            </div>
+
+            <!-- Edit Shape Forms - Same structure as add forms -->
+            <div id="editShapeForms">
+                <!-- Forms will be cloned from original shape forms -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn" onclick="closeEditModal()"
+                    style="background-color: var(--accent); color: white;">Batal</button>
+                <button class="btn btn-warning" onclick="updateBQItem()">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div>Balai Besar Pengujian Standar Instrumen Sumberdaya Lahan Pertanian</div>
+        <div class="social-links">
+            <a href="https://www.facebook.com/BBSDLP/?locale=id_ID" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
+            </a>
+            <a href="https://www.instagram.com/bsip_sdlp/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+            </a>
+            <a href="https://www.youtube.com/@bbsdlp5005/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
+            </a>
+            <a href="https://sdlp.bsip.pertanian.go.id/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website">
+            </a>
+        </div>
+    </footer>
+
+    <script src="bq_renderer.js"></script>
 </body>
 
 </html>
