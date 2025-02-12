@@ -4,7 +4,6 @@ function setupBQHandlers(ipcMain, db) {
     if (!userId) return [];
 
     return new Promise((resolve, reject) => {
-      // Get AHS items that have pricing entries and calculate their total price
       const query = `
         SELECT 
           a.id,
@@ -67,22 +66,22 @@ function setupBQHandlers(ipcMain, db) {
 
     return new Promise((resolve, reject) => {
       db.run(
-        `
-        INSERT INTO bq (
+        `INSERT INTO bq (
           user_id,
           ahs_id,
           shape,
           dimensions,
           volume,
+          total_price,
           created_at
-        ) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-      `,
+        ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
         [
           bqItem.userId,
           bqItem.ahsId,
           bqItem.shape,
           bqItem.dimensions,
           bqItem.volume,
+          0,
         ],
         function (err) {
           if (err) {
@@ -96,31 +95,37 @@ function setupBQHandlers(ipcMain, db) {
     });
   });
 
-  // Update BQ item
-  ipcMain.handle("update-bq-item", async (event, bqItem) => {
-    if (!bqItem.id) throw new Error("Item ID is required");
+  // Update BQ item - update shape, dimensions, volume, recalc total_price
+  ipcMain.handle(
+    "update-bq-item",
+    async (event, { id, shape, dimensions, volume }) => {
+      if (!id) throw new Error("Item ID is required");
+      if (!volume) throw new Error("Volume is required");
 
-    return new Promise((resolve, reject) => {
-      db.run(
-        `
-        UPDATE bq 
-        SET shape = ?,
-            dimensions = ?,
-            volume = ?
-        WHERE id = ?
-      `,
-        [bqItem.shape, bqItem.dimensions, bqItem.volume, bqItem.id],
-        (err) => {
-          if (err) {
-            console.error("Error updating BQ item:", err);
-            reject(err);
-            return;
+      return new Promise((resolve, reject) => {
+        db.run(
+          `UPDATE bq
+         SET shape = ?,
+             dimensions = ?,
+             volume = ?,
+             total_price = (SELECT SUM(m.price * p.koefisien) * ?
+                            FROM pricing p
+                            INNER JOIN materials m ON m.id = p.material_id
+                            WHERE p.ahs_id = bq.ahs_id)
+         WHERE id = ?`,
+          [shape, dimensions, volume, volume, id],
+          (err) => {
+            if (err) {
+              console.error("Error updating BQ item:", err);
+              reject(err);
+              return;
+            }
+            resolve(true);
           }
-          resolve(true);
-        }
-      );
-    });
-  });
+        );
+      });
+    }
+  );
 
   // Delete BQ item
   ipcMain.handle("delete-bq-item", async (event, { id }) => {
