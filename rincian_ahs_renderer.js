@@ -500,6 +500,12 @@ async function startImport() {
   if (!userId) return;
 
   try {
+    // Request file path from main process
+    const result = await ipcRenderer.invoke("show-excel-dialog");
+    if (!result.filePath) {
+      return; // User cancelled file selection
+    }
+
     importInProgress = true;
     const progressBar = document.getElementById("importProgressBar");
     const importProgress = document.getElementById("importProgress");
@@ -512,11 +518,10 @@ async function startImport() {
 
     // Start Excel analysis
     const workbook = new ExcelJS.Workbook();
-    const filepath = path.join("EXCEL", "analisa-2.xlsx");
-
     progressBar.style.width = "20%";
 
-    await workbook.xlsx.readFile(filepath);
+    // Use selected file path
+    await workbook.xlsx.readFile(result.filePath);
     const worksheet = workbook.getWorksheet("Sheet1");
 
     if (!worksheet) {
@@ -784,8 +789,57 @@ function updateTotals() {
 // Add CSS for selected row
 const style = document.createElement("style");
 style.textContent = `
-  #materialDetails tr.selected {
-    background-color: #e0e7ff !important;
-  }
-`;
+    #materialDetails tr.selected {
+      background-color: #e0e7ff !important;
+    }
+  `;
 document.head.appendChild(style);
+
+// Function to delete all pricing data
+async function deleteAllPricing() {
+  const userId = checkAuth();
+  if (!userId) return;
+
+  if (!selectedAhsId) {
+    alert("Silakan pilih AHS terlebih dahulu");
+    return;
+  }
+
+  if (
+    !confirm("Anda yakin ingin menghapus semua data pricing untuk AHS ini?")
+  ) {
+    return;
+  }
+
+  try {
+    // Send delete request to server
+    ipcRenderer.send("delete-all-pricing", {
+      ahs_id: selectedAhsId,
+      userId,
+    });
+
+    // Clear table
+    const tableBody = document.getElementById("materialDetails");
+    tableBody.innerHTML = "";
+
+    // Update chart
+    updateTotals();
+  } catch (error) {
+    console.error("Error deleting all pricing:", error);
+    alert("Gagal menghapus data: " + error.message);
+  }
+}
+
+// Handle delete all pricing response
+ipcRenderer.on("all-pricing-deleted", (event, response) => {
+  if (response && response.error) {
+    alert("Gagal menghapus semua data: " + response.error);
+  } else {
+    console.log("All pricing data deleted successfully");
+    // Refresh pricing data
+    const userId = checkAuth();
+    if (userId) {
+      ipcRenderer.send("get-pricing", { ahsId: selectedAhsId, userId });
+    }
+  }
+});

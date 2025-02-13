@@ -4,6 +4,45 @@ const path = require("path");
 const { dialog } = require("electron");
 
 function setupImportHandlers(ipcMain, db) {
+  // Show Excel file picker dialog
+  ipcMain.handle("show-excel-dialog", async (event) => {
+    const result = await dialog.showOpenDialog({
+      title: "Pilih File Excel",
+      filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
+      properties: ["openFile"],
+    });
+
+    if (result.canceled) {
+      return { filePath: null };
+    }
+
+    return { filePath: result.filePaths[0] };
+  });
+
+  // Handle delete all pricing
+  ipcMain.on("delete-all-pricing", async (event, { ahs_id, userId }) => {
+    try {
+      await new Promise((resolve, reject) => {
+        db.run(
+          "DELETE FROM pricing WHERE ahs_id = ? AND user_id = ?",
+          [ahs_id, userId],
+          (err) => {
+            if (err) reject(err);
+            else resolve();
+          }
+        );
+      });
+
+      event.reply("all-pricing-deleted", { success: true });
+    } catch (error) {
+      console.error("Error deleting all pricing:", error);
+      event.reply("all-pricing-deleted", {
+        success: false,
+        error: error.message,
+      });
+    }
+  });
+
   // Handle Excel AHS import
   ipcMain.on("import-ahs-data", async (event, { ahsList, userId }) => {
     try {
