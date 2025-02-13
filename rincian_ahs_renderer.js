@@ -563,6 +563,21 @@ async function startImport() {
       if (!currentAHS) return;
       if (uraian === "No" || uraian === "No." || kode === "Kode") return;
 
+      // Skip summary rows and headers
+      if (
+        uraian.includes("TOTAL") ||
+        uraian.includes("Jumlah") ||
+        uraian.includes("Overhead") ||
+        uraian.includes("PPN") ||
+        uraian.includes("Harga Satuan") ||
+        uraian.includes("Pajak Pertambahan") ||
+        uraian === "TENAGA" ||
+        uraian === "BAHAN" ||
+        uraian === "PERALATAN"
+      ) {
+        return;
+      }
+
       // Check for section headers
       if (sectionOrCode === "A" && uraian === "TENAGA") {
         currentSection = "tenaga";
@@ -577,6 +592,7 @@ async function startImport() {
 
       if (!currentSection || !uraian) return;
 
+      // Create item object
       const item = {
         id: id,
         uraian: uraian,
@@ -585,7 +601,27 @@ async function startImport() {
         koefisien: values[6] ? parseFloat(values[6].toString()) : 0,
       };
 
-      if (item.uraian) {
+      // Skip invalid items
+      if (!item.koefisien || item.koefisien <= 0) return;
+
+      // Skip rows that are likely summary/header rows
+      if (
+        item.uraian.includes("(") ||
+        item.uraian.includes(")") ||
+        item.uraian.startsWith("Pek.") ||
+        item.uraian.startsWith("1 ") ||
+        item.uraian.startsWith("Biaya") ||
+        item.uraian.startsWith("Base") ||
+        item.uraian.startsWith("Kantor") ||
+        item.uraian.startsWith("Gudang") ||
+        item.uraian.startsWith("Ruang") ||
+        item.uraian.startsWith("Bengkel")
+      ) {
+        return;
+      }
+
+      // Add valid item to appropriate section
+      if (item.uraian && item.koefisien > 0) {
         switch (currentSection) {
           case "tenaga":
             currentAHS.tenaga.push(item);
