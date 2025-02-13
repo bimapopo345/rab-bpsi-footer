@@ -130,37 +130,12 @@ const addRekapSheet = async (workbook, db, userId, project) => {
     });
     totalRow.getCell("amount").alignment = { horizontal: "right" };
 
-    // Add terbilang
+    // Add terbilang at the bottom
     worksheet.mergeCells(`A${currentRow + 4}:C${currentRow + 4}`);
     const terbilangCell = worksheet.getCell(`A${currentRow + 4}`);
     terbilangCell.value = `Terbilang: ${sayRupiah(grandTotal + ppn)}`;
     terbilangCell.font = { italic: true };
-
-    // Add signature section
-    worksheet.addRow([]); // Empty row
-    const currentDate = new Date().toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-
-    worksheet.mergeCells(`B${currentRow + 6}:C${currentRow + 6}`);
-    const dateCell = worksheet.getCell(`B${currentRow + 6}`);
-    dateCell.value = `${project.location}, ${currentDate}`;
-    dateCell.alignment = { horizontal: "center" };
-    dateCell.font = STYLES.normal.font;
-
-    worksheet.mergeCells(`B${currentRow + 7}:C${currentRow + 7}`);
-    const titleCell2 = worksheet.getCell(`B${currentRow + 7}`);
-    titleCell2.value = "Mengetahui,";
-    titleCell2.alignment = { horizontal: "center" };
-    titleCell2.font = STYLES.normal.font;
-
-    worksheet.mergeCells(`B${currentRow + 11}:C${currentRow + 11}`);
-    const signCell = worksheet.getCell(`B${currentRow + 11}`);
-    signCell.value = "(________________________)";
-    signCell.alignment = { horizontal: "center" };
-    signCell.font = STYLES.normal.font;
+    terbilangCell.alignment = { horizontal: "left", vertical: "middle" };
   } catch (error) {
     console.error("Error generating rekap sheet:", error);
     throw error;

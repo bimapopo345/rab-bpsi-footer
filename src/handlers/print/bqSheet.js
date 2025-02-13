@@ -16,7 +16,7 @@ const addBQSheet = async (workbook, db, userId, project) => {
     { header: "JUMLAH HARGA (Rp)", key: "total", width: 25 },
   ];
 
-  // Add title with project styling (updated merge range for new columns)
+  // Add title
   worksheet.mergeCells("A1:I2");
   const titleCell = worksheet.getCell("A1");
   titleCell.value = `RENCANA ANGGARAN BIAYA (RAB)\n${project.name}`;
@@ -29,7 +29,7 @@ const addBQSheet = async (workbook, db, userId, project) => {
   titleCell.fill = STYLES.header.fill;
   titleCell.font = { ...STYLES.header.font, size: 14 };
 
-  // Add project info with sub-header styling
+  // Add project info
   worksheet.mergeCells("A3:I3");
   const locationCell = worksheet.getCell("A3");
   locationCell.value = `Lokasi: ${project.location}`;
@@ -37,20 +37,37 @@ const addBQSheet = async (workbook, db, userId, project) => {
   locationCell.fill = STYLES.subHeader.fill;
   locationCell.alignment = { horizontal: "left", vertical: "middle" };
 
-  // Style header row
+  // Add column headers
   const headerRow = worksheet.getRow(5);
-  headerRow.font = STYLES.groupHeader.font;
-  headerRow.alignment = STYLES.groupHeader.alignment;
-  headerRow.height = 30;
+  headerRow.values = [
+    "NO.",
+    "KODE",
+    "URAIAN",
+    "BENTUK",
+    "DIMENSI",
+    "VOLUME",
+    "SATUAN",
+    "HARGA",
+    "JUMLAH",
+  ];
 
-  // Apply header styling
+  // Style headers
+  headerRow.height = 30;
   headerRow.eachCell((cell) => {
-    cell.fill = STYLES.groupHeader.fill;
+    cell.font = { ...STYLES.header.font, size: 11 };
+    cell.fill = STYLES.header.fill;
+    cell.alignment = {
+      horizontal: "center",
+      vertical: "middle",
+      wrapText: true,
+    };
     cell.border = BORDERS;
   });
 
   // Fetch and add data
   try {
+    let startingRow = 6; // Data starts one row earlier now
+
     // Get BQ items with AHS details and calculated total price
     const items = await new Promise((resolve, reject) => {
       db.all(
@@ -76,7 +93,7 @@ const addBQSheet = async (workbook, db, userId, project) => {
       );
     });
 
-    let currentRow = 6;
+    let currentRow = startingRow;
     let subtotal = 0;
 
     items.forEach((item, index) => {
