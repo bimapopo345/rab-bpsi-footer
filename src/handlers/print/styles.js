@@ -8,6 +8,49 @@ function formatRupiah(amount) {
   }).format(amount);
 }
 
+// Function to add standardized project header
+function addProjectHeader(worksheet, project, columnCount) {
+  // Merge cells for the header
+  const mergeRange = `A1:${String.fromCharCode(64 + columnCount)}3`;
+  worksheet.mergeCells(mergeRange);
+
+  // Set header cell value and styling
+  const headerCell = worksheet.getCell("A1");
+  headerCell.value = `${project.name}\n${project.location}\n${project.funding}`;
+
+  headerCell.alignment = {
+    horizontal: "center",
+    vertical: "middle",
+    wrapText: true,
+  };
+
+  // Create rich text to apply different font sizes
+  headerCell.value = {
+    richText: [
+      {
+        text: `${project.name}\n`,
+        font: { bold: true, size: 28, color: { argb: "1A4F7C" } },
+      },
+      {
+        text: `${project.location}\n`,
+        font: { bold: true, size: 20, color: { argb: "1A4F7C" } },
+      },
+      {
+        text: project.funding,
+        font: { bold: true, size: 16, color: { argb: "1A4F7C" } },
+      },
+    ],
+  };
+
+  // Set row heights
+  worksheet.getRow(1).height = 30;
+  worksheet.getRow(2).height = 30;
+  worksheet.getRow(3).height = 30;
+
+  // Add spacing row
+  worksheet.getRow(4).height = 15;
+}
+
 const STYLES = {
   projectHeader: {
     font: {
@@ -109,22 +152,6 @@ const BORDERS = {
 
 // Currency format
 const CURRENCY_FORMAT = '"Rp"#,##0.00';
-
-// Function to add project header to a worksheet
-function addProjectHeader(worksheet, projectData, columnCount) {
-  // Add a single line header with all project info
-  const headerText = `${projectData.name} | ${projectData.location} | ${projectData.funding}`;
-  const headerRow = worksheet.addRow([headerText]);
-
-  // Style the header
-  headerRow.height = 25; // Slightly taller for better visibility
-  headerRow.eachCell((cell) => {
-    cell.style = STYLES.projectHeader;
-  });
-
-  // Merge all columns for the header
-  worksheet.mergeCells(`A1:${String.fromCharCode(64 + columnCount)}1`);
-}
 
 module.exports = {
   STYLES,

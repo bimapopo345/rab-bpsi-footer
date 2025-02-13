@@ -1,4 +1,4 @@
-const { STYLES, BORDERS, formatRupiah } = require("./styles");
+const { STYLES, BORDERS, formatRupiah, addProjectHeader } = require("./styles");
 
 const addBQSheet = async (workbook, db, userId, project) => {
   const worksheet = workbook.addWorksheet("BQ");
@@ -16,24 +16,8 @@ const addBQSheet = async (workbook, db, userId, project) => {
     { header: "JUMLAH HARGA (Rp)", key: "total", width: 25 },
   ];
 
-  // Add project header (3 rows in 1 merged cell)
-  worksheet.mergeCells("A1:I3");
-  const headerCell = worksheet.getCell("A1");
-  headerCell.value = `${project.name}\n${project.location}\n${project.funding}`;
-  headerCell.font = { bold: true, size: 14, color: { argb: "1A4F7C" } };
-  headerCell.alignment = {
-    horizontal: "center",
-    vertical: "middle",
-    wrapText: true,
-  };
-
-  // Set row heights for header
-  worksheet.getRow(1).height = 30;
-  worksheet.getRow(2).height = 30;
-  worksheet.getRow(3).height = 30;
-
-  // Add spacing row
-  worksheet.getRow(4).height = 15;
+  // Add standardized project header
+  addProjectHeader(worksheet, project, 9);
 
   // Add column headers (now row 5 after spacing)
   const headerRow = worksheet.getRow(5);
