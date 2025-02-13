@@ -1,7 +1,10 @@
 const { ipcRenderer } = require("electron");
+const ExcelJS = require("exceljs");
+const path = require("path");
 
 let selectedMaterialId = null;
 let selectedAhsId = null;
+let importInProgress = false;
 
 // Check if user is logged in
 function checkAuth() {
@@ -469,6 +472,178 @@ function logout() {
 
 function goBack() {
   window.location.href = "index.html";
+}
+
+// Import Modal Functions
+function openImportModal() {
+  const modal = document.getElementById("importExcelModal");
+  modal.style.display = "block";
+  document.getElementById("importProgress").style.display = "none";
+  document.getElementById("importResults").style.display = "none";
+}
+
+function closeImportModal() {
+  const modal = document.getElementById("importExcelModal");
+  if (importInProgress) {
+    if (!confirm("Import sedang berlangsung. Anda yakin ingin membatalkan?")) {
+      return;
+    }
+  }
+  modal.style.display = "none";
+  importInProgress = false;
+}
+
+async function startImport() {
+  if (importInProgress) return;
+
+  const userId = checkAuth();
+  if (!userId) return;
+
+  try {
+    importInProgress = true;
+    const progressBar = document.getElementById("importProgressBar");
+    const importProgress = document.getElementById("importProgress");
+    const importResults = document.getElementById("importResults");
+    const importSummary = document.getElementById("importSummary");
+
+    importProgress.style.display = "block";
+    importResults.style.display = "none";
+    progressBar.style.width = "0%";
+
+    // Start Excel analysis
+    const workbook = new ExcelJS.Workbook();
+    const filepath = path.join("EXCEL", "analisa-2.xlsx");
+
+    progressBar.style.width = "20%";
+
+    await workbook.xlsx.readFile(filepath);
+    const worksheet = workbook.getWorksheet("Sheet1");
+
+    if (!worksheet) {
+      throw new Error("Could not find Sheet1");
+    }
+
+    progressBar.style.width = "40%";
+
+    let currentAHS = null;
+    let currentSection = null;
+    let ahsList = [];
+
+    // Process Excel data
+    worksheet.eachRow((row, rowNumber) => {
+      const values = row.values;
+      if (!values || values.length === 0) return;
+
+      const id = values[1] ? values[1].toString().trim() : "";
+      const sectionOrCode = values[2] ? values[2].toString().trim() : "";
+      const uraian = values[3] ? values[3].toString().trim() : "";
+      const kode = values[4] ? values[4].toString().trim() : "";
+
+      // Check for AHS header
+      if (sectionOrCode && sectionOrCode.match(/^A\.\d+/)) {
+        if (currentAHS) {
+          ahsList.push(currentAHS);
+        }
+        currentAHS = {
+          kode_ahs: sectionOrCode.trim(),
+          description: uraian,
+          tenaga: [],
+          bahan: [],
+          peralatan: [],
+        };
+        currentSection = null;
+        return;
+      }
+
+      if (!currentAHS) return;
+      if (uraian === "No" || uraian === "No." || kode === "Kode") return;
+
+      // Check for section headers
+      if (sectionOrCode === "A" && uraian === "TENAGA") {
+        currentSection = "tenaga";
+        return;
+      } else if (sectionOrCode === "B" && uraian === "BAHAN") {
+        currentSection = "bahan";
+        return;
+      } else if (sectionOrCode === "C" && uraian === "PERALATAN") {
+        currentSection = "peralatan";
+        return;
+      }
+
+      if (!currentSection || !uraian) return;
+
+      const item = {
+        id: id,
+        uraian: uraian,
+        kode: kode,
+        satuan: values[5]?.toString() || "",
+        koefisien: values[6] ? parseFloat(values[6].toString()) : 0,
+      };
+
+      if (item.uraian) {
+        switch (currentSection) {
+          case "tenaga":
+            currentAHS.tenaga.push(item);
+            break;
+          case "bahan":
+            currentAHS.bahan.push(item);
+            break;
+          case "peralatan":
+            currentAHS.peralatan.push(item);
+            break;
+        }
+      }
+    });
+
+    if (currentAHS) {
+      ahsList.push(currentAHS);
+    }
+
+    progressBar.style.width = "60%";
+
+    // Process the imported data
+    let stats = {
+      total: 0,
+      matched: 0,
+      notFound: 0,
+    };
+
+    // Send data to main process for database operations
+    ipcRenderer.send("import-ahs-data", {
+      ahsList,
+      userId,
+    });
+
+    // Handle import result
+    const importResult = await new Promise((resolve) => {
+      ipcRenderer.once("import-ahs-complete", (event, result) => {
+        resolve(result);
+      });
+    });
+
+    progressBar.style.width = "100%";
+
+    // Display results
+    importResults.style.display = "block";
+    importSummary.innerHTML = `
+      <p>Import selesai:</p>
+      <ul>
+        <li>Total AHS: ${importResult.totalAhs}</li>
+        <li>Berhasil diimpor: ${importResult.imported}</li>
+        <li>Gagal: ${importResult.failed}</li>
+      </ul>
+    `;
+
+    importInProgress = false;
+  } catch (error) {
+    console.error("Import error:", error);
+    const importSummary = document.getElementById("importSummary");
+    importSummary.innerHTML = `
+      <p style="color: var(--error);">Error saat import:</p>
+      <p>${error.message}</p>
+    `;
+    importInProgress = false;
+  }
 }
 
 // Function to calculate and update cost breakdown

@@ -436,6 +436,37 @@
             <button class="action-btn" onclick="addBahanUpah()">
                 <span>+</span> Bahan/Upah
             </button>
+            <button class="action-btn" onclick="openImportModal()" style="background-color: var(--primary);">
+                <span>📥</span> Import Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal for Excel Import -->
+    <div id="importExcelModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeImportModal()">&times;</span>
+            <h2>Import Data dari Excel</h2>
+            <div id="importProgress" style="display: none;">
+                <p>Sedang mengimport data...</p>
+                <div style="margin: 20px 0;">
+                    <div style="height: 20px; background: var(--background); border-radius: 10px; overflow: hidden;">
+                        <div id="importProgressBar"
+                            style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease-out;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="importResults" style="display: none; margin-top: 20px;">
+                <h3>Hasil Import:</h3>
+                <div id="importSummary" style="margin: 10px 0;"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="action-btn" onclick="startImport()" style="background-color: var(--success)">Mulai
+                    Import</button>
+                <button class="action-btn" onclick="closeImportModal()"
+                    style="background-color: var(--accent)">Tutup</button>
+            </div>
         </div>
     </div>
 

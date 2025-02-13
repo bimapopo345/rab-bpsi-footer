@@ -4,6 +4,138 @@ const path = require("path");
 const { dialog } = require("electron");
 
 function setupImportHandlers(ipcMain, db) {
+  // Handle Excel AHS import
+  ipcMain.on("import-ahs-data", async (event, { ahsList, userId }) => {
+    try {
+      // Start transaction
+      await new Promise((resolve, reject) => {
+        db.run("BEGIN TRANSACTION", (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+
+      let stats = {
+        totalAhs: ahsList.length,
+        imported: 0,
+        failed: 0,
+      };
+
+      try {
+        for (const ahs of ahsList) {
+          // Find matching AHS by kode
+          const existingAhs = await new Promise((resolve, reject) => {
+            db.get(
+              "SELECT id FROM ahs WHERE kode_ahs = ? AND user_id = ?",
+              [ahs.kode_ahs, userId],
+              (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+              }
+            );
+          });
+
+          if (!existingAhs) {
+            console.log(`AHS ${ahs.kode_ahs} not found, skipping`);
+            stats.failed++;
+            continue;
+          }
+
+          const ahsId = existingAhs.id;
+
+          // Process each section (tenaga, bahan, peralatan)
+          for (const section of ["tenaga", "bahan", "peralatan"]) {
+            for (const item of ahs[section]) {
+              // Find matching material by uraian
+              const material = await new Promise((resolve, reject) => {
+                db.get(
+                  "SELECT id FROM materials WHERE name = ? AND user_id = ?",
+                  [item.uraian, userId],
+                  (err, row) => {
+                    if (err) reject(err);
+                    else resolve(row);
+                  }
+                );
+              });
+
+              if (!material) {
+                console.log(`Material "${item.uraian}" not found, skipping`);
+                continue;
+              }
+
+              // Add or update pricing
+              // First try to update existing record
+              await new Promise((resolve, reject) => {
+                db.run(
+                  `UPDATE pricing 
+                   SET quantity = ?, koefisien = ?
+                   WHERE user_id = ? AND ahs_id = ? AND material_id = ?`,
+                  [item.koefisien, item.koefisien, userId, ahsId, material.id],
+                  (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                  }
+                );
+              });
+
+              // If no rows were updated, insert new record
+              await new Promise((resolve, reject) => {
+                db.run(
+                  `INSERT INTO pricing (user_id, ahs_id, material_id, quantity, koefisien)
+                   SELECT ?, ?, ?, ?, ?
+                   WHERE NOT EXISTS (
+                     SELECT 1 FROM pricing 
+                     WHERE user_id = ? AND ahs_id = ? AND material_id = ?
+                   )`,
+                  [
+                    userId,
+                    ahsId,
+                    material.id,
+                    item.koefisien,
+                    item.koefisien,
+                    userId,
+                    ahsId,
+                    material.id,
+                  ],
+                  (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                  }
+                );
+              });
+            }
+          }
+
+          stats.imported++;
+        }
+
+        // Commit transaction
+        await new Promise((resolve, reject) => {
+          db.run("COMMIT", (err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
+
+        event.reply("import-ahs-complete", stats);
+      } catch (error) {
+        // Rollback on error
+        await new Promise((resolve) => {
+          db.run("ROLLBACK", () => resolve());
+        });
+        throw error;
+      }
+    } catch (error) {
+      console.error("Error importing AHS data:", error);
+      event.reply("import-ahs-complete", {
+        totalAhs: 0,
+        imported: 0,
+        failed: 0,
+        error: error.message,
+      });
+    }
+  });
+
   // Import user data from Excel - for regular users
   ipcMain.handle("import-my-data", async (event, userId) => {
     try {
