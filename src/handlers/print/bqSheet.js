@@ -3,19 +3,21 @@ const { STYLES, BORDERS, formatRupiah } = require("./styles");
 const addBQSheet = async (workbook, db, userId, project) => {
   const worksheet = workbook.addWorksheet("BQ");
 
-  // Set column widths and properties
+  // Set columns
   worksheet.columns = [
-    { header: "No", key: "no", width: 5 },
-    { header: "Kode AHS", key: "kode_ahs", width: 15 },
-    { header: "Uraian Pekerjaan", key: "ahs", width: 40 },
-    { header: "Bentuk", key: "shape", width: 15 },
-    { header: "Volume (m²)", key: "volume", width: 15 },
-    { header: "Harga Satuan", key: "unit_price", width: 20 },
-    { header: "Jumlah Harga", key: "total", width: 25 },
+    { header: "NO.", key: "no", width: 5 },
+    { header: "KODE AHS", key: "kode_ahs", width: 15 },
+    { header: "URAIAN PEKERJAAN", key: "ahs", width: 40 },
+    { header: "BENTUK", key: "shape", width: 15 },
+    { header: "DIMENSI", key: "dimensions", width: 20 },
+    { header: "VOLUME", key: "volume", width: 12 },
+    { header: "SATUAN", key: "unit", width: 10 },
+    { header: "HARGA SATUAN (Rp)", key: "unit_price", width: 20 },
+    { header: "JUMLAH HARGA (Rp)", key: "total", width: 25 },
   ];
 
-  // Add title with project styling
-  worksheet.mergeCells("A1:G2");
+  // Add title with project styling (updated merge range for new columns)
+  worksheet.mergeCells("A1:I2");
   const titleCell = worksheet.getCell("A1");
   titleCell.value = `RENCANA ANGGARAN BIAYA (RAB)\n${project.name}`;
   titleCell.font = { bold: true, size: 14 };
@@ -28,7 +30,7 @@ const addBQSheet = async (workbook, db, userId, project) => {
   titleCell.font = { ...STYLES.header.font, size: 14 };
 
   // Add project info with sub-header styling
-  worksheet.mergeCells("A3:G3");
+  worksheet.mergeCells("A3:I3");
   const locationCell = worksheet.getCell("A3");
   locationCell.value = `Lokasi: ${project.location}`;
   locationCell.font = STYLES.subHeader.font;
@@ -79,12 +81,41 @@ const addBQSheet = async (workbook, db, userId, project) => {
 
     items.forEach((item, index) => {
       const total = item.volume * item.unit_price;
+      let dimensions = "";
+      try {
+        const dims = JSON.parse(item.dimensions);
+        switch (item.shape) {
+          case "persegi":
+            dimensions = `${dims.sisi} x ${dims.sisi}`;
+            break;
+          case "persegiPanjang":
+            dimensions = `${dims.panjang} x ${dims.lebar}`;
+            break;
+          case "trapesium":
+            dimensions = `a=${dims.sisiAtas}, b=${dims.sisiBawah}, t=${dims.tinggi}`;
+            break;
+          case "lingkaran":
+            dimensions = `r=${dims.jariJari}`;
+            break;
+          case "kubus":
+            dimensions = `${dims.sisi} x ${dims.sisi} x ${dims.sisi}`;
+            break;
+          case "balok":
+            dimensions = `${dims.panjang} x ${dims.lebar} x ${dims.tinggi}`;
+            break;
+        }
+      } catch (e) {
+        dimensions = "-";
+      }
+
       const row = worksheet.addRow({
         no: index + 1,
         kode_ahs: item.kode_ahs || "-",
         ahs: item.ahs,
         shape: formatShapeName(item.shape),
+        dimensions: dimensions,
         volume: Number(item.volume).toFixed(2),
+        unit: "m²",
         unit_price: formatRupiah(item.unit_price),
         total: formatRupiah(total),
       });
@@ -133,32 +164,6 @@ const addBQSheet = async (workbook, db, userId, project) => {
     totalRow.font = { ...STYLES.totalRow.font, bold: true };
     totalRow.fill = STYLES.totalRow.fill;
     totalRow.getCell("total").alignment = { horizontal: "right" };
-
-    // Add signature section
-    worksheet.addRow([]); // Empty row
-    const currentDate = new Date().toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-
-    worksheet.mergeCells(`E${currentRow + 4}:G${currentRow + 4}`);
-    const dateCell = worksheet.getCell(`E${currentRow + 4}`);
-    dateCell.value = `${project.location}, ${currentDate}`;
-    dateCell.alignment = { horizontal: "center" };
-    dateCell.font = STYLES.normal.font;
-
-    worksheet.mergeCells(`E${currentRow + 5}:G${currentRow + 5}`);
-    const titleCell2 = worksheet.getCell(`E${currentRow + 5}`);
-    titleCell2.value = "Mengetahui,";
-    titleCell2.alignment = { horizontal: "center" };
-    titleCell2.font = STYLES.normal.font;
-
-    worksheet.mergeCells(`E${currentRow + 9}:G${currentRow + 9}`);
-    const signCell = worksheet.getCell(`E${currentRow + 9}`);
-    signCell.value = "(________________________)";
-    signCell.alignment = { horizontal: "center" };
-    signCell.font = STYLES.normal.font;
   } catch (error) {
     console.error("Error generating BQ sheet:", error);
     throw error;
