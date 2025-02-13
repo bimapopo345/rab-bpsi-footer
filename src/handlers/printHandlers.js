@@ -6,6 +6,8 @@ const { addDetailedAHSSheet } = require("./print/ahsSheet");
 const { addDetailedMaterialSheet } = require("./print/materialSheet");
 const { addDetailedWageSheet } = require("./print/wageSheet");
 const { addSummarySheet } = require("./print/summarySheet");
+const { addBQSheet } = require("./print/bqSheet");
+const { addRekapSheet } = require("./print/rekapSheet");
 
 function setupPrintHandlers(ipcMain, db) {
   ipcMain.on("print-rab", async (event, { type, userId }) => {
@@ -43,6 +45,9 @@ function setupPrintHandlers(ipcMain, db) {
           await addDetailedAHSSheet(workbook, db, userId, project);
           await addDetailedMaterialSheet(workbook, db, userId, project);
           await addDetailedWageSheet(workbook, db, userId, project);
+          // BQ and Rekap sheets
+          await addBQSheet(workbook, db, userId, project);
+          await addRekapSheet(workbook, db, userId, project);
           break;
 
         case "wages":
@@ -58,6 +63,16 @@ function setupPrintHandlers(ipcMain, db) {
         case "ahs":
           await addProjectSheet(workbook, project);
           await addDetailedAHSSheet(workbook, db, userId, project);
+          break;
+
+        case "bq":
+          await addProjectSheet(workbook, project);
+          await addBQSheet(workbook, db, userId, project);
+          break;
+
+        case "rekapBQ":
+          await addProjectSheet(workbook, project);
+          await addRekapSheet(workbook, db, userId, project);
           break;
       }
 

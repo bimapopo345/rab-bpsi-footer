@@ -60,40 +60,43 @@ function hideLoading() {
   loading.classList.remove("active");
 }
 
-// Print all RAB data
-function printAll() {
+// Print functions
+function print(type) {
   const userId = checkAuth();
   if (!userId) return;
 
   showLoading();
-  ipcRenderer.send("print-rab", { type: "all", userId });
+  ipcRenderer.send("print-rab", { type, userId });
+}
+
+// Print all RAB data
+function printAll() {
+  print("all");
 }
 
 // Print wages only
 function printWages() {
-  const userId = checkAuth();
-  if (!userId) return;
-
-  showLoading();
-  ipcRenderer.send("print-rab", { type: "wages", userId });
+  print("wages");
 }
 
 // Print materials only
 function printMaterials() {
-  const userId = checkAuth();
-  if (!userId) return;
-
-  showLoading();
-  ipcRenderer.send("print-rab", { type: "materials", userId });
+  print("materials");
 }
 
 // Print AHS only
 function printAhsOnly() {
-  const userId = checkAuth();
-  if (!userId) return;
+  print("ahs");
+}
 
-  showLoading();
-  ipcRenderer.send("print-rab", { type: "ahs", userId });
+// Print BQ only
+function printBQ() {
+  print("bq");
+}
+
+// Print Rekap BQ only
+function printRekapBQ() {
+  print("rekapBQ");
 }
 
 // Handle print completion
