@@ -658,22 +658,47 @@ async function startImport() {
     // Handle import result
     const importResult = await new Promise((resolve) => {
       ipcRenderer.once("import-ahs-complete", (event, result) => {
+        console.log("Import result:", result); // Debug log
         resolve(result);
       });
     });
 
     progressBar.style.width = "100%";
-
-    // Display results
     importResults.style.display = "block";
-    importSummary.innerHTML = `
-      <p>Import selesai:</p>
-      <ul>
-        <li>Total AHS: ${importResult.totalAhs}</li>
-        <li>Berhasil diimpor: ${importResult.imported}</li>
-        <li>Gagal: ${importResult.failed}</li>
-      </ul>
-    `;
+
+    // Update summary counters
+    document.getElementById("totalAhsCount").textContent =
+      importResult.totalAhs;
+    document.getElementById("successCount").textContent = importResult.imported;
+    document.getElementById("failedCount").textContent = importResult.failed;
+
+    // Display skipped items in table
+    const skippedList = document.getElementById("skippedItemsList");
+    if (skippedList && importResult.skippedItems) {
+      if (importResult.skippedItems.length > 0) {
+        skippedList.innerHTML = importResult.skippedItems
+          .map(
+            (item) => `
+            <tr>
+              <td style="padding: 10px">${item.kode || "-"}</td>
+              <td style="padding: 10px">${item.description || "-"}</td>
+              <td style="padding: 10px">${
+                item.reason || "AHS tidak ditemukan"
+              }</td>
+            </tr>
+          `
+          )
+          .join("");
+
+        console.log("Populated skipped items:", importResult.skippedItems);
+      } else {
+        skippedList.innerHTML = `
+          <tr>
+            <td colspan="3" style="text-align: center; padding: 10px;">Tidak ada item yang dilewati</td>
+          </tr>
+        `;
+      }
+    }
 
     importInProgress = false;
   } catch (error) {

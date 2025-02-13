@@ -461,8 +461,52 @@
                 </div>
             </div>
             <div id="importResults" style="display: none; margin-top: 20px;">
-                <h3>Hasil Import:</h3>
-                <div id="importSummary" style="margin: 10px 0;"></div>
+                <h3>Status Import:</h3>
+                <div id="importSummary" class="summary-box"
+                    style="background: var(--background); padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <h4>Hasil Import:</h4>
+                    <p>Total AHS: <span id="totalAhsCount">0</span></p>
+                    <p>Berhasil diimpor: <span id="successCount">0</span></p>
+                    <p>Gagal: <span id="failedCount">0</span></p>
+                </div>
+                <div style="margin-top: 20px;">
+                    <h4>Data yang Dilewati:</h4>
+                    <div
+                        style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px;">
+                        <table style="width: 100%; border-collapse: collapse; margin: 0;">
+                            <thead>
+                                <tr>
+                                    <th
+                                        style="background: var(--primary); color: white; position: sticky; top: 0; padding: 10px; text-align: left; border-bottom: 1px solid var(--border);">
+                                        Kode</th>
+                                    <th
+                                        style="background: var(--primary); color: white; position: sticky; top: 0; padding: 10px; text-align: left; border-bottom: 1px solid var(--border);">
+                                        AHS</th>
+                                    <th
+                                        style="background: var(--primary); color: white; position: sticky; top: 0; padding: 10px; text-align: left; border-bottom: 1px solid var(--border);">
+                                        Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="skippedItemsList" style="background: white;">
+                                <style>
+                                    #skippedItemsList td {
+                                        padding: 8px 10px;
+                                        border-bottom: 1px solid var(--border);
+                                    }
+
+                                    #skippedItemsList tr:hover {
+                                        background-color: var(--background);
+                                    }
+
+                                    #skippedItemsList tr:last-child td {
+                                        border-bottom: none;
+                                    }
+                                </style>
+                                <!-- Skipped items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="modal-buttons">
                 <button class="action-btn" onclick="startImport()" style="background-color: var(--success)">Mulai

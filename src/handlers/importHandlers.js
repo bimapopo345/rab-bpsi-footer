@@ -58,6 +58,7 @@ function setupImportHandlers(ipcMain, db) {
         totalAhs: ahsList.length,
         imported: 0,
         failed: 0,
+        skippedItems: [], // Array to track skipped items
       };
 
       try {
@@ -77,6 +78,11 @@ function setupImportHandlers(ipcMain, db) {
           if (!existingAhs) {
             console.log(`AHS ${ahs.kode_ahs} not found, skipping`);
             stats.failed++;
+            stats.skippedItems.push({
+              kode: ahs.kode_ahs,
+              description: ahs.description || "-",
+              reason: "AHS tidak ditemukan",
+            });
             continue;
           }
 
@@ -99,6 +105,11 @@ function setupImportHandlers(ipcMain, db) {
 
               if (!material) {
                 console.log(`Material "${item.uraian}" not found, skipping`);
+                stats.skippedItems.push({
+                  kode: ahs.kode_ahs,
+                  description: item.uraian,
+                  reason: "Material tidak ditemukan",
+                });
                 continue;
               }
 
