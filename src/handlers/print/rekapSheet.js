@@ -10,25 +10,24 @@ const addRekapSheet = async (workbook, db, userId, project) => {
     { header: "Jumlah Harga", key: "amount", width: 30 },
   ];
 
-  // Add title with project styling
-  worksheet.mergeCells("A1:C2");
-  const titleCell = worksheet.getCell("A1");
-  titleCell.value = `REKAPITULASI\nRENCAN ANGGARAN BIAYA (RAB)\n${project.name}`;
-  titleCell.font = { ...STYLES.header.font, size: 14 };
-  titleCell.fill = STYLES.header.fill;
-  titleCell.alignment = {
+  // Add project header (3 rows in 1 merged cell)
+  worksheet.mergeCells("A1:C3");
+  const headerCell = worksheet.getCell("A1");
+  headerCell.value = `${project.name}\n${project.location}\n${project.funding}`;
+  headerCell.font = { bold: true, size: 14, color: { argb: "1A4F7C" } };
+  headerCell.alignment = {
     horizontal: "center",
     vertical: "middle",
     wrapText: true,
   };
 
-  // Add project info with sub-header styling
-  worksheet.mergeCells("A3:C3");
-  const locationCell = worksheet.getCell("A3");
-  locationCell.value = `Lokasi: ${project.location}`;
-  locationCell.font = STYLES.subHeader.font;
-  locationCell.fill = STYLES.subHeader.fill;
-  locationCell.alignment = { horizontal: "left", vertical: "middle" };
+  // Set row heights for header
+  worksheet.getRow(1).height = 30;
+  worksheet.getRow(2).height = 30;
+  worksheet.getRow(3).height = 30;
+
+  // Add spacing row
+  worksheet.getRow(4).height = 15;
 
   // Style header row with group header styling
   const headerRow = worksheet.getRow(5);
