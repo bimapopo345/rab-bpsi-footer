@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const { initDatabase } = require("./src/database/init");
 const { setupAuthHandlers } = require("./src/handlers/authHandlers");
@@ -87,4 +87,14 @@ app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
+});
+
+// Handle file save dialog
+ipcMain.handle("show-save-dialog", async (event, options) => {
+  return dialog.showSaveDialog(mainWindow, {
+    title: "Simpan File Excel",
+    defaultPath: options.defaultPath,
+    filters: options.filters,
+    properties: ["createDirectory"],
+  });
 });

@@ -904,3 +904,222 @@ ipcRenderer.on("all-pricing-deleted", (event, response) => {
     }
   }
 });
+
+async function handleExportToExcel() {
+  const userId = checkAuth();
+  if (!userId) return;
+
+  try {
+    // Ambil semua data AHS dan pricing dari database
+    ipcRenderer.send("get-all-pricing-for-export", { userId });
+
+    // Tunggu response dari main process
+    const allData = await new Promise((resolve) => {
+      ipcRenderer.once("all-pricing-for-export-data", (event, data) => {
+        resolve(data);
+      });
+    });
+
+    // Inisialisasi workbook
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
+
+    let currentRow = 1;
+
+    // Loop melalui setiap AHS
+    for (const ahs of allData) {
+      if (currentRow > 1) {
+        currentRow += 2; // Tambah spasi antar AHS
+      }
+
+      // Filter data berdasarkan kategori
+      const tenagaData = ahs.pricing.filter((item) =>
+        item.category.toLowerCase().includes("upah")
+      );
+      const bahanData = ahs.pricing.filter((item) =>
+        item.category.toLowerCase().includes("bahan")
+      );
+      const alatData = ahs.pricing.filter((item) =>
+        item.category.toLowerCase().includes("alat")
+      );
+
+      // Header section untuk AHS ini
+      worksheet.mergeCells(`A${currentRow}:E${currentRow}`);
+      worksheet.getCell(`A${currentRow}`).value = ahs.kode_ahs;
+      currentRow++;
+
+      worksheet.mergeCells(`A${currentRow}:E${currentRow}`);
+      worksheet.getCell(`A${currentRow}`).value = ahs.ahs;
+      currentRow++;
+
+      // Column headers
+      worksheet.getCell(`A${currentRow}`).value = "No";
+      worksheet.getCell(`B${currentRow}`).value = "Uraian";
+      worksheet.getCell(`C${currentRow}`).value = "Kode";
+      worksheet.getCell(`D${currentRow}`).value = "Satuan";
+      worksheet.getCell(`E${currentRow}`).value = "Koefisien";
+      worksheet.getCell(`F${currentRow}`).value = "Harga Satuan";
+      worksheet.getCell(`G${currentRow}`).value = "Jumlah";
+      currentRow++;
+
+      // Column headers
+      worksheet.getCell("A5").value = "No";
+      worksheet.getCell("B5").value = "Uraian";
+      worksheet.getCell("C5").value = "Kode";
+      worksheet.getCell("D5").value = "Satuan";
+      worksheet.getCell("E5").value = "Koefisien";
+      worksheet.getCell("F5").value = "Harga Satuan";
+      worksheet.getCell("G5").value = "Jumlah";
+
+      // Tenaga Kerja section
+      worksheet.getCell(`A${currentRow}`).value = "A";
+      worksheet.getCell(`B${currentRow}`).value = "TENAGA";
+      currentRow++;
+
+      let tenagaStartRow = currentRow;
+
+      tenagaData.forEach((item) => {
+        worksheet.getCell(`B${currentRow}`).value = item.name;
+        worksheet.getCell(`C${currentRow}`).value = item.kode || "-";
+        worksheet.getCell(`D${currentRow}`).value = item.unit;
+        worksheet.getCell(`E${currentRow}`).value = parseFloat(item.koefisien);
+        worksheet.getCell(`F${currentRow}`).value = parseInt(item.price);
+        worksheet.getCell(`G${currentRow}`).value = {
+          formula: `E${currentRow}*F${currentRow}`,
+        };
+        currentRow++;
+      });
+
+      // Jumlah Tenaga Kerja
+      worksheet.getCell(`B${currentRow}`).value = "JUMLAH TENAGA KERJA";
+      worksheet.getCell(`G${currentRow}`).value = {
+        formula: `SUM(G${tenagaStartRow}:G${currentRow - 1})`,
+      };
+      let tenagaEndRow = currentRow;
+      currentRow += 2;
+
+      // Bahan section
+      worksheet.getCell(`A${currentRow}`).value = "B";
+      worksheet.getCell(`B${currentRow}`).value = "BAHAN";
+      currentRow++;
+
+      let bahanStartRow = currentRow;
+
+      bahanData.forEach((item) => {
+        worksheet.getCell(`B${currentRow}`).value = item.name;
+        worksheet.getCell(`C${currentRow}`).value = item.kode || "-";
+        worksheet.getCell(`D${currentRow}`).value = item.unit;
+        worksheet.getCell(`E${currentRow}`).value = parseFloat(item.koefisien);
+        worksheet.getCell(`F${currentRow}`).value = parseInt(item.price);
+        worksheet.getCell(`G${currentRow}`).value = {
+          formula: `E${currentRow}*F${currentRow}`,
+        };
+        currentRow++;
+      });
+
+      // Jumlah Bahan
+      worksheet.getCell(`B${currentRow}`).value = "JUMLAH HARGA BAHAN";
+      worksheet.getCell(`G${currentRow}`).value = {
+        formula: `SUM(G${bahanStartRow}:G${currentRow - 1})`,
+      };
+      let bahanEndRow = currentRow;
+      currentRow += 2;
+
+      // Peralatan section
+      worksheet.getCell(`A${currentRow}`).value = "C";
+      worksheet.getCell(`B${currentRow}`).value = "PERALATAN";
+      currentRow++;
+
+      let alatStartRow = currentRow;
+
+      alatData.forEach((item) => {
+        worksheet.getCell(`B${currentRow}`).value = item.name;
+        worksheet.getCell(`C${currentRow}`).value = item.kode || "-";
+        worksheet.getCell(`D${currentRow}`).value = item.unit;
+        worksheet.getCell(`E${currentRow}`).value = parseFloat(item.koefisien);
+        worksheet.getCell(`F${currentRow}`).value = parseInt(item.price);
+        worksheet.getCell(`G${currentRow}`).value = {
+          formula: `E${currentRow}*F${currentRow}`,
+        };
+        currentRow++;
+      });
+
+      // Jumlah Alat
+      worksheet.getCell(`B${currentRow}`).value = "JUMLAH HARGA ALAT";
+      worksheet.getCell(`G${currentRow}`).value = {
+        formula: `SUM(G${alatStartRow}:G${currentRow - 1})`,
+      };
+      let alatEndRow = currentRow;
+      currentRow += 2;
+
+      // Total (A+B+C)
+      worksheet.getCell(`A${currentRow}`).value = "D";
+      worksheet.getCell(`B${currentRow}`).value = "Jumlah (A+B+C)";
+      worksheet.getCell(`G${currentRow}`).value = {
+        formula: `G${tenagaEndRow}+G${bahanEndRow}+G${alatEndRow}`,
+      };
+      let totalRow = currentRow;
+      currentRow++;
+
+      // Overhead & Profit
+      worksheet.getCell(`A${currentRow}`).value = "E";
+      worksheet.getCell(`B${currentRow}`).value =
+        "Overhead & Profit (Maksimal 15 %)";
+      worksheet.getCell(`E${currentRow}`).value = 0.1;
+      worksheet.getCell(`F${currentRow}`).value = "x D";
+      worksheet.getCell(`G${currentRow}`).value = {
+        formula: `G${totalRow}*E${currentRow}`,
+      };
+      let overheadRow = currentRow;
+      currentRow++;
+
+      // Harga Satuan Pekerjaan
+      worksheet.getCell(`A${currentRow}`).value = "F";
+      worksheet.getCell(`B${currentRow}`).value =
+        "Harga Satuan Pekerjaan (D+E)";
+      worksheet.getCell(`G${currentRow}`).value = {
+        formula: `G${totalRow}+G${overheadRow}`,
+      };
+      let hargaSatuanRow = currentRow;
+      currentRow++;
+
+      // PPN
+      worksheet.getCell(`A${currentRow}`).value = "G";
+      worksheet.getCell(`B${currentRow}`).value =
+        "Pajak Pertambahan Nilai (PPN)";
+      worksheet.getCell(`E${currentRow}`).value = 0.12;
+      worksheet.getCell(`F${currentRow}`).value = "x F";
+      worksheet.getCell(`G${currentRow}`).value = {
+        formula: `G${hargaSatuanRow}*E${currentRow}`,
+      };
+      let ppnRow = currentRow;
+      currentRow++;
+
+      // Total Akhir
+      worksheet.getCell(`A${currentRow}`).value = "H";
+      worksheet.getCell(`B${currentRow}`).value = "TOTAL";
+      worksheet.getCell(`G${currentRow}`).value = {
+        formula: `G${hargaSatuanRow}+G${ppnRow}`,
+      };
+
+      // Format section
+      ["A", "B", "C", "D", "E", "F", "G"].forEach((col) => {
+        worksheet.getColumn(col).width = col === "B" ? 40 : 15;
+      });
+    }
+
+    // Save file
+    const result = await ipcRenderer.invoke("show-save-dialog", {
+      filters: [{ name: "Excel", extensions: ["xlsx"] }],
+      defaultPath: `Analisa_AHS_${new Date().toISOString().split("T")[0]}.xlsx`,
+    });
+
+    if (result.filePath) {
+      await workbook.xlsx.writeFile(result.filePath);
+      alert("File Excel berhasil disimpan!");
+    }
+  } catch (error) {
+    console.error("Error exporting to Excel:", error);
+    alert("Gagal mengekspor ke Excel: " + error.message);
+  }
+}

@@ -149,6 +149,71 @@ function setupPricingHandlers(ipcMain, db) {
       );
     }
   );
+
+  // Get all AHS pricing for export
+  ipcMain.on("get-all-pricing-for-export", (event, { userId }) => {
+    if (!userId) {
+      event.reply("all-pricing-for-export-data", []);
+      return;
+    }
+
+    // First get all AHS
+    db.all(
+      `SELECT id, kode_ahs, ahs, kelompok, satuan 
+       FROM ahs 
+       WHERE user_id = ?
+       ORDER BY kode_ahs`,
+      [userId],
+      (err, ahsList) => {
+        if (err) {
+          console.error("Error fetching AHS list:", err);
+          event.reply("all-pricing-for-export-data", []);
+          return;
+        }
+
+        // For each AHS, get its pricing data
+        Promise.all(
+          ahsList.map((ahs) => {
+            return new Promise((resolve) => {
+              db.all(
+                `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data, m.kode
+                 FROM pricing p
+                 JOIN materials m ON p.material_id = m.id
+                 WHERE p.ahs_id = ? 
+                 AND p.user_id = ?
+                 AND m.user_id = ?
+                 ORDER BY 
+                   CASE 
+                     WHEN m.category LIKE '%upah%' THEN 1
+                     WHEN m.category LIKE '%bahan%' THEN 2
+                     WHEN m.category LIKE '%alat%' THEN 3
+                     ELSE 4
+                   END,
+                   m.name`,
+                [ahs.id, userId, userId],
+                (err, pricing) => {
+                  if (err) {
+                    console.error("Error fetching pricing:", err);
+                    resolve({
+                      ...ahs,
+                      pricing: [],
+                    });
+                    return;
+                  }
+                  resolve({
+                    ...ahs,
+                    pricing: pricing,
+                  });
+                }
+              );
+            });
+          })
+        ).then((results) => {
+          event.reply("all-pricing-for-export-data", results);
+        });
+      }
+    );
+  });
 }
 
 module.exports = { setupPricingHandlers };

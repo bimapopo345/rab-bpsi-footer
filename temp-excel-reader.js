@@ -4,7 +4,7 @@ const path = require("path");
 async function readExcel() {
   try {
     const workbook = new ExcelJS.Workbook();
-    const filepath = path.join("EXCEL", "TEMPLATE-RAB-2025.xlsx");
+    const filepath = path.join("EXCEL", "analisa-2.xlsx");
     console.log("Reading:", filepath);
 
     await workbook.xlsx.readFile(filepath);
