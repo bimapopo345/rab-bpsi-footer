@@ -144,6 +144,31 @@ function initDatabase() {
           }
         );
 
+        // Create BQ table
+        db.run(
+          `
+          CREATE TABLE IF NOT EXISTS bq (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            ahs_id INTEGER NOT NULL,
+            shape TEXT,
+            dimensions TEXT,
+            volume REAL DEFAULT 0,
+            total_price REAL DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (ahs_id) REFERENCES ahs(id)
+          )
+        `,
+          (err) => {
+            if (err) {
+              console.error("Error creating BQ table:", err);
+              return;
+            }
+            console.log("BQ table created");
+          }
+        );
+
         console.log("Database initialized successfully!");
         resolve(db);
       });

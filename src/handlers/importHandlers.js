@@ -97,8 +97,19 @@ function setupImportHandlers(ipcMain, db) {
                 );
               });
 
+              // Skip logging for certain materials without showing warning
+              const skipWarningMaterials = [
+                "Harga Satuan Pekerjaan (D+E)",
+                "Pajak Pertambahan Nilai (PPN)",
+                "TOTAL",
+                "Jumlah (A+B+C)",
+                "Overhead & Profit (Maksimal 15 %)",
+              ];
+
               if (!material) {
-                console.log(`Material "${item.uraian}" not found, skipping`);
+                if (!skipWarningMaterials.includes(item.uraian)) {
+                  console.log(`Material "${item.uraian}" not found, skipping`);
+                }
                 continue;
               }
 
