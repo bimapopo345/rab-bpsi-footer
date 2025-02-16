@@ -639,6 +639,12 @@ async function startImport() {
       </ul>
     `;
 
+    // Display error report if available
+    if (importResult.errorReport) {
+      document.getElementById("errorReport").innerHTML =
+        importResult.errorReport;
+    }
+
     importInProgress = false;
   } catch (error) {
     console.error("Import error:", error);

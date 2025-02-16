@@ -2,6 +2,7 @@ const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
 const { dialog } = require("electron");
+const importLogger = require("../utils/import-logger");
 
 function setupImportHandlers(ipcMain, db) {
   // Show Excel file picker dialog
@@ -75,7 +76,7 @@ function setupImportHandlers(ipcMain, db) {
           });
 
           if (!existingAhs) {
-            console.log(`AHS ${ahs.kode_ahs} not found, skipping`);
+            importLogger.addAHSError(ahs.kode_ahs);
             stats.failed++;
             continue;
           }
@@ -97,7 +98,6 @@ function setupImportHandlers(ipcMain, db) {
                 );
               });
 
-              // Skip logging for certain materials without showing warning
               const skipWarningMaterials = [
                 "Harga Satuan Pekerjaan (D+E)",
                 "Pajak Pertambahan Nilai (PPN)",
@@ -108,7 +108,7 @@ function setupImportHandlers(ipcMain, db) {
 
               if (!material) {
                 if (!skipWarningMaterials.includes(item.uraian)) {
-                  console.log(`Material "${item.uraian}" not found, skipping`);
+                  importLogger.addMaterialError(item.uraian);
                 }
                 continue;
               }
@@ -167,7 +167,18 @@ function setupImportHandlers(ipcMain, db) {
           });
         });
 
-        event.reply("import-ahs-complete", stats);
+        // Generate error report
+        const errorReport = importLogger.generateErrorTable();
+        const totalErrors = importLogger.getTotalErrors();
+
+        event.reply("import-ahs-complete", {
+          ...stats,
+          errorReport,
+          totalErrors,
+        });
+
+        // Reset logger for next import
+        importLogger.reset();
       } catch (error) {
         // Rollback on error
         await new Promise((resolve) => {
