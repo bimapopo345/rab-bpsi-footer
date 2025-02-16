@@ -2,6 +2,25 @@ const { ipcRenderer } = require("electron");
 const ExcelJS = require("exceljs");
 const path = require("path");
 
+// Fungsi untuk export ke Excel
+async function exportToExcel() {
+  const userId = checkAuth();
+  if (!userId) return;
+
+  try {
+    const result = await ipcRenderer.invoke("export-all-ahs", { userId });
+
+    if (result.success) {
+      alert(`Export berhasil!\n${result.message}`);
+    } else {
+      alert(`Export gagal: ${result.message}`);
+    }
+  } catch (error) {
+    console.error("Error exporting to Excel:", error);
+    alert(`Error saat export: ${error.message}`);
+  }
+}
+
 let selectedMaterialId = null;
 let selectedAhsId = null;
 let importInProgress = false;

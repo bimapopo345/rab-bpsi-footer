@@ -13,6 +13,7 @@ const { setupPrintHandlers } = require("./src/handlers/printHandlers");
 const { setupExportHandlers } = require("./src/handlers/exportHandlers");
 const { setupImportHandlers } = require("./src/handlers/importHandlers");
 const { setupBQHandlers } = require("./src/handlers/bqHandlers");
+const { setupExportAHSHandler } = require("./src/handlers/exportAHSHandler");
 
 let mainWindow;
 let db;
@@ -43,6 +44,7 @@ function createWindow() {
       setupExportHandlers(ipcMain, db);
       setupImportHandlers(ipcMain, db);
       setupBQHandlers(ipcMain, db);
+      setupExportAHSHandler(ipcMain, db);
     })
     .catch(console.error);
 
