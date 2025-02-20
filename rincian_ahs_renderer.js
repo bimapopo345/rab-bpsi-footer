@@ -210,11 +210,15 @@ function displayPricingData(pricingData) {
   console.log("Pricing Data:", pricingData);
 
   pricingData.forEach((item) => {
-    const total = item.price * item.koefisien;
+    // Hitung total dengan memperhatikan format angka
+    const price = parseFloat(item.price.toString().replace(/,/g, ""));
+    const koefisien = parseFloat(item.koefisien.toString().replace(/,/g, "."));
+    const total = price * koefisien;
+
     const row = document.createElement("tr");
     row.dataset.pricingId = item.id;
     row.dataset.materialId = item.material_id;
-    row.dataset.materialPrice = item.price;
+    row.dataset.materialPrice = price;
 
     // Debug: Log each item's category
     console.log("Item Category:", item.category);
@@ -329,12 +333,14 @@ function selectMaterial(
 
   selectedMaterialId = id;
   const koefisien = 1;
-  const total = price * koefisien;
+  // Normalisasi format angka
+  const normalizedPrice = parseFloat(price.toString().replace(/,/g, ""));
+  const total = normalizedPrice * koefisien;
 
   const tableBody = document.getElementById("materialDetails");
   const row = document.createElement("tr");
   row.dataset.materialId = id;
-  row.dataset.materialPrice = price;
+  row.dataset.materialPrice = normalizedPrice;
   row.innerHTML = `
     <td>${category}</td>
     <td>${kode || "-"}</td>
@@ -383,13 +389,16 @@ function updateKoefisien(input) {
   const row = input.closest("tr");
   if (!row) return;
 
-  const materialPrice = parseFloat(row.dataset.materialPrice);
-  const newKoefisien = parseFloat(input.value);
+  // Normalisasi format angka
+  const materialPrice = parseFloat(
+    row.dataset.materialPrice.toString().replace(/,/g, "")
+  );
+  const newKoefisien = parseFloat(input.value.toString().replace(/,/g, "."));
   const newTotal = materialPrice * newKoefisien;
 
-  // Update total cell immediately
+  // Update total cell immediately dengan format yang benar
   const totalCell = row.cells[8]; // Index 8 for total column
-  totalCell.textContent = `Rp ${newTotal.toLocaleString()}`;
+  totalCell.textContent = `Rp ${Number(newTotal.toFixed(2)).toLocaleString()}`;
 
   // Update chart after total change
   updateTotals();
@@ -705,10 +714,19 @@ function updateTotals() {
       rawValue: rawValue,
     });
 
+    // Normalisasi format angka:
+    // 1. Hapus "Rp" dan spasi
+    // 2. Ganti koma ribuan dengan temporer placeholder
+    // 3. Ganti titik desimal dengan koma
+    // 4. Kembalikan koma ribuan menjadi kosong
     const totalText = rawValue
-      .replace(/Rp\s?/g, "") // Remove 'Rp' and space
-      .replace(/[.,]/g, ""); // Remove dots and commas
-    const total = parseInt(totalText) || 0;
+      .replace(/Rp\s?/g, "")
+      .replace(/,/g, "COMMA")
+      .replace(/\./g, ",")
+      .replace(/COMMA/g, "")
+      .replace(/\s/g, "");
+
+    const total = parseFloat(totalText.replace(/,/g, ".")) || 0;
 
     console.log("Parsed value:", {
       category,
