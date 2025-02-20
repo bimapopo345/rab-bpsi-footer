@@ -43,6 +43,7 @@ function checkAuth() {
 document.addEventListener("DOMContentLoaded", () => {
   checkAuth();
   initializeMaterialTable();
+  resetTaxProfitToDefaults(); // Add default values on page load
 });
 
 function openAhsModal() {
@@ -111,37 +112,93 @@ ipcRenderer.on("ahs-data", (event, ahs) => {
   });
 });
 
+function resetTaxProfitToDefaults(force = false) {
+  console.log("Resetting tax-profit values...");
+
+  const profitSelect = document.getElementById("profit-select");
+  const ppnSelect = document.getElementById("ppn-select");
+
+  if (!force && selectedAhsId) {
+    // If not forced and we have a selected AHS, preserve values
+    console.log("AHS selected, preserving current values");
+    updateTaxProfitTotals(true);
+    return;
+  }
+
+  // Otherwise reset to defaults
+  console.log("Resetting to defaults");
+  if (profitSelect) profitSelect.value = "0";
+  if (ppnSelect) ppnSelect.value = "0";
+  updateTaxProfitTotals(false);
+}
+
 function selectAhs(id) {
   const userId = checkAuth();
   if (!userId) return;
 
   selectedAhsId = id;
+  console.log("Selected AHS:", id);
+
+  // Reset fields initially but indicate we're in selection mode
+  resetTaxProfitToDefaults(true);
 
   // Get data and close modal
   closeSearchAhsModal();
   ipcRenderer.send("get-ahs-by-id", { id, userId });
+
+  // Get tax profit data first to ensure proper initialization
+  ipcRenderer.send("get-tax-profit", { ahs_id: id, userId });
+
+  // Then get pricing data which will trigger updates
   ipcRenderer.send("get-pricing", { ahsId: id, userId });
 
-  // Get saved tax profit data
-  ipcRenderer.send("get-tax-profit", { ahs_id: id, userId });
+  console.log("AHS selection process complete");
+}
+
+function updateTaxProfitFields(data) {
+  console.log("Updating tax profit fields with data:", data);
+
+  const profitSelect = document.getElementById("profit-select");
+  const ppnSelect = document.getElementById("ppn-select");
+
+  if (!profitSelect || !ppnSelect) {
+    console.error("Tax-profit select elements not found");
+    return;
+  }
+
+  // Set default values first
+  profitSelect.value = "0";
+  ppnSelect.value = "0";
+
+  // Update with saved values if they exist
+  if (data && typeof data === "object") {
+    if (
+      data.profit_percentage !== null &&
+      data.profit_percentage !== undefined
+    ) {
+      profitSelect.value = data.profit_percentage;
+      console.log("Set profit to:", data.profit_percentage);
+    }
+    if (data.ppn_percentage !== null && data.ppn_percentage !== undefined) {
+      ppnSelect.value = data.ppn_percentage;
+      console.log("Set PPN to:", data.ppn_percentage);
+    }
+  }
+
+  // Trigger calculation
+  updateTaxProfitTotals();
 }
 
 // Handle tax profit data response
 ipcRenderer.on("tax-profit-data", (event, response) => {
+  console.log("Received tax-profit data:", response);
+
   if (response.success && response.data && response.data.length > 0) {
-    // Ada kemungkinan multiple pricing rows, ambil yang paling baru
     const latestData = response.data[0];
-
-    // Update profit dropdown
-    const profitSelect = document.getElementById("profit-select");
-    profitSelect.value = latestData.profit_percentage || "0";
-
-    // Update PPN dropdown
-    const ppnSelect = document.getElementById("ppn-select");
-    ppnSelect.value = latestData.ppn_percentage || "11";
-
-    // Trigger update totals to recalculate with restored percentages
-    updateTotals();
+    updateTaxProfitFields(latestData);
+  } else {
+    console.log("No tax-profit data found, using defaults");
+    updateTaxProfitFields(null);
   }
 });
 
@@ -212,26 +269,26 @@ ipcRenderer.on("ahs-data-for-edit", (event, ahs) => {
   }
 });
 
-// Handle pricing data updates
-ipcRenderer.on("pricing-data", (event, pricingData) => {
-  // Display data and show chart
-  displayPricingData(pricingData);
-  document.getElementById("cost-chart").style.display =
-    pricingData.length > 0 ? "block" : "none";
-
-  // Update chart values
-  if (pricingData.length > 0) {
-    updateTotals();
-  }
-});
-
 // Display pricing data in table
 function displayPricingData(pricingData) {
   const tableBody = document.getElementById("materialDetails");
   tableBody.innerHTML = "";
 
   // Debug: Log the pricing data
-  console.log("Pricing Data:", pricingData);
+  console.log("Displaying pricing data:", pricingData);
+
+  // Keep tax-profit values if they exist
+  const profitSelect = document.getElementById("profit-select");
+  const ppnSelect = document.getElementById("ppn-select");
+  const currentProfit = profitSelect ? profitSelect.value : "0";
+  const currentPPN = ppnSelect ? ppnSelect.value : "0";
+
+  console.log(
+    "Current tax-profit values - Profit:",
+    currentProfit,
+    "PPN:",
+    currentPPN
+  );
 
   pricingData.forEach((item) => {
     // Hitung total dengan memperhatikan format angka
@@ -268,13 +325,58 @@ function displayPricingData(pricingData) {
   });
 }
 
-// Handle pricing data updates
+// Single handler for pricing data updates
 ipcRenderer.on("pricing-data", (event, pricingData) => {
+  console.log("Received pricing data update");
+
+  // Keep current tax-profit values before updating
+  const profitSelect = document.getElementById("profit-select");
+  const ppnSelect = document.getElementById("ppn-select");
+  const currentProfit = profitSelect?.value || "0";
+  const currentPPN = ppnSelect?.value || "0";
+
+  console.log("Preserving values - Profit:", currentProfit, "PPN:", currentPPN);
+
   // Display data in table
   displayPricingData(pricingData);
-  // Update chart
+
+  // Show/hide chart based on data
+  document.getElementById("cost-chart").style.display =
+    pricingData.length > 0 ? "block" : "none";
+
+  // Update totals first
   updateTotals();
+
+  // Restore tax-profit values after all updates
+  if (profitSelect) profitSelect.value = currentProfit;
+  if (ppnSelect) ppnSelect.value = currentPPN;
+
+  // Force recalculation with restored values
+  updateTaxProfitTotals(true);
+
+  console.log(
+    "Pricing update complete. Values restored and recalculated - Profit:",
+    profitSelect?.value,
+    "PPN:",
+    ppnSelect?.value
+  );
 });
+
+// Handle final pricing updates (used by pricing-added, pricing-updated, etc.)
+function handlePricingChanges() {
+  console.log("Handling pricing changes");
+  if (!selectedAhsId) {
+    console.log("No AHS selected, skipping tax-profit update");
+    return;
+  }
+
+  const userId = checkAuth();
+  if (userId) {
+    // Always get fresh tax-profit data after pricing changes
+    console.log("Requesting fresh tax-profit data");
+    ipcRenderer.send("get-tax-profit", { ahs_id: selectedAhsId, userId });
+  }
+}
 
 function addBahanUpah() {
   const userId = checkAuth();
@@ -410,6 +512,7 @@ ipcRenderer.on("pricing-added", (event, response) => {
     if (userId) {
       console.log("Requesting fresh pricing data...");
       ipcRenderer.send("get-pricing", { ahsId: selectedAhsId, userId });
+      handlePricingChanges(); // Ensure tax-profit data is updated
     }
   }
 });
@@ -459,6 +562,7 @@ ipcRenderer.on("pricing-updated", (event, response) => {
   } else {
     // Update chart after successful update
     updateTotals();
+    handlePricingChanges(); // Also update tax-profit data
   }
 });
 
@@ -504,13 +608,12 @@ ipcRenderer.on("pricing-deleted", (event, response) => {
   if (response && response.error) {
     alert("Gagal menghapus: " + response.error);
   } else {
-    // Update chart and totals first
-    updateTotals();
-    updateTaxProfitTotals();
-    // Then get fresh pricing data
     const userId = checkAuth();
     if (userId) {
+      // First get fresh pricing data
       ipcRenderer.send("get-pricing", { ahsId: selectedAhsId, userId });
+      // Tax-profit data will be refreshed via handlePricingChanges
+      handlePricingChanges();
     }
   }
 });
@@ -718,26 +821,49 @@ async function startImport() {
   }
 }
 
-// Function to calculate and update cost breakdown
-// Fungsi untuk update total dengan PPN dan Profit
-function updateTaxProfitTotals() {
-  // Parse total value, handling both comma and dot separators
-  const totalText = document.getElementById("total-value").textContent;
-  const baseTotal = parseFloat(totalText.replace(/,/g, "")) || 0;
+// Function to calculate and update cost breakdown without resetting values
+function updateTaxProfitTotals(preserveExisting = true) {
+  console.log("Updating tax profit totals");
 
-  // Get and calculate profit
-  const profitPercentage =
-    parseFloat(document.getElementById("profit-select").value) || 0;
+  // Get current tax-profit values
+  const profitSelect = document.getElementById("profit-select");
+  const ppnSelect = document.getElementById("ppn-select");
+
+  if (!profitSelect || !ppnSelect) {
+    console.error("Required elements not found");
+    return;
+  }
+
+  // Parse base total
+  const totalText = document.getElementById("total-value").textContent;
+  const baseTotal = parseFloat(totalText.replace(/[^0-9.-]+/g, "")) || 0;
+  console.log("Base total:", baseTotal);
+
+  // Get current percentages
+  const profitPercentage = parseFloat(profitSelect.value) || 0;
+  const ppnPercentage = parseFloat(ppnSelect.value) || 0;
+  console.log(
+    "Current percentages - Profit:",
+    profitPercentage,
+    "PPN:",
+    ppnPercentage
+  );
+
+  // Calculate amounts
   const profitAmount = calculateProfit(baseTotal, profitPercentage);
   const totalAfterProfit = baseTotal + profitAmount;
-
-  // Calculate PPN
-  const ppnPercentage =
-    parseFloat(document.getElementById("ppn-select").value) || 0;
   const ppnAmount = calculatePPN(totalAfterProfit, ppnPercentage);
   const grandTotal = totalAfterProfit + ppnAmount;
 
-  // Update display values - using unrounded values to maintain decimal precision
+  console.log("Calculated values:", {
+    baseTotal,
+    profitAmount,
+    totalAfterProfit,
+    ppnAmount,
+    grandTotal,
+  });
+
+  // Update display values
   document.getElementById("profit-value").textContent =
     formatRupiah(profitAmount);
   document.getElementById("ppn-value").textContent = formatRupiah(ppnAmount);
@@ -753,13 +879,27 @@ function saveTotalAfterTaxProfit() {
     return;
   }
 
+  console.log("Saving tax-profit data...");
+
   const grandTotalText =
     document.getElementById("grand-total-value").textContent;
-  const grandTotal = parseFloat(grandTotalText.replace(/,/g, "")) || 0;
-  const profitPercentage =
-    parseFloat(document.getElementById("profit-select").value) || 0;
-  const ppnPercentage =
-    parseFloat(document.getElementById("ppn-select").value) || 0;
+  const profitSelect = document.getElementById("profit-select");
+  const ppnSelect = document.getElementById("ppn-select");
+
+  if (!profitSelect || !ppnSelect) {
+    console.error("Required elements not found");
+    return;
+  }
+
+  const grandTotal = parseFloat(grandTotalText.replace(/[^0-9.-]+/g, "")) || 0;
+  const profitPercentage = parseFloat(profitSelect.value) || 0;
+  const ppnPercentage = parseFloat(ppnSelect.value) || 0;
+
+  console.log("Sending update with values:", {
+    grandTotal,
+    profitPercentage,
+    ppnPercentage,
+  });
 
   ipcRenderer.send("update-tax-profit", {
     ahs_id: selectedAhsId,
@@ -976,10 +1116,25 @@ ipcRenderer.on("all-pricing-deleted", (event, response) => {
     alert("Gagal menghapus semua data: " + response.error);
   } else {
     console.log("All pricing data deleted successfully");
-    // Refresh pricing data
+
+    // Keep current tax-profit values
+    const profitSelect = document.getElementById("profit-select");
+    const ppnSelect = document.getElementById("ppn-select");
+    const currentProfit = profitSelect?.value || "0";
+    const currentPPN = ppnSelect?.value || "0";
+
+    // Refresh data
     const userId = checkAuth();
     if (userId) {
       ipcRenderer.send("get-pricing", { ahsId: selectedAhsId, userId });
+
+      // Restore and update tax-profit after a short delay
+      setTimeout(() => {
+        if (profitSelect) profitSelect.value = currentProfit;
+        if (ppnSelect) ppnSelect.value = currentPPN;
+        updateTaxProfitTotals(true);
+        handlePricingChanges();
+      }, 100);
     }
   }
 });
