@@ -74,14 +74,16 @@ function setupBQHandlers(ipcMain, db) {
           volume,
           satuan,
           total_price,
-          created_at
-        ) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+          created_at,
+          subproject_id
+        ) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)`,
         [
           bqItem.userId,
           bqItem.ahsId,
           bqItem.volume,
           bqItem.satuan,
           bqItem.total_price || 0,
+          bqItem.subproject_id,
         ],
         function (err) {
           if (err) {

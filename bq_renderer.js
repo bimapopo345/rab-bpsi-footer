@@ -3,14 +3,125 @@ const { ipcRenderer } = require("electron");
 let selectedAHSId = null;
 let selectedAHSData = null;
 let editingItemId = null;
+let selectedSubprojectId = null;
 
 // Get user ID from localStorage
 const userId = localStorage.getItem("userId");
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
-  loadBQData();
+  loadSubprojects();
 });
+
+// Load Subprojects
+async function loadSubprojects() {
+  const subprojects = await ipcRenderer.invoke("get-subprojects", { userId });
+
+  // If no subprojects exist yet, create a container for the "Add Subproject" button only
+  const container = document.querySelector(".container");
+  container.innerHTML = `
+    <div class="button-container">
+      <button class="btn btn-primary" onclick="openSubprojectModal()">
+        <span>+</span> Tambah Subproyek
+      </button>
+    </div>
+    <div id="subprojectsContainer"></div>
+  `;
+
+  const subprojectsContainer = document.getElementById("subprojectsContainer");
+  subprojectsContainer.innerHTML = "";
+
+  // Load BQ items grouped by subproject
+  const bqItems = await ipcRenderer.invoke("get-bq-by-subproject", { userId });
+
+  // Group BQ items by subproject
+  const groupedItems = {};
+  bqItems.forEach((item) => {
+    if (item.subproject_id) {
+      if (!groupedItems[item.subproject_id]) {
+        groupedItems[item.subproject_id] = {
+          name: item.subproject_name,
+          items: [],
+        };
+      }
+      if (item.id) {
+        // Only add if it's an actual BQ item
+        groupedItems[item.subproject_id].items.push(item);
+      }
+    }
+  });
+
+  // Create HTML for each subproject
+  subprojects.forEach((subproject) => {
+    const subprojectItems = groupedItems[subproject.id] || { items: [] };
+
+    const subprojectSection = document.createElement("div");
+    subprojectSection.className = "subproject-section";
+    subprojectSection.innerHTML = `
+      <div class="subproject-header">
+        <h2>${subproject.name}</h2>
+        <div class="subproject-actions">
+          <button class="btn btn-primary" onclick="openAHSModal(${
+            subproject.id
+          })">
+            <span>+</span> Tambah AHS
+          </button>
+          <button class="btn btn-warning" onclick="editSubproject(${
+            subproject.id
+          }, '${subproject.name}')">
+            Edit
+          </button>
+          <button class="btn btn-danger" onclick="deleteSubproject(${
+            subproject.id
+          })">
+            Hapus
+          </button>
+        </div>
+      </div>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Kode AHS</th>
+            <th>AHS</th>
+            <th>Volume</th>
+            <th>Satuan</th>
+            <th>Total Harga</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${subprojectItems.items
+            .map(
+              (item) => `
+            <tr>
+              <td>${item.kode_ahs || "-"}</td>
+              <td>${item.ahs}</td>
+              <td>${item.volume.toFixed(2)}</td>
+              <td>${item.satuan || "m³"}</td>
+              <td>Rp ${
+                item.total_price ? item.total_price.toLocaleString() : "-"
+              }</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn btn-primary btn-small" onclick="editBQItem(${JSON.stringify(
+                    item
+                  ).replace(/"/g, "&quot;")})">Edit</button>
+                  <button class="btn btn-danger btn-small" onclick="deleteBQItem(${
+                    item.id
+                  })">Hapus</button>
+                </div>
+              </td>
+            </tr>
+          `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+
+    subprojectsContainer.appendChild(subprojectSection);
+  });
+}
 
 // Load BQ Data
 async function loadBQData() {
@@ -273,7 +384,222 @@ function saveEditedData() {
 function deleteBQItem(id) {
   if (confirm("Yakin ingin menghapus item ini?")) {
     ipcRenderer.invoke("delete-bq-item", { id }).then(() => {
-      loadBQData();
+      loadSubprojects();
     });
   }
+}
+
+// Subproject Functions
+function openSubprojectModal() {
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.id = "subprojectModal";
+  modal.innerHTML = `
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeSubprojectModal()">&times;</button>
+      <h2>Tambah Subproyek</h2>
+      <div class="form-group">
+        <label for="subprojectName">Nama Subproyek:</label>
+        <input type="text" id="subprojectName" placeholder="Masukkan nama subproyek">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeSubprojectModal()">Batal</button>
+        <button class="btn btn-primary" onclick="saveSubproject()">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  modal.style.display = "block";
+  setTimeout(() => {
+    modal.classList.add("active");
+  }, 10);
+}
+
+function closeSubprojectModal() {
+  const modal = document.getElementById("subprojectModal");
+  if (modal) {
+    modal.classList.remove("active");
+    setTimeout(() => {
+      modal.remove();
+    }, 300);
+  }
+}
+
+async function saveSubproject() {
+  const name = document.getElementById("subprojectName").value.trim();
+  if (!name) {
+    alert("Nama subproyek tidak boleh kosong");
+    return;
+  }
+
+  try {
+    const result = await ipcRenderer.invoke("add-subproject", { name, userId });
+    if (result.success) {
+      closeSubprojectModal();
+      loadSubprojects();
+    } else {
+      alert(result.error || "Gagal menambahkan subproyek");
+    }
+  } catch (error) {
+    console.error("Error saving subproject:", error);
+    alert("Gagal menyimpan subproyek");
+  }
+}
+
+function editSubproject(id, name) {
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.id = "editSubprojectModal";
+  modal.innerHTML = `
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeEditSubprojectModal()">&times;</button>
+      <h2>Edit Subproyek</h2>
+      <div class="form-group">
+        <label for="editSubprojectName">Nama Subproyek:</label>
+        <input type="text" id="editSubprojectName" value="${name}">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeEditSubprojectModal()">Batal</button>
+        <button class="btn btn-primary" onclick="saveEditedSubproject(${id})">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  modal.style.display = "block";
+  setTimeout(() => {
+    modal.classList.add("active");
+  }, 10);
+}
+
+function closeEditSubprojectModal() {
+  const modal = document.getElementById("editSubprojectModal");
+  if (modal) {
+    modal.classList.remove("active");
+    setTimeout(() => {
+      modal.remove();
+    }, 300);
+  }
+}
+
+async function saveEditedSubproject(id) {
+  const name = document.getElementById("editSubprojectName").value.trim();
+  if (!name) {
+    alert("Nama subproyek tidak boleh kosong");
+    return;
+  }
+
+  try {
+    const result = await ipcRenderer.invoke("update-subproject", {
+      id,
+      name,
+      userId,
+    });
+    if (result.success) {
+      closeEditSubprojectModal();
+      loadSubprojects();
+    } else {
+      alert(result.error || "Gagal mengupdate subproyek");
+    }
+  } catch (error) {
+    console.error("Error updating subproject:", error);
+    alert("Gagal menyimpan perubahan");
+  }
+}
+
+function deleteSubproject(id) {
+  if (
+    confirm(
+      "Yakin ingin menghapus subproyek ini? Semua AHS yang terkait akan dihapus dari subproyek."
+    )
+  ) {
+    ipcRenderer
+      .invoke("delete-subproject", { id, userId })
+      .then((result) => {
+        if (result.success) {
+          loadSubprojects();
+        } else {
+          alert(result.error || "Gagal menghapus subproyek");
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting subproject:", error);
+        alert("Gagal menghapus subproyek");
+      });
+  }
+}
+
+// Override original openAHSModal to handle subproject
+function openAHSModal(subprojectId) {
+  selectedSubprojectId = subprojectId;
+  const modal = document.getElementById("ahsModal");
+  modal.style.display = "block";
+  setTimeout(() => {
+    modal.classList.add("active");
+  }, 10);
+
+  // Load only AHS items that have pricing data
+  ipcRenderer.invoke("get-ahs-with-pricing", { userId }).then((ahsItems) => {
+    const ahsList = document.getElementById("ahsList");
+    ahsList.innerHTML = "";
+
+    ahsItems.forEach((ahs) => {
+      const div = document.createElement("div");
+      div.className = "ahs-item";
+      div.innerHTML = `
+        <strong>${ahs.kode_ahs || "-"}</strong>
+        <div>${ahs.ahs}</div>
+        <div>Total: Rp ${ahs.total_price.toLocaleString()}</div>
+      `;
+      div.onclick = () => selectAHS(ahs);
+      ahsList.appendChild(div);
+    });
+  });
+}
+
+// Update saveVolumeAndSatuan to include subproject_id
+function saveVolumeAndSatuan() {
+  if (!selectedAHSId || !selectedAHSData) {
+    alert("Silakan pilih AHS terlebih dahulu");
+    return;
+  }
+
+  const volume = parseFloat(document.getElementById("volumeInput").value);
+  if (!volume || isNaN(volume) || volume <= 0) {
+    alert("Volume harus berupa angka lebih dari 0");
+    return;
+  }
+
+  const satuanSelect = document.getElementById("satuanSelect");
+  let satuan = satuanSelect.value;
+  if (satuan === "manual") {
+    satuan = document.getElementById("manualSatuan").value.trim();
+    if (!satuan) {
+      alert("Silakan masukkan satuan manual");
+      return;
+    }
+  }
+
+  const ahsPrice = parseFloat(selectedAHSData.total_price);
+  if (isNaN(ahsPrice) || ahsPrice <= 0) {
+    alert("AHS terpilih tidak memiliki data harga yang valid");
+    return;
+  }
+
+  const totalPrice = parseFloat((volume * ahsPrice).toFixed(2));
+
+  const bqItem = {
+    userId,
+    ahsId: selectedAHSId,
+    subproject_id: selectedSubprojectId,
+    volume,
+    satuan,
+    total_price: totalPrice,
+  };
+
+  ipcRenderer.invoke("save-bq-item", bqItem).then(() => {
+    closeVolumeModal();
+    loadSubprojects();
+  });
 }

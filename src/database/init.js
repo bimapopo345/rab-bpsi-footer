@@ -147,6 +147,26 @@ function initDatabase() {
           }
         );
 
+        // Create subprojects table
+        db.run(
+          `
+          CREATE TABLE IF NOT EXISTS subprojects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+          )
+        `,
+          (err) => {
+            if (err) {
+              console.error("Error creating subprojects table:", err);
+              return;
+            }
+            console.log("Subprojects table created");
+          }
+        );
+
         // Create BQ table
         db.run(
           `
@@ -154,6 +174,7 @@ function initDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             ahs_id INTEGER NOT NULL,
+            subproject_id INTEGER,
             shape TEXT,
             dimensions TEXT,
             volume REAL DEFAULT 0,
@@ -161,7 +182,8 @@ function initDatabase() {
             total_price REAL DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (ahs_id) REFERENCES ahs(id)
+            FOREIGN KEY (ahs_id) REFERENCES ahs(id),
+            FOREIGN KEY (subproject_id) REFERENCES subprojects(id)
           )
         `,
           (err) => {

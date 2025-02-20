@@ -15,6 +15,9 @@ const { setupImportHandlers } = require("./src/handlers/importHandlers");
 const { setupBQHandlers } = require("./src/handlers/bqHandlers");
 const { setupExportAHSHandler } = require("./src/handlers/exportAHSHandler");
 const { setupTaxProfitHandlers } = require("./src/handlers/taxProfitHandlers");
+const {
+  setupSubprojectHandlers,
+} = require("./src/handlers/subprojectHandlers");
 
 let mainWindow;
 let db;
@@ -47,6 +50,7 @@ function createWindow() {
       setupBQHandlers(ipcMain, db);
       setupExportAHSHandler(ipcMain, db);
       setupTaxProfitHandlers(ipcMain, db);
+      setupSubprojectHandlers(ipcMain, db);
     })
     .catch(console.error);
 
