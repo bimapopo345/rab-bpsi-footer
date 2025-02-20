@@ -718,10 +718,11 @@ function updateTaxProfitTotals() {
     ) || 0;
   const profitPercentage =
     parseFloat(document.getElementById("profit-select").value) || 0;
-
   const profitAmount = calculateProfit(baseTotal, profitPercentage);
   const totalAfterProfit = baseTotal + profitAmount;
-  const ppnAmount = calculatePPN(totalAfterProfit);
+  const ppnPercentage =
+    parseFloat(document.getElementById("ppn-select").value) || 0;
+  const ppnAmount = totalAfterProfit * (ppnPercentage / 100);
   const grandTotal = totalAfterProfit + ppnAmount;
 
   document.getElementById("profit-value").textContent = formatRupiah(
@@ -751,11 +752,12 @@ function saveTotalAfterTaxProfit() {
     ) || 0;
   const profitPercentage =
     parseFloat(document.getElementById("profit-select").value) || 0;
+  const ppnPercentage =
+    parseFloat(document.getElementById("ppn-select").value) || 0;
 
-  // Kirim ke main process untuk update database
   ipcRenderer.send("update-tax-profit", {
     ahs_id: selectedAhsId,
-    ppn_percentage: 11,
+    ppn_percentage: ppnPercentage,
     profit_percentage: profitPercentage,
     total_after_tax_profit: grandTotal,
     userId,
@@ -779,6 +781,11 @@ function updateTotals() {
   if (!profitSelect.hasAttribute("data-listener-attached")) {
     profitSelect.addEventListener("change", updateTaxProfitTotals);
     profitSelect.setAttribute("data-listener-attached", "true");
+  }
+  const ppnSelect = document.getElementById("ppn-select");
+  if (ppnSelect && !ppnSelect.hasAttribute("data-listener-attached")) {
+    ppnSelect.addEventListener("change", updateTaxProfitTotals);
+    ppnSelect.setAttribute("data-listener-attached", "true");
   }
   let dataTotals = {
     bahan: 0,

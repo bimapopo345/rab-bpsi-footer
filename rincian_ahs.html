@@ -427,7 +427,11 @@
             <!-- PPN -->
             <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px;">
                 <span style="width: 80px;">PPN</span>
-                <span>11%</span>
+                <select id="ppn-select" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border);">
+                    <option value="0" selected>0%</option>
+                    <option value="10">10%</option>
+                    <option value="11">11%</option>
+                </select>
                 <div style="flex: 1;"></div>
                 <span style="width: 150px; text-align: right;">Rp. <span id="ppn-value">0</span></span>
             </div>
