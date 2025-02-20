@@ -7,7 +7,17 @@ function calculatePPN(total, ppnPercentage = 11) {
 }
 
 function formatRupiah(amount) {
-  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  // Convert to 2 decimal places and handle rounding
+  const num = Number(amount).toFixed(2);
+
+  // Split the number into whole and decimal parts
+  const [whole, decimal] = num.split(".");
+
+  // Add comma as thousand separator and combine with decimal
+  return (
+    whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+    (decimal !== "00" ? "." + decimal : "")
+  );
 }
 
 module.exports = {

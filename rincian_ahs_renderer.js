@@ -163,8 +163,9 @@ function updateTotals() {
   // Calculate totals from each row
   allRows.forEach((row) => {
     const category = row.cells[0].textContent.toLowerCase();
-    const totalText = row.cells[8].textContent.replace(/[Rp,.\s]/g, "");
-    const total = parseInt(totalText) || 0;
+    const rawValue = row.cells[8].textContent;
+    const totalText = rawValue.replace(/Rp\s?/g, "").replace(/,/g, "").trim();
+    const total = parseFloat(totalText) || 0;
 
     if (category.includes("bahan")) dataTotals.bahan += total;
     else if (category.includes("upah")) dataTotals.upah += total;
@@ -178,17 +179,13 @@ function updateTotals() {
     document.getElementById("cost-chart").style.display = "block";
   }
 
-  // Format function
-  const formatRupiah = (num) =>
-    num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-  // Update values and bars
+  // Import formatRupiah from tax-profit-calculator.js instead of local definition
   ["bahan", "upah", "alat"].forEach((type) => {
     const value = dataTotals[type];
     const percentage =
       value > 0 ? ((value / grandTotal) * 100).toFixed(1) : "0.0";
 
-    // Update value
+    // Update value using imported formatRupiah
     document.getElementById(`${type}-value`).textContent = formatRupiah(value);
 
     // Update bar
@@ -197,7 +194,7 @@ function updateTotals() {
     bar.querySelector(".percentage").textContent = percentage + "%";
   });
 
-  // Update total
+  // Update total using imported formatRupiah
   document.getElementById("total-value").textContent = formatRupiah(grandTotal);
 }
 
@@ -246,6 +243,10 @@ function displayPricingData(pricingData) {
     // Debug: Log each item's category
     console.log("Item Category:", item.category);
 
+    // Format price and total dengan formatRupiah
+    const formattedPrice = formatRupiah(price);
+    const formattedTotal = formatRupiah(total);
+
     row.innerHTML = `
       <td>${item.category || "Bahan"}</td>
       <td>${item.kode || "-"}</td>
@@ -254,10 +255,10 @@ function displayPricingData(pricingData) {
       <td><input type="number" value="${
         item.koefisien
       }" onchange="updateKoefisien(this)"></td>
-      <td>Rp ${item.price.toLocaleString()}</td>
+      <td>Rp ${formattedPrice}</td>
       <td>${item.lokasi || "-"}</td>
       <td>${item.sumber_data || "-"}</td>
-      <td>Rp ${total.toLocaleString()}</td>
+      <td>Rp ${formattedTotal}</td>
     `;
     tableBody.appendChild(row);
   });
@@ -323,7 +324,7 @@ ipcRenderer.on("materials-data", (event, materials) => {
         <td>${material.kode || "-"}</td>
         <td>${material.name}</td>
         <td>${material.unit}</td>
-        <td>Rp ${material.price.toLocaleString()}</td>
+        <td>Rp ${formatRupiah(material.price)}</td>
         <td>${material.category}</td>
         <td>${material.lokasi || "-"}</td>
         <td>${material.sumber_data || "-"}</td>
@@ -364,16 +365,20 @@ function selectMaterial(
   const row = document.createElement("tr");
   row.dataset.materialId = id;
   row.dataset.materialPrice = normalizedPrice;
+  // Format angka menggunakan formatRupiah
+  const formattedPrice = formatRupiah(normalizedPrice);
+  const formattedTotal = formatRupiah(total);
+
   row.innerHTML = `
     <td>${category}</td>
     <td>${kode || "-"}</td>
     <td>${name}</td>
     <td>${unit}</td>
     <td><input type="number" value="${koefisien}" onchange="updateKoefisien(this)"></td>
-    <td>Rp ${price.toLocaleString()}</td>
+    <td>Rp ${formattedPrice}</td>
     <td>${lokasi || "-"}</td>
     <td>${sumber_data || "-"}</td>
-    <td>Rp ${total.toLocaleString()}</td>
+    <td>Rp ${formattedTotal}</td>
   `;
   tableBody.appendChild(row);
 
@@ -419,9 +424,9 @@ function updateKoefisien(input) {
   const newKoefisien = parseFloat(input.value.toString().replace(/,/g, "."));
   const newTotal = materialPrice * newKoefisien;
 
-  // Update total cell immediately dengan format yang benar
+  // Update total cell immediately dengan formatRupiah
   const totalCell = row.cells[8]; // Index 8 for total column
-  totalCell.textContent = `Rp ${Number(newTotal.toFixed(2)).toLocaleString()}`;
+  totalCell.textContent = `Rp ${formatRupiah(newTotal)}`;
 
   // Update chart after total change
   updateTotals();
@@ -712,28 +717,28 @@ async function startImport() {
 // Function to calculate and update cost breakdown
 // Fungsi untuk update total dengan PPN dan Profit
 function updateTaxProfitTotals() {
-  const baseTotal =
-    parseFloat(
-      document.getElementById("total-value").textContent.replace(/\./g, "")
-    ) || 0;
+  // Parse total value, handling both comma and dot separators
+  const totalText = document.getElementById("total-value").textContent;
+  const baseTotal = parseFloat(totalText.replace(/,/g, "")) || 0;
+
+  // Get and calculate profit
   const profitPercentage =
     parseFloat(document.getElementById("profit-select").value) || 0;
   const profitAmount = calculateProfit(baseTotal, profitPercentage);
   const totalAfterProfit = baseTotal + profitAmount;
+
+  // Calculate PPN
   const ppnPercentage =
     parseFloat(document.getElementById("ppn-select").value) || 0;
-  const ppnAmount = totalAfterProfit * (ppnPercentage / 100);
+  const ppnAmount = calculatePPN(totalAfterProfit, ppnPercentage);
   const grandTotal = totalAfterProfit + ppnAmount;
 
-  document.getElementById("profit-value").textContent = formatRupiah(
-    Math.round(profitAmount)
-  );
-  document.getElementById("ppn-value").textContent = formatRupiah(
-    Math.round(ppnAmount)
-  );
-  document.getElementById("grand-total-value").textContent = formatRupiah(
-    Math.round(grandTotal)
-  );
+  // Update display values - using unrounded values to maintain decimal precision
+  document.getElementById("profit-value").textContent =
+    formatRupiah(profitAmount);
+  document.getElementById("ppn-value").textContent = formatRupiah(ppnAmount);
+  document.getElementById("grand-total-value").textContent =
+    formatRupiah(grandTotal);
 }
 
 // Fungsi untuk menyimpan total setelah PPN dan profit
@@ -744,12 +749,9 @@ function saveTotalAfterTaxProfit() {
     return;
   }
 
-  const grandTotal =
-    parseFloat(
-      document
-        .getElementById("grand-total-value")
-        .textContent.replace(/\./g, "")
-    ) || 0;
+  const grandTotalText =
+    document.getElementById("grand-total-value").textContent;
+  const grandTotal = parseFloat(grandTotalText.replace(/,/g, "")) || 0;
   const profitPercentage =
     parseFloat(document.getElementById("profit-select").value) || 0;
   const ppnPercentage =
@@ -850,11 +852,7 @@ function updateTotals() {
 
   // Update values and bars
   if (grandTotal > 0) {
-    const formatRupiah = (num) => {
-      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    };
-
-    // Update values with proper formatting
+    // Update values with imported formatRupiah
     document.getElementById("bahan-value").textContent = formatRupiah(
       dataTotals.bahan
     );
