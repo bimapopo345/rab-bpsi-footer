@@ -405,6 +405,41 @@
             </div>
         </div>
 
+        <!-- Tax and Profit Section -->
+        <div id="tax-profit-section"
+            style="margin: 20px 0; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <!-- Profit -->
+            <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px;">
+                <span style="width: 80px;">Profit</span>
+                <select id="profit-select" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border);">
+                    <option value="0">0%</option>
+                    <option value="10">10%</option>
+                    <option value="11">11%</option>
+                    <option value="12">12%</option>
+                    <option value="13">13%</option>
+                    <option value="14">14%</option>
+                    <option value="15">15%</option>
+                </select>
+                <span style="flex: 1;"></span>
+                <span style="width: 150px; text-align: right;">Rp. <span id="profit-value">0</span></span>
+            </div>
+
+            <!-- PPN -->
+            <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px;">
+                <span style="width: 80px;">PPN</span>
+                <span>11%</span>
+                <div style="flex: 1;"></div>
+                <span style="width: 150px; text-align: right;">Rp. <span id="ppn-value">0</span></span>
+            </div>
+
+            <!-- Grand Total -->
+            <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px; font-weight: bold;">
+                <span style="width: 80px;">Total Akhir</span>
+                <div style="flex: 1;"></div>
+                <span style="width: 150px; text-align: right;">Rp. <span id="grand-total-value">0</span></span>
+            </div>
+        </div>
+
         <!-- Table for material details -->
         <table>
             <thead>

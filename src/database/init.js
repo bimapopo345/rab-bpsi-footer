@@ -106,6 +106,8 @@ function initDatabase() {
             material_id INTEGER NOT NULL,
             quantity REAL DEFAULT 0,
             koefisien REAL DEFAULT 0,
+            ppn_percentage REAL DEFAULT 0,
+            profit_percentage REAL DEFAULT 0,
             user_id INTEGER NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (ahs_id) REFERENCES ahs(id),

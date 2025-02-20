@@ -9,7 +9,8 @@ function setupPricingHandlers(ipcMain, db) {
       }
 
       db.run(
-        "INSERT INTO pricing (ahs_id, material_id, quantity, koefisien, user_id) VALUES (?, ?, ?, ?, ?)",
+        `INSERT INTO pricing (ahs_id, material_id, quantity, koefisien, ppn_percentage, profit_percentage, user_id) 
+         VALUES (?, ?, ?, ?, 0, 0, ?)`,
         [ahs_id, material_id, quantity, koefisien, userId],
         function (err) {
           if (err) {
@@ -31,7 +32,8 @@ function setupPricingHandlers(ipcMain, db) {
     }
 
     db.all(
-      `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data 
+      `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data, 
+              p.ppn_percentage, p.profit_percentage
        FROM pricing p
        JOIN materials m ON p.material_id = m.id
        WHERE p.ahs_id = ? 
@@ -84,7 +86,8 @@ function setupPricingHandlers(ipcMain, db) {
 
             // Get updated pricing data
             db.all(
-              `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data
+              `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data,
+                      p.ppn_percentage, p.profit_percentage
                FROM pricing p
                JOIN materials m ON p.material_id = m.id
                WHERE p.ahs_id = ?
@@ -128,7 +131,8 @@ function setupPricingHandlers(ipcMain, db) {
 
           // Get updated pricing data
           db.all(
-            `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data
+            `SELECT p.*, m.name, m.unit, m.price, m.category, m.lokasi, m.sumber_data,
+                    p.ppn_percentage, p.profit_percentage
              FROM pricing p
              JOIN materials m ON p.material_id = m.id
              WHERE p.ahs_id = ?
@@ -145,6 +149,31 @@ function setupPricingHandlers(ipcMain, db) {
               event.reply("pricing-updated", { success: true });
             }
           );
+        }
+      );
+    }
+  );
+
+  // Update Tax dan Profit
+  ipcMain.on(
+    "update-tax-profit",
+    (event, { pricing_id, ppn_percentage, profit_percentage, userId }) => {
+      if (!userId) {
+        event.reply("tax-profit-updated", { error: "User ID is required" });
+        return;
+      }
+
+      db.run(
+        "UPDATE pricing SET ppn_percentage = ?, profit_percentage = ? WHERE id = ? AND user_id = ?",
+        [ppn_percentage, profit_percentage, pricing_id, userId],
+        (err) => {
+          if (err) {
+            console.error("Error updating tax & profit:", err);
+            event.reply("tax-profit-updated", { error: err.message });
+            return;
+          }
+
+          event.reply("tax-profit-updated", { success: true });
         }
       );
     }

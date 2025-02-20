@@ -1,6 +1,11 @@
 const { ipcRenderer } = require("electron");
 const ExcelJS = require("exceljs");
 const path = require("path");
+const {
+  calculateProfit,
+  calculatePPN,
+  formatRupiah,
+} = require("./src/utils/tax-profit-calculator");
 
 // Fungsi untuk export ke Excel
 async function exportToExcel() {
@@ -472,8 +477,9 @@ ipcRenderer.on("pricing-deleted", (event, response) => {
   if (response && response.error) {
     alert("Gagal menghapus: " + response.error);
   } else {
-    // Update chart first with current data
+    // Update chart and totals first
     updateTotals();
+    updateTaxProfitTotals();
     // Then get fresh pricing data
     const userId = checkAuth();
     if (userId) {
@@ -686,6 +692,44 @@ async function startImport() {
 }
 
 // Function to calculate and update cost breakdown
+// Fungsi untuk update total dengan PPN dan Profit
+function updateTaxProfitTotals() {
+  const baseTotal =
+    parseFloat(
+      document.getElementById("total-value").textContent.replace(/\./g, "")
+    ) || 0;
+  const profitPercentage =
+    parseFloat(document.getElementById("profit-select").value) || 0;
+
+  const profitAmount = calculateProfit(baseTotal, profitPercentage);
+  const totalAfterProfit = baseTotal + profitAmount;
+  const ppnAmount = calculatePPN(totalAfterProfit);
+  const grandTotal = totalAfterProfit + ppnAmount;
+
+  document.getElementById("profit-value").textContent = formatRupiah(
+    Math.round(profitAmount)
+  );
+  document.getElementById("ppn-value").textContent = formatRupiah(
+    Math.round(ppnAmount)
+  );
+  document.getElementById("grand-total-value").textContent = formatRupiah(
+    Math.round(grandTotal)
+  );
+
+  // Update database
+  if (selectedAhsId) {
+    const userId = checkAuth();
+    if (userId) {
+      ipcRenderer.send("update-tax-profit", {
+        pricing_id: selectedAhsId,
+        ppn_percentage: 11,
+        profit_percentage: profitPercentage,
+        userId,
+      });
+    }
+  }
+}
+
 function updateTotals() {
   console.log("Starting updateTotals...");
 
@@ -695,6 +739,13 @@ function updateTotals() {
   // Get all rows and verify
   const allRows = document.querySelectorAll("#materialDetails tr");
   console.log(`Found ${allRows.length} rows to process`);
+
+  // Add event listener untuk profit select jika belum ada
+  const profitSelect = document.getElementById("profit-select");
+  if (!profitSelect.hasAttribute("data-listener-attached")) {
+    profitSelect.addEventListener("change", updateTaxProfitTotals);
+    profitSelect.setAttribute("data-listener-attached", "true");
+  }
   let dataTotals = {
     bahan: 0,
     upah: 0,
@@ -774,6 +825,9 @@ function updateTotals() {
     );
     document.getElementById("total-value").textContent =
       formatRupiah(grandTotal);
+
+    // Update PPN dan Profit setelah total diupdate
+    updateTaxProfitTotals();
 
     // Debug total values before updating bars
     console.log("Totals:", {
