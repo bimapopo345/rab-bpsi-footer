@@ -52,13 +52,7 @@ function openAHSModal() {
   });
 }
 
-function closeAHSModal() {
-  const modal = document.getElementById("ahsModal");
-  modal.classList.remove("active");
-  setTimeout(() => {
-    modal.style.display = "none";
-  }, 300);
-}
+// Note: closeAHSModal function moved to inline script in bq.html
 
 // Select AHS and Show Volume Modal
 function selectAHS(ahs) {

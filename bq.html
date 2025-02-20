@@ -340,6 +340,10 @@
         <div class="modal-content">
             <button class="close-btn" onclick="closeAHSModal()">&times;</button>
             <h2>Pilih AHS</h2>
+            <div class="form-group">
+                <input type="text" id="ahsSearchInput" placeholder="Cari berdasarkan kode atau nama AHS..."
+                    style="width: 100%; margin-bottom: 16px;">
+            </div>
             <div class="ahs-list" id="ahsList">
                 <!-- AHS items will be populated here -->
             </div>
@@ -405,6 +409,23 @@
     </div>
 
     <script src="bq_renderer.js"></script>
+    <script src="bq_search.js"></script>
+    <script>
+        // Initialize search functionality when document is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeAHSSearch();
+        });
+
+        // Clear search when modal is closed
+        function closeAHSModal() {
+            clearAHSSearch();
+            const modal = document.getElementById("ahsModal");
+            modal.classList.remove("active");
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 300);
+        }
+    </script>
 </body>
 
 </html>
