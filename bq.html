@@ -323,8 +323,8 @@
                 <tr>
                     <th>Kode AHS</th>
                     <th>AHS</th>
-                    <th>Bentuk</th>
                     <th>Volume</th>
+                    <th>Satuan</th>
                     <th>Total Harga</th>
                     <th>Aksi</th>
                 </tr>
@@ -346,90 +346,31 @@
         </div>
     </div>
 
-    <!-- Shape Selection Modal -->
-    <div id="shapeModal" class="modal">
+    <!-- Volume Input Modal -->
+    <div id="volumeModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeShapeModal()">&times;</button>
-            <h2>Pilih Bentuk</h2>
+            <button class="close-btn" onclick="closeVolumeModal()">&times;</button>
+            <h2>Input Volume</h2>
             <div class="form-group">
-                <label for="shapeSelect">Bentuk:</label>
-                <select id="shapeSelect" onchange="showShapeForm()">
-                    <option value="">Pilih Bentuk...</option>
-                    <option value="persegi">Persegi</option>
-                    <option value="persegiPanjang">Persegi Panjang</option>
-                    <option value="trapesium">Trapesium</option>
-                    <option value="lingkaran">Lingkaran</option>
-                    <option value="kubus">Kubus</option>
-                    <option value="balok">Balok</option>
+                <label for="volumeInput">Volume:</label>
+                <input type="number" id="volumeInput" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="satuanSelect">Satuan:</label>
+                <select id="satuanSelect" onchange="handleSatuanChange()">
+                    <option value="m">m</option>
+                    <option value="m2">m²</option>
+                    <option value="m3">m³</option>
+                    <option value="manual">Input Manual</option>
                 </select>
             </div>
-
-            <!-- Shape Forms -->
-            <div id="persegiForm" class="shape-form">
-                <div class="form-group">
-                    <label>Sisi (m)</label>
-                    <input type="number" id="sisiPersegi" step="0.01">
-                </div>
+            <div class="form-group" id="manualSatuanGroup" style="display: none;">
+                <label for="manualSatuan">Satuan Manual:</label>
+                <input type="text" id="manualSatuan" placeholder="Contoh: kg, ton, dll">
             </div>
-
-            <div id="persegiPanjangForm" class="shape-form">
-                <div class="form-group">
-                    <label>Panjang (m)</label>
-                    <input type="number" id="panjangPersegiPanjang" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Lebar (m)</label>
-                    <input type="number" id="lebarPersegiPanjang" step="0.01">
-                </div>
-            </div>
-
-            <div id="trapesiumForm" class="shape-form">
-                <div class="form-group">
-                    <label>Sisi Atas (m)</label>
-                    <input type="number" id="sisiAtasTrapesium" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Sisi Bawah (m)</label>
-                    <input type="number" id="sisiBawahTrapesium" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Tinggi (m)</label>
-                    <input type="number" id="tinggiTrapesium" step="0.01">
-                </div>
-            </div>
-
-            <div id="lingkaranForm" class="shape-form">
-                <div class="form-group">
-                    <label>Jari-jari (m)</label>
-                    <input type="number" id="jariLingkaran" step="0.01">
-                </div>
-            </div>
-
-            <div id="kubusForm" class="shape-form">
-                <div class="form-group">
-                    <label>Sisi (m)</label>
-                    <input type="number" id="sisiKubus" step="0.01">
-                </div>
-            </div>
-
-            <div id="balokForm" class="shape-form">
-                <div class="form-group">
-                    <label>Panjang (m)</label>
-                    <input type="number" id="panjangBalok" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Lebar (m)</label>
-                    <input type="number" id="lebarBalok" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Tinggi (m)</label>
-                    <input type="number" id="tinggiBalok" step="0.01">
-                </div>
-            </div>
-
             <div class="modal-actions">
-                <button class="btn" onclick="closeShapeModal()">Batal</button>
-                <button class="btn btn-primary" onclick="calculateAndSave()">Simpan</button>
+                <button class="btn" onclick="closeVolumeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="saveVolumeAndSatuan()">Simpan</button>
             </div>
         </div>
     </div>
@@ -440,77 +381,21 @@
             <button class="close-btn" onclick="closeEditModal()">&times;</button>
             <h2>Edit Item</h2>
             <div class="form-group">
-                <label for="editShapeSelect">Bentuk:</label>
-                <select id="editShapeSelect" onchange="showEditShapeForm()">
-                    <option value="">Pilih Bentuk...</option>
-                    <option value="persegi">Persegi</option>
-                    <option value="persegiPanjang">Persegi Panjang</option>
-                    <option value="trapesium">Trapesium</option>
-                    <option value="lingkaran">Lingkaran</option>
-                    <option value="kubus">Kubus</option>
-                    <option value="balok">Balok</option>
-                </select>
-            </div>
-            <!-- Dynamic Edit Shape Forms -->
-            <div id="editPersegiForm" class="edit-shape-form">
-                <div class="form-group">
-                    <label>Sisi (m)</label>
-                    <input type="number" id="editSisiPersegi" step="0.01">
-                </div>
-            </div>
-            <div id="editPersegiPanjangForm" class="edit-shape-form">
-                <div class="form-group">
-                    <label>Panjang (m)</label>
-                    <input type="number" id="editPanjangPersegiPanjang" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Lebar (m)</label>
-                    <input type="number" id="editLebarPersegiPanjang" step="0.01">
-                </div>
-            </div>
-            <div id="editTrapesiumForm" class="edit-shape-form">
-                <div class="form-group">
-                    <label>Sisi Atas (m)</label>
-                    <input type="number" id="editSisiAtasTrapesium" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Sisi Bawah (m)</label>
-                    <input type="number" id="editSisiBawahTrapesium" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Tinggi (m)</label>
-                    <input type="number" id="editTinggiTrapesium" step="0.01">
-                </div>
-            </div>
-            <div id="editLingkaranForm" class="edit-shape-form">
-                <div class="form-group">
-                    <label>Jari-jari (m)</label>
-                    <input type="number" id="editJariLingkaran" step="0.01">
-                </div>
-            </div>
-            <div id="editKubusForm" class="edit-shape-form">
-                <div class="form-group">
-                    <label>Sisi (m)</label>
-                    <input type="number" id="editSisiKubus" step="0.01">
-                </div>
-            </div>
-            <div id="editBalokForm" class="edit-shape-form">
-                <div class="form-group">
-                    <label>Panjang (m)</label>
-                    <input type="number" id="editPanjangBalok" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Lebar (m)</label>
-                    <input type="number" id="editLebarBalok" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Tinggi (m)</label>
-                    <input type="number" id="editTinggiBalok" step="0.01">
-                </div>
+                <label for="editVolume">Volume:</label>
+                <input type="number" id="editVolume" step="0.01">
             </div>
             <div class="form-group">
-                <label for="editVolume">Volume (m³):</label>
-                <input type="number" id="editVolume" step="0.01">
+                <label for="editSatuanSelect">Satuan:</label>
+                <select id="editSatuanSelect" onchange="handleEditSatuanChange()">
+                    <option value="m">m</option>
+                    <option value="m2">m²</option>
+                    <option value="m3">m³</option>
+                    <option value="manual">Input Manual</option>
+                </select>
+            </div>
+            <div class="form-group" id="editManualSatuanGroup" style="display: none;">
+                <label for="editManualSatuan">Satuan Manual:</label>
+                <input type="text" id="editManualSatuan" placeholder="Contoh: kg, ton, dll">
             </div>
             <div class="modal-actions">
                 <button class="btn" onclick="closeEditModal()">Batal</button>

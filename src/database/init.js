@@ -154,6 +154,7 @@ function initDatabase() {
             shape TEXT,
             dimensions TEXT,
             volume REAL DEFAULT 0,
+            satuan TEXT DEFAULT 'm3',
             total_price REAL DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id),
