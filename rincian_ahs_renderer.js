@@ -136,6 +136,10 @@ ipcRenderer.on("tax-profit-data", (event, response) => {
     const profitSelect = document.getElementById("profit-select");
     profitSelect.value = latestData.profit_percentage || "0";
 
+    // Update PPN dropdown
+    const ppnSelect = document.getElementById("ppn-select");
+    ppnSelect.value = latestData.ppn_percentage || "11";
+
     // Trigger update totals to recalculate with restored percentages
     updateTotals();
   }
