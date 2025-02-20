@@ -9,7 +9,7 @@ function setupBQHandlers(ipcMain, db) {
           a.id,
           a.kode_ahs,
           a.ahs,
-          SUM(m.price * p.koefisien) as total_price
+          COALESCE(MAX(p.total_after_tax_profit), SUM(m.price * p.koefisien)) as total_price
         FROM ahs a
         INNER JOIN pricing p ON p.ahs_id = a.id
         INNER JOIN materials m ON m.id = p.material_id
@@ -39,9 +39,9 @@ function setupBQHandlers(ipcMain, db) {
           b.*,
           a.kode_ahs,
           a.ahs,
-          (SELECT SUM(m.price * p.koefisien) * b.volume
+          (SELECT COALESCE(MAX(p.total_after_tax_profit), SUM(m.price * p.koefisien)) * b.volume
            FROM pricing p
-           INNER JOIN materials m ON m.id = p.material_id
+           LEFT JOIN materials m ON m.id = p.material_id 
            WHERE p.ahs_id = b.ahs_id) as total_price
         FROM bq b
         INNER JOIN ahs a ON a.id = b.ahs_id
@@ -106,9 +106,9 @@ function setupBQHandlers(ipcMain, db) {
         `UPDATE bq
          SET volume = ?,
              satuan = ?,
-             total_price = (SELECT SUM(m.price * p.koefisien) * ?
+             total_price = (SELECT COALESCE(MAX(p.total_after_tax_profit), SUM(m.price * p.koefisien)) * ?
                             FROM pricing p
-                            INNER JOIN materials m ON m.id = p.material_id
+                            LEFT JOIN materials m ON m.id = p.material_id
                             WHERE p.ahs_id = bq.ahs_id)
          WHERE id = ?`,
         [volume, satuan, volume, id],

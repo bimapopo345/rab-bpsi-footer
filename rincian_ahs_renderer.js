@@ -715,19 +715,35 @@ function updateTaxProfitTotals() {
   document.getElementById("grand-total-value").textContent = formatRupiah(
     Math.round(grandTotal)
   );
+}
 
-  // Update database
-  if (selectedAhsId) {
-    const userId = checkAuth();
-    if (userId) {
-      ipcRenderer.send("update-tax-profit", {
-        pricing_id: selectedAhsId,
-        ppn_percentage: 11,
-        profit_percentage: profitPercentage,
-        userId,
-      });
-    }
+// Fungsi untuk menyimpan total setelah PPN dan profit
+function saveTotalAfterTaxProfit() {
+  const userId = checkAuth();
+  if (!userId || !selectedAhsId) {
+    alert("Pilih AHS terlebih dahulu");
+    return;
   }
+
+  const grandTotal =
+    parseFloat(
+      document
+        .getElementById("grand-total-value")
+        .textContent.replace(/\./g, "")
+    ) || 0;
+  const profitPercentage =
+    parseFloat(document.getElementById("profit-select").value) || 0;
+
+  // Kirim ke main process untuk update database
+  ipcRenderer.send("update-tax-profit", {
+    ahs_id: selectedAhsId,
+    ppn_percentage: 11,
+    profit_percentage: profitPercentage,
+    total_after_tax_profit: grandTotal,
+    userId,
+  });
+
+  alert("Total berhasil disimpan!");
 }
 
 function updateTotals() {
