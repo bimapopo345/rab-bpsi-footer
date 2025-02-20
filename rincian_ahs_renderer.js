@@ -121,7 +121,25 @@ function selectAhs(id) {
   closeSearchAhsModal();
   ipcRenderer.send("get-ahs-by-id", { id, userId });
   ipcRenderer.send("get-pricing", { ahsId: id, userId });
+
+  // Get saved tax profit data
+  ipcRenderer.send("get-tax-profit", { ahs_id: id, userId });
 }
+
+// Handle tax profit data response
+ipcRenderer.on("tax-profit-data", (event, response) => {
+  if (response.success && response.data && response.data.length > 0) {
+    // Ada kemungkinan multiple pricing rows, ambil yang paling baru
+    const latestData = response.data[0];
+
+    // Update profit dropdown
+    const profitSelect = document.getElementById("profit-select");
+    profitSelect.value = latestData.profit_percentage || "0";
+
+    // Trigger update totals to recalculate with restored percentages
+    updateTotals();
+  }
+});
 
 // Handle AHS data response
 ipcRenderer.on("ahs-data-for-edit", (event, ahs) => {
