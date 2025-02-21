@@ -15,10 +15,28 @@ async function addBqNewSheet(workbook, db, userId, project) {
     "JUMLAH\nHARGA (Rp)",
   ];
 
-  // Add formula explanation
-  sheet.mergeCells("A2:F2");
-  sheet.getCell("A2").value = "1 2 3 4 5 6 = 3 x 5";
-  sheet.getCell("A2").alignment = { horizontal: "center" };
+  // Add column numbers with more precise alignment
+  const columnNumbers = [
+    { col: 1, text: "1", width: 5 },
+    { col: 2, text: "2", width: 50 },
+    { col: 3, text: "3", width: 12 },
+    { col: 4, text: "4", width: 8 },
+    { col: 5, text: "5", width: 15 },
+    { col: 6, text: "6 = 3 x 5", width: 18 },
+  ];
+
+  columnNumbers.forEach(({ col, text, width }) => {
+    const cell = sheet.getCell(2, col);
+    cell.value = text;
+    cell.alignment = {
+      horizontal: "center",
+      vertical: "middle",
+    };
+    cell.font = { size: 10 };
+
+    // Match column width
+    sheet.getColumn(col).width = width;
+  });
 
   // Insert headers
   headers.forEach((header, i) => {
@@ -169,14 +187,6 @@ async function addBqNewSheet(workbook, db, userId, project) {
     }
   }
   sheet.getCell(currentRow, 6).font = { bold: true };
-
-  // Set column widths
-  sheet.getColumn(1).width = 5; // NO
-  sheet.getColumn(2).width = 50; // URAIAN PEKERJAAN
-  sheet.getColumn(3).width = 12; // VOLUME
-  sheet.getColumn(4).width = 8; // SAT
-  sheet.getColumn(5).width = 15; // HARGA SATUAN
-  sheet.getColumn(6).width = 18; // JUMLAH HARGA
 
   return sheet;
 }
