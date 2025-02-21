@@ -76,8 +76,7 @@ async function addRekapitulasiSheet(workbook, db, userId, project) {
   // Project Info
   sheet.getCell("B5").value = "NAMA PEKERJAAN";
   sheet.getCell("D5").value = ":";
-  sheet.getCell("E5").value =
-    "SURVEI, INVESTIGASI DAN DESAIN (SID)\nOPTIMASI LAHAN RAWA UNTUK PENGEMBANGAN PERTANIAN";
+  sheet.getCell("E5").value = project.name;
   sheet.getCell("E5").alignment = { wrapText: true };
 
   sheet.getCell("B6").value = "PROVINSI";
@@ -88,7 +87,9 @@ async function addRekapitulasiSheet(workbook, db, userId, project) {
 
   sheet.getCell("B7").value = "LOKASI KEGIATAN";
   sheet.getCell("D7").value = ":";
-  sheet.getCell("E7").value = "BULUNGAN";
+  sheet.getCell("E7").value = project.location
+    ? project.location.split(",")[0].trim()
+    : "KALIMANTAN UTARA";
 
   sheet.getCell("B8").value = "TAHUN ANGGARAN";
   sheet.getCell("D8").value = ":";
