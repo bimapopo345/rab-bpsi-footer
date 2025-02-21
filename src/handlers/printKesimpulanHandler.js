@@ -1,11 +1,17 @@
 const ExcelJS = require("exceljs");
 const path = require("path");
 const { app } = require("electron");
-const { addRekapitulasiSheet } = require("./print/rekapitulasiSheet");
-const { addBqNewSheet } = require("./print/bqNewSheet");
-const { addRekapHspSheet } = require("./print/rekapHspSheet");
-const { addAnalisaFixSheet } = require("./print/analisaFixSheet");
-const { addDaftarHargaSheet } = require("./print/daftarHargaSheet");
+const {
+  addRekapitulasiSheet,
+} = require("./print/Cetak Kesimpulan/rekapitulasiSheet");
+const { addBqNewSheet } = require("./print/Cetak Kesimpulan/bqNewSheet");
+const { addRekapHspSheet } = require("./print/Cetak Kesimpulan/rekapHspSheet");
+const {
+  addAnalisaFixSheet,
+} = require("./print/Cetak Kesimpulan/analisaFixSheet");
+const {
+  addDaftarHargaSheet,
+} = require("./print/Cetak Kesimpulan/daftarHargaSheet");
 
 function setupPrintKesimpulanHandlers(ipcMain, db) {
   ipcMain.on("print-kesimpulan", async (event, { userId }) => {
