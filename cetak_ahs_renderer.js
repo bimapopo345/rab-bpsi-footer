@@ -99,6 +99,15 @@ function printRekapBQ() {
   print("rekapBQ");
 }
 
+// Print Kesimpulan
+function printKesimpulan() {
+  const userId = checkAuth();
+  if (!userId) return;
+
+  showLoading();
+  ipcRenderer.send("print-kesimpulan", { userId });
+}
+
 // Handle print completion
 ipcRenderer.on("print-complete", (event, result) => {
   hideLoading();

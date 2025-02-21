@@ -18,6 +18,9 @@ const { setupTaxProfitHandlers } = require("./src/handlers/taxProfitHandlers");
 const {
   setupSubprojectHandlers,
 } = require("./src/handlers/subprojectHandlers");
+const {
+  setupPrintKesimpulanHandlers,
+} = require("./src/handlers/printKesimpulanHandler");
 
 let mainWindow;
 let db;
@@ -51,6 +54,7 @@ function createWindow() {
       setupExportAHSHandler(ipcMain, db);
       setupTaxProfitHandlers(ipcMain, db);
       setupSubprojectHandlers(ipcMain, db);
+      setupPrintKesimpulanHandlers(ipcMain, db);
     })
     .catch(console.error);
 
