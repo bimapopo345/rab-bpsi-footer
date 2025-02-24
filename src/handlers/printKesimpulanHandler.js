@@ -1,6 +1,7 @@
 const ExcelJS = require("exceljs");
 const path = require("path");
 const { app } = require("electron");
+const { addCoverSheet } = require("./print/Cetak Kesimpulan/coverSheet");
 const {
   addRekapitulasiSheet,
 } = require("./print/Cetak Kesimpulan/rekapitulasiSheet");
@@ -36,7 +37,8 @@ function setupPrintKesimpulanHandlers(ipcMain, db) {
       workbook.modified = new Date();
       workbook.properties.date1904 = true;
 
-      // Add sheets
+      // Add sheets (Cover first)
+      await addCoverSheet(workbook, db, userId, project);
       await addRekapitulasiSheet(workbook, db, userId, project);
       await addBqNewSheet(workbook, db, userId, project);
       await addRekapHspSheet(workbook, db, userId, project);
