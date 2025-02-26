@@ -8,11 +8,30 @@ async function addCoverSheet(workbook, db, userId, project) {
   });
 
   // Add outer border
-  for (let i = 1; i <= 30; i++) {
+  // First set corners
+  sheet.getCell("B1").border = {
+    top: { style: "medium" },
+    left: { style: "medium" },
+  };
+  sheet.getCell("K1").border = {
+    top: { style: "medium" },
+    right: { style: "medium" },
+  };
+  sheet.getCell("B30").border = {
+    bottom: { style: "medium" },
+    left: { style: "medium" },
+  };
+  sheet.getCell("K30").border = {
+    bottom: { style: "medium" },
+    right: { style: "medium" },
+  };
+
+  // Then set edges
+  for (let i = 2; i <= 29; i++) {
     sheet.getCell(i, 2).border = { left: { style: "medium" } };
     sheet.getCell(i, 11).border = { right: { style: "medium" } };
   }
-  for (let i = 2; i <= 11; i++) {
+  for (let i = 3; i <= 10; i++) {
     sheet.getCell(1, i).border = { top: { style: "medium" } };
     sheet.getCell(30, i).border = { bottom: { style: "medium" } };
   }
@@ -94,6 +113,13 @@ async function addCoverSheet(workbook, db, userId, project) {
       cell.alignment = { horizontal: "left", vertical: "middle" };
       if (col === 5) {
         cell.value = project.location || "";
+        // Add underline
+        cell.font = {
+          name: "Times New Roman",
+          bold: true,
+          size: 14,
+          underline: true,
+        };
       }
     }
 
