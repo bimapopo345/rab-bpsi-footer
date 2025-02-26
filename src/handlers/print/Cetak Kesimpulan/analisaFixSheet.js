@@ -91,7 +91,7 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       materials.forEach((item, index) => {
         sheet.getCell(currentRow, 2).value = index + 1;
         sheet.getCell(currentRow, 3).value = item.name;
-        sheet.getCell(currentRow, 4).value = item.kode || "-";
+        sheet.getCell(currentRow, 4).value = item.sumber_data || "-";
         sheet.getCell(currentRow, 5).value = item.unit;
         sheet.getCell(currentRow, 6).value = item.koefisien;
         sheet.getCell(currentRow, 7).value = item.price;
@@ -122,6 +122,41 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
     );
     sheet.getCell(currentRow, 7).value = "TOTAL";
     sheet.getCell(currentRow, 8).value = total;
+    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 7).font = { bold: true };
+    sheet.getCell(currentRow, 8).font = { bold: true };
+    currentRow++;
+
+    const profitPercent =
+      pricingData.length > 0 ? pricingData[0].profit_percentage : 0;
+    const ppnPercent =
+      pricingData.length > 0 ? pricingData[0].ppn_percentage : 0;
+
+    // Calculate Overhead & Profit
+    const profitValue = total * (profitPercent / 100);
+    sheet.getCell(
+      currentRow,
+      7
+    ).value = `Overhead & Profit (${profitPercent}%)`;
+    sheet.getCell(currentRow, 8).value = profitValue;
+    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 7).font = { bold: true };
+    sheet.getCell(currentRow, 8).font = { bold: true };
+    currentRow++;
+
+    // Calculate PPN
+    const ppnValue = total * (ppnPercent / 100);
+    sheet.getCell(currentRow, 7).value = `PPN (${ppnPercent}%)`;
+    sheet.getCell(currentRow, 8).value = ppnValue;
+    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 7).font = { bold: true };
+    sheet.getCell(currentRow, 8).font = { bold: true };
+    currentRow++;
+
+    // Final Harga Satuan Pekerjaan
+    const finalPrice = total + profitValue + ppnValue;
+    sheet.getCell(currentRow, 7).value = "Harga Satuan Pekerjaan";
+    sheet.getCell(currentRow, 8).value = finalPrice;
     sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
     sheet.getCell(currentRow, 7).font = { bold: true };
     sheet.getCell(currentRow, 8).font = { bold: true };
