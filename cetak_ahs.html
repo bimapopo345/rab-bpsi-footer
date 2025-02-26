@@ -195,7 +195,7 @@
                 </div>
             </div>
 
-            <div class="button-grid">
+            <!-- <div class="button-grid">
                 <button class="btn btn-primary" onclick="printAll()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -235,8 +235,8 @@
                         <path d="M7 12h2v5H7zm4-7h2v12h-2zm4 4h2v8h-2z" fill="currentColor" />
                     </svg>
                     Cetak BQ
-                </button>
-                <button class="btn btn-primary" onclick="printRekapBQ()">
+                </button> -->
+            <!-- <button class="btn btn-primary" onclick="printRekapBQ()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"
@@ -244,21 +244,21 @@
                         <path d="M7 14h10v2H7zm0-4h10v2H7zm0-4h7v2H7z" fill="currentColor" />
                     </svg>
                     Cetak Rekap BQ
-                </button>
-                <button class="btn btn-primary" onclick="printKesimpulan()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"
-                            fill="currentColor" />
-                        <path d="M9 13h6v2H9zm0 3h6v2H9z" fill="currentColor" />
-                    </svg>
-                    Cetak Kesimpulan
-                </button>
-            </div>
-
-            <div id="loadingIndicator" class="loading">
-                Mempersiapkan dokumen Excel...
-            </div>
+                </button> -->
+            <button class="btn btn-primary" onclick="printKesimpulan()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"
+                        fill="currentColor" />
+                    <path d="M9 13h6v2H9zm0 3h6v2H9z" fill="currentColor" />
+                </svg>
+                Cetak Kesimpulan
+            </button>
         </div>
+
+        <div id="loadingIndicator" class="loading">
+            Mempersiapkan dokumen Excel...
+        </div>
+    </div>
     </div>
 
     <script src="cetak_ahs_renderer.js"></script>
