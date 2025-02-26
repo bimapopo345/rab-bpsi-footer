@@ -5,6 +5,41 @@ async function addBqNewSheet(workbook, db, userId, project) {
     pageSetup: { fitToPage: true, orientation: "portrait" },
   });
 
+  // Title
+  sheet.mergeCells("B1:H1");
+  const titleCell = sheet.getCell("B1");
+  titleCell.value = "RENCANA ANGGARAN BIAYA (RAB)";
+  titleCell.font = { name: "Arial", size: 14, bold: true };
+  titleCell.alignment = { horizontal: "center", vertical: "middle" };
+
+  // Project Info
+  const projectInfo = [
+    { row: 3, label: "NAMA PEKERJAAN", value: project.name },
+    {
+      row: 4,
+      label: "PROVINSI",
+      value: project.location?.split(",")[0].trim() || "",
+    },
+    { row: 5, label: "LOKASI KEGIATAN", value: project.location || "" },
+    { row: 6, label: "TAHUN ANGGARAN", value: new Date().getFullYear() },
+  ];
+
+  projectInfo.forEach((info) => {
+    const labelCell = sheet.getCell(`B${info.row}`);
+    const colonCell = sheet.getCell(`D${info.row}`);
+    const valueCell = sheet.getCell(`E${info.row}`);
+
+    labelCell.value = info.label;
+    labelCell.font = { name: "Arial", size: 10 };
+    colonCell.value = ":";
+    colonCell.font = { name: "Arial", size: 10 };
+    valueCell.value = info.value;
+    valueCell.font = { name: "Arial", size: 10 };
+  });
+
+  // Skip rows for spacing
+  const tableStartRow = 8;
+
   // Headers
   const headers = [
     "NO",
@@ -15,7 +50,7 @@ async function addBqNewSheet(workbook, db, userId, project) {
     "JUMLAH\nHARGA (Rp)",
   ];
 
-  // Add column numbers with more precise alignment
+  // Set column numbers and widths
   const columnNumbers = [
     { col: 1, text: "1", width: 5 },
     { col: 2, text: "2", width: 50 },
@@ -26,35 +61,39 @@ async function addBqNewSheet(workbook, db, userId, project) {
   ];
 
   columnNumbers.forEach(({ col, text, width }) => {
-    const cell = sheet.getCell(2, col);
+    const cell = sheet.getCell(tableStartRow + 1, col);
     cell.value = text;
-    cell.alignment = {
-      horizontal: "center",
-      vertical: "middle",
+    cell.alignment = { horizontal: "center", vertical: "middle" };
+    cell.font = { name: "Arial", size: 10, bold: true };
+    cell.border = {
+      top: { style: "medium" },
+      bottom: { style: "double" },
+      left: col === 1 ? { style: "medium" } : { style: "thin" },
+      right: col === 6 ? { style: "medium" } : { style: "thin" },
     };
-    cell.font = { size: 10 };
 
-    // Match column width
     sheet.getColumn(col).width = width;
   });
 
-  // Insert headers
+  // Insert headers with styling
   headers.forEach((header, i) => {
-    const cell = sheet.getCell(1, i + 1);
+    const cell = sheet.getCell(tableStartRow, i + 1);
     cell.value = header;
-    cell.font = { bold: true, size: 11 };
+    cell.font = { name: "Arial", bold: true, size: 10 };
     cell.alignment = {
       vertical: "middle",
       horizontal: "center",
       wrapText: true,
     };
     cell.border = {
-      top: { style: "thin" },
-      left: { style: "thin" },
-      bottom: { style: "thin" },
-      right: { style: "thin" },
+      top: { style: "medium" },
+      left: i === 0 ? { style: "medium" } : { style: "thin" },
+      bottom: { style: "double" },
+      right: i === headers.length - 1 ? { style: "medium" } : { style: "thin" },
     };
   });
+
+  let currentRow = tableStartRow + 2;
 
   // Get subprojects data with their BQs
   const subprojectsData = await new Promise((resolve, reject) => {
@@ -75,7 +114,6 @@ async function addBqNewSheet(workbook, db, userId, project) {
     );
   });
 
-  let currentRow = 3;
   let totalSum = 0;
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -84,10 +122,29 @@ async function addBqNewSheet(workbook, db, userId, project) {
     const subproject = subprojectsData[subIdx];
 
     // Write subproject header
-    sheet.getCell(currentRow, 1).value = alphabet[subIdx];
-    sheet.getCell(currentRow, 2).value = subproject.name.toUpperCase();
-    sheet.getCell(currentRow, 2).font = { bold: true };
-    sheet.getCell(currentRow, 2).alignment = { horizontal: "left" };
+    const headerFont = { name: "Arial", size: 10, bold: true };
+
+    const letterCell = sheet.getCell(currentRow, 1);
+    letterCell.value = alphabet[subIdx];
+    letterCell.font = headerFont;
+    letterCell.alignment = { horizontal: "center", vertical: "middle" };
+    letterCell.border = {
+      top: { style: "thin" },
+      left: { style: "medium" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+
+    const nameCell = sheet.getCell(currentRow, 2);
+    nameCell.value = subproject.name.toUpperCase();
+    nameCell.font = headerFont;
+    nameCell.alignment = { horizontal: "left", vertical: "middle" };
+    nameCell.border = {
+      top: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "medium" },
+    };
+
     // Merge cells for category header
     sheet.mergeCells(`B${currentRow}:F${currentRow}`);
     currentRow++;
@@ -116,47 +173,91 @@ async function addBqNewSheet(workbook, db, userId, project) {
 
     // Write BQ items
     bqData.forEach((item, index) => {
-      sheet.getCell(currentRow, 1).value = index + 1 + ".";
-      sheet.getCell(currentRow, 2).value = item.uraian;
-      sheet.getCell(currentRow, 2).alignment = {
+      const baseFont = { name: "Arial", size: 10 };
+
+      // Item number
+      const numCell = sheet.getCell(currentRow, 1);
+      numCell.value = index + 1 + ".";
+      numCell.font = baseFont;
+      numCell.alignment = { horizontal: "center", vertical: "middle" };
+
+      // Description
+      const descCell = sheet.getCell(currentRow, 2);
+      descCell.value = item.uraian;
+      descCell.font = baseFont;
+      descCell.alignment = {
         horizontal: "left",
+        vertical: "middle",
         wrapText: true,
       };
-      sheet.getCell(currentRow, 3).alignment = { horizontal: "center" };
-      sheet.getCell(currentRow, 4).alignment = { horizontal: "center" };
-      sheet.getCell(currentRow, 5).alignment = { horizontal: "right" };
-      sheet.getCell(currentRow, 6).alignment = { horizontal: "right" };
-      sheet.getCell(currentRow, 3).value = item.volume;
-      sheet.getCell(currentRow, 4).value = item.satuan;
-      sheet.getCell(currentRow, 5).value = item.harga_satuan || 0;
-      sheet.getCell(currentRow, 6).value =
-        (item.harga_satuan || 0) * item.volume;
 
-      sheet.getCell(currentRow, 5).numFmt =
-        '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
-      sheet.getCell(currentRow, 6).numFmt =
-        '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
+      // Volume
+      const volCell = sheet.getCell(currentRow, 3);
+      volCell.value = item.volume;
+      volCell.font = baseFont;
+      volCell.alignment = { horizontal: "center", vertical: "middle" };
+
+      // Unit
+      const unitCell = sheet.getCell(currentRow, 4);
+      unitCell.value = item.satuan;
+      unitCell.font = baseFont;
+      unitCell.alignment = { horizontal: "center", vertical: "middle" };
+
+      // Unit price
+      const priceCell = sheet.getCell(currentRow, 5);
+      priceCell.value = item.harga_satuan || 0;
+      priceCell.font = baseFont;
+      priceCell.alignment = { horizontal: "right", vertical: "middle" };
+      priceCell.numFmt = '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
+
+      // Total price
+      const totalCell = sheet.getCell(currentRow, 6);
+      totalCell.value = (item.harga_satuan || 0) * item.volume;
+      totalCell.font = baseFont;
+      totalCell.alignment = { horizontal: "right", vertical: "middle" };
+      totalCell.numFmt = '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
 
       subTotal += (item.harga_satuan || 0) * item.volume;
       currentRow++;
     });
 
-    // Write subtotal for subproject
-    sheet.getCell(currentRow, 6).value = subTotal;
-    sheet.getCell(currentRow, 6).numFmt =
-      '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
-    sheet.getCell(currentRow, 6).alignment = { horizontal: "right" };
-    sheet.getCell(currentRow, 6).font = { bold: true };
+    // Write subtotal for subproject with medium border top and bottom
+    const subtotalCell = sheet.getCell(currentRow, 6);
+    subtotalCell.value = subTotal;
+    subtotalCell.numFmt = '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
+    subtotalCell.alignment = { horizontal: "right", vertical: "middle" };
+    subtotalCell.font = { name: "Arial", size: 10, bold: true };
+    subtotalCell.border = {
+      top: { style: "medium" },
+      bottom: { style: "medium" },
+      left: { style: "thin" },
+      right: { style: "medium" },
+    };
     currentRow++;
 
     if (subproject.name.toLowerCase().includes("optimalisasi")) {
-      sheet.getCell(currentRow, 2).value =
-        "Sub Total Pekerjaan " + alphabet[subIdx];
-      sheet.getCell(currentRow, 6).value = subTotal;
-      sheet.getCell(currentRow, 6).numFmt =
-        '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
-      sheet.getCell(currentRow, 6).alignment = { horizontal: "right" };
-      sheet.getCell(currentRow, 6).font = { bold: true };
+      // Optimalisasi subtotal label
+      const subtotalLabelCell = sheet.getCell(currentRow, 2);
+      subtotalLabelCell.value = "Sub Total Pekerjaan " + alphabet[subIdx];
+      subtotalLabelCell.font = { name: "Arial", size: 10, bold: true };
+      subtotalLabelCell.alignment = { horizontal: "left", vertical: "middle" };
+      subtotalLabelCell.border = {
+        top: { style: "medium" },
+        bottom: { style: "medium" },
+      };
+
+      // Optimalisasi subtotal value
+      const subtotalValueCell = sheet.getCell(currentRow, 6);
+      subtotalValueCell.value = subTotal;
+      subtotalValueCell.numFmt = '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
+      subtotalValueCell.alignment = { horizontal: "right", vertical: "middle" };
+      subtotalValueCell.font = { name: "Arial", size: 10, bold: true };
+      subtotalValueCell.border = {
+        top: { style: "medium" },
+        bottom: { style: "medium" },
+        left: { style: "thin" },
+        right: { style: "medium" },
+      };
       currentRow++;
     }
 
@@ -165,12 +266,23 @@ async function addBqNewSheet(workbook, db, userId, project) {
   }
 
   // Write total
-  sheet.getCell(currentRow, 2).value = "TOTAL HARGA PEKERJAAN";
-  sheet.getCell(currentRow, 2).font = { bold: true };
-  sheet.getCell(currentRow, 6).value = totalSum;
-  sheet.getCell(currentRow, 6).numFmt =
-    '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
-  sheet.getCell(currentRow, 6).alignment = { horizontal: "right" };
+  // TOTAL HARGA PEKERJAAN row
+  const totalLabelCell = sheet.getCell(currentRow, 2);
+  totalLabelCell.value = "TOTAL HARGA PEKERJAAN";
+  totalLabelCell.font = { name: "Arial", size: 10, bold: true };
+  totalLabelCell.alignment = { horizontal: "left", vertical: "middle" };
+
+  const totalValueCell = sheet.getCell(currentRow, 6);
+  totalValueCell.value = totalSum;
+  totalValueCell.font = { name: "Arial", size: 10, bold: true };
+  totalValueCell.alignment = { horizontal: "right", vertical: "middle" };
+  totalValueCell.numFmt = '_-* #,##0_-;-* #,##0_-;_-* "-"_-;_-@_-';
+  totalValueCell.border = {
+    top: { style: "medium" },
+    bottom: { style: "medium" },
+    left: { style: "thin" },
+    right: { style: "medium" },
+  };
 
   // Add borders for all data cells
   for (let row = 1; row <= currentRow; row++) {
@@ -179,9 +291,9 @@ async function addBqNewSheet(workbook, db, userId, project) {
       if (!cell.border) {
         cell.border = {
           top: { style: "thin" },
-          left: { style: "thin" },
+          left: col === 1 ? { style: "medium" } : { style: "thin" },
           bottom: { style: "thin" },
-          right: { style: "thin" },
+          right: col === 6 ? { style: "medium" } : { style: "thin" },
         };
       }
     }
