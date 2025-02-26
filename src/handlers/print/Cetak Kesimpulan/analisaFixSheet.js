@@ -120,11 +120,11 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       (sum, item) => sum + item.koefisien * item.price,
       0
     );
-    sheet.getCell(currentRow, 7).value = "TOTAL";
-    sheet.getCell(currentRow, 8).value = total;
-    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
-    sheet.getCell(currentRow, 7).font = { bold: true };
-    sheet.getCell(currentRow, 8).font = { bold: true };
+    sheet.getCell(currentRow, 2).value = "TOTAL";
+    sheet.getCell(currentRow, 3).value = total;
+    sheet.getCell(currentRow, 3).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 2).font = { bold: true };
+    sheet.getCell(currentRow, 3).font = { bold: true };
     currentRow++;
 
     const profitPercent =
@@ -136,30 +136,30 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
     const profitValue = total * (profitPercent / 100);
     sheet.getCell(
       currentRow,
-      7
+      2
     ).value = `Overhead & Profit (${profitPercent}%)`;
-    sheet.getCell(currentRow, 8).value = profitValue;
-    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
-    sheet.getCell(currentRow, 7).font = { bold: true };
-    sheet.getCell(currentRow, 8).font = { bold: true };
+    sheet.getCell(currentRow, 3).value = profitValue;
+    sheet.getCell(currentRow, 3).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 2).font = { bold: true };
+    sheet.getCell(currentRow, 3).font = { bold: true };
     currentRow++;
 
     // Calculate PPN
-    const ppnValue = total * (ppnPercent / 100);
-    sheet.getCell(currentRow, 7).value = `PPN (${ppnPercent}%)`;
-    sheet.getCell(currentRow, 8).value = ppnValue;
-    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
-    sheet.getCell(currentRow, 7).font = { bold: true };
-    sheet.getCell(currentRow, 8).font = { bold: true };
+    const ppnValue = (total + profitValue) * (ppnPercent / 100);
+    sheet.getCell(currentRow, 2).value = `PPN (${ppnPercent}%)`;
+    sheet.getCell(currentRow, 3).value = ppnValue;
+    sheet.getCell(currentRow, 3).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 2).font = { bold: true };
+    sheet.getCell(currentRow, 3).font = { bold: true };
     currentRow++;
 
     // Final Harga Satuan Pekerjaan
     const finalPrice = total + profitValue + ppnValue;
-    sheet.getCell(currentRow, 7).value = "Harga Satuan Pekerjaan";
-    sheet.getCell(currentRow, 8).value = finalPrice;
-    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
-    sheet.getCell(currentRow, 7).font = { bold: true };
-    sheet.getCell(currentRow, 8).font = { bold: true };
+    sheet.getCell(currentRow, 2).value = "Harga Satuan Pekerjaan";
+    sheet.getCell(currentRow, 3).value = finalPrice;
+    sheet.getCell(currentRow, 3).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 2).font = { bold: true };
+    sheet.getCell(currentRow, 3).font = { bold: true };
 
     currentRow += 2; // Add space before next AHS
   }
