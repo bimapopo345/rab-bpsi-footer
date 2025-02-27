@@ -1,0 +1,41 @@
+kamu tau extension cline kan? nah saya ingin kamu buatin prompt biar dia bisa read seluruh file saya dulu isi projectnya tanpa terkecuali semua file file baca pahami dll biar kedepannya enak ngodingnya dan ga error ganggu fungsi yang ada
+
+
+-==- =GPT
+
+
+<search_files>
+<path>./</path>
+<regex>.*</regex>
+</search_files>
+
+Baca dan pahami seluruh file yang ada dalam proyek ini. Pastikan untuk memeriksa semua file kode, konfigurasi, dokumentasi, dan file lainnya yang relevan. Pahami struktur proyek, dependensi, dan konfigurasi yang ada. Jangan lewatkan file atau bagian apapun, dan pastikan untuk memeriksa dan memahami logika serta fungsi-fungsi yang ada di dalam setiap file. Setelah itu, berikan ringkasan terkait hal-hal penting dalam proyek ini, dan pastikan tidak ada konflik atau error yang berpotensi terjadi ketika melanjutkan pengembangan.
+
+
+
+-=-= update baru 
+
+masukan:
+1. di menu BQ ditambah form untuk jenis pekerjaan (sub proyek, krn ternyta, dalam 1 tempat ada lebih dari 1 proyek)
+2. untuk volume, diganti dengan form kosong saja, sehingga user nanti menghitung volum secara manual, jadi nanti diiput user di form volume tsb. kasih aja form volum, dan dropdown satuan (m2,m2,m)
+3.di menu rincian AHS ditambahin form buat pilihan profil (dropdown, pilih profit 10%-15%, beda pekerjaan, kadang beda besar profit)
+4. tambahkan pilihan PPN 11% (pilihan optional, krn terkadang ada PT yang sudah memasukkan PPN)
+
+hasil export excel
+1. rekapitulasi berisi seluruh rincian pekerjaan yg di input yang dibuat(bukan semua AHS)
+2. material dan upah berisi rekap materiah dan upah dr projek yg dibuat
+3. AHS berisi AHS yang di gunakan dalam projek
+
+
+-=-=
+
+Di bq kan pas tambah bq ada dropdown pilih bangunan, ternyata harus di revisi ,ternyata mau input manual dah gitu aja, jadi ga usah ada dropdown, langsung input volume, biar user aja ketik, nanti langsung kamu kali gitu, dan jug ada dropdown satuan, m, m2,m3
+
+
+--=-==
+
+tambahin search 
+
+
+
+

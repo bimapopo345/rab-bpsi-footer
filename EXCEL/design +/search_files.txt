@@ -1,0 +1,663 @@
+<search_files>
+<path>./</path>
+<regex>.*</regex>
+</search_files>
+
+Baca dan pahami seluruh file yang ada dalam proyek ini. Pastikan untuk memeriksa semua file kode, konfigurasi, dokumentasi, dan file lainnya yang relevan. Pahami struktur proyek, dependensi, dan konfigurasi yang ada. Jangan lewatkan file atau bagian apapun, dan pastikan untuk memeriksa dan memahami logika serta fungsi-fungsi yang ada di dalam setiap file. Setelah itu, berikan ringkasan terkait hal-hal penting dalam proyek ini, dan pastikan tidak ada konflik atau error yang berpotensi terjadi ketika melanjutkan pengembangan.
+
+
+
+
+-==-=
+
+bentar saya barusan ngepush, tapi saya cek di web ga ada commitan jadi kacau
+
+PS C:\Users\bimap\OneDrive\Desktop\Ku\rab-bpsi\rab-bldsp> git add .
+PS C:\Users\bimap\OneDrive\Desktop\Ku\rab-bpsi\rab-bldsp> git commit -m "Deleted: Dropdown Shape in BQ"
+[balik-import-table-rincian-ahs b7a9eae] Deleted: Dropdown Shape in BQ
+ 6 files changed, 91 insertions(+), 583 deletions(-)
+ create mode 100644 baru.database.sqlite
+PS C:\Users\bimap\OneDrive\Desktop\Ku\rab-bpsi\rab-bldsp> git push -u origin main
+Everything up-to-date
+branch 'main' set up to track 'origin/main'.
+PS C:\Users\bimap\OneDrive\Desktop\Ku\rab-bpsi\rab-bldsp> git remote -v
+origin  https://github.com/bimapopo345/rab-bpsi-footer.git (fetch)
+origin  https://github.com/bimapopo345/rab-bpsi-footer.git (push)
+PS C:\Users\bimap\OneDrive\Desktop\Ku\rab-bpsi\rab-bldsp> 
+
+
+
+-==-=
+
+
+SAYA INGIN JANGAN TERGANGU DB KOLOM FITUR FUNGSI LAIN JANGAN GANGGU!!!!, kalau emang baru cukup tambahkan file baru atau apa gitu biar yang lain ga rusak
+
+aneh cok setelah ubah ke punya kamu, pas tekan import exceldi rincian_ahs.html, error cok ga masuk ke db dll error total, kenapa ya , kan say dah bilang jangan ganggu fitur rincian_ahs import suka error 
+
+perhatikan juga importHandlers.js, bq_renderer.js, bgHandlers.js, init.js, bq.html
+
+Di bq kan pas tambah bq ada dropdown pilih bangunan, ternyata harus di revisi ,ternyata mau input manual dah gitu aja, jadi ga usah ada dropdown, langsung input volume, biar user aja ketik, nanti langsung kamu kali gitu, dan jug ada dropdown satuan, m, m2,m3
+
+perbaiki init.js tambahin kolom satuan biar bisa user input custom selain 3 pilihan yang ada
+
+kan di dropdown bq tadi ada piliha m,m2,m3 >> nah saya ingin ada 1 lagi option yaitu "Input Manual", jadi pas tekan itu user jadi bisa input sendiri, semisal mau m asukin satuan ton, kwintal, kg, dll
+
+
+-=-=
+
+Saya melihat bahwa masalah terjadi di fungsi updateTotals() saat memproses nilai total dari tabel. Masalahnya ada pada baris yang memproses angka dari teks:
+
+const totalText = row.cells[8].textContent
+  .replace(/[Rp,.\s]/g, ""); // Menghapus semua tanda baca
+Ini menyebabkan angka seperti "117,562.5" menjadi "1175625" karena semua tanda baca dihapus.
+
+Saya akan membuat perbaikan untuk menormalisasi format angka dengan benar, dengan mempertimbangkan:
+
+Koma sebagai pemisah ribuan
+Titik sebagai pemisah decimal
+
+Perbaikan parsing angka untuk grafik telah selesai dilakukan. Sekarang sistem akan:
+
+Menangani format angka desimal dengan benar (contoh: "356.25" akan dibaca sebagai 356.25)
+Menangani format angka ribuan dengan benar (contoh: "2,175" akan dibaca sebagai 2175)
+Menangani kombinasi keduanya dengan benar (contoh: "117,562.5" akan dibaca sebagai 117562.5)
+
+PERHATIKAN RESPONSE TOO LONG !!! KARENA API GA KUAT< baik kamu potong chunk api to smaller bit
+
+saya ga mau kamu ganggu fungsi import export, cukup parsing yg benar dari data table ke grafik dah itu aja, jangan tambah yang lain, ubah yang lain, maupun ada duplikat biarin, saya cumin peduli ke grafik aja!!!!
+
+tolong dong udah fungsi dia ganti , masaslah duplikat ga clean yang lain biarin aja malas kalau perbaiki kelamaan dan kamunya error
+
+saya ga minta fungsi lain!!, cumin parsing nya benerin biar grafik kebaca, ga mau parsing lain diganggu, ga mau tambah fitur lain cumin parsing ke grafik!!! takutnya ke bq dll erro kalau diubah
+
+tidak mengubah ke bq, import juga kan? kamu harus tanggung jawab kalau error, saya cuman minta "diGRAFIK SAJA!!!"
+
+nah saya ingin perhatikan baik baik rincian_ahs.html, semuanya udah benar total mau apapun itu fungsi, dan ngarah ke bq udah cocok, import Cetak sudah bisa,
+
+nah yang bermasalah di rincian_ahs.html, pas pilih salah satu ahs. Ntah kenapa kalau .5 , atau ada titik gitu kaya ga dianggap digrafik lho, saya ga mau kamu uabh yang lain, cuman ubah logika baca digrafik!!! biar ga error jangan ubah yg lain please
+
+Nama Analisa Harga Satuan Pekerjaan:
+1 m3 Galian Batu sedalam 2 s.d. 3 m, manual
+Kelompok Pekerjaan:
+-
+Satuan:
+m3
+Bahan
+0.0%
+Rp. 0
+Upah
+100.0%
+Rp. 1.893.375
+Alat
+0.0%
+Rp. 0
+Total
+100%
+Rp. 1.893.375
+Kategori Kode Deskripsi Satuan Koefisien Hrg Satuan Lokasi Sumber Data Total
+Upah - Mandor OH
+0,4125
+Rp 285,000 Barito Kuala SK Bupati Rp 117,562.5
+Upah - Kepala Tukang OH
+0
+Rp 274,000 Barito Kuala SK Bupati Rp 0
+Upah - Pekerja OH
+4,125
+Rp 174,000 Barito Kuala SK Bupati Rp 717,750
+
+>> tuh harusnya 800 ribuan kan, malah jadi 1 juta, karena 117,562.5 >> dia nganggap 1 jutaan, padahal itu 117,562 ratus ribu, yang .5 itu koma kan dibelakang
+
+
+Kasus "684.0.450.000.000.001" seharusnya menjadi 684045
+Kasus angka seperti "356.25" dan "2,175" perlu penanganan khusus
+Perlu normalisasi format sebelum menjumlahkan
+
+Angka seperti "117,562.5" salah terbaca menjadi 1175625 karena semua tanda titik dan koma dihapus
+Ini menyebabkan total di grafik menjadi tidak akurat
+
+Rincian AHS
+Nama Analisa Harga Satuan Pekerjaan:
+1 m2 Pembabadan rumput (tidak diketahui kondisi medan secara detail)
+Kelompok Pekerjaan:
+-
+Satuan:
+m2
+Bahan
+0.0%
+Rp. 0
+Upah
+100.0%
+Rp. 358.425
+Alat
+0.0%
+Rp. 0
+Total
+100%
+Rp. 358.425
+Kategori	Kode	Deskripsi	Satuan	Koefisien	Hrg Satuan	Lokasi	Sumber Data	Total
+Upah	-	Mandor	OH	
+0,00125
+Rp 285,000	Barito Kuala	SK Bupati	Rp 356.25
+Upah	-	Kepala Tukang	OH	
+0
+Rp 274,000	Barito Kuala	SK Bupati	Rp 0
+Upah	-	Pekerja	OH	
+0,0125
+Rp 174,000	Barito Kuala	SK Bupati	Rp 2,175
+
+
+
+
+
+-=-=-
+
+padahal kamu tinggal tambahin 2 kolom PPN, Profit , terus itu update ke total dibawahnya
+
+perhatikan API RESPONSE TOO LONG, semisal ada fungsi Panjang baru buatkan file baru aje dah biar ga kepanjangana pa gimana gitu < response bit smaller chunks, perhatikan kareana api ga bisa ngangkat panjang
+
+Sekarang di rincian_ahs.html
+
+pas dah milih salah satu ahs kan muncul grafik, saya ingin dibawah grafik itu ada 2 kolom lagi kaya diujung kiri ada profit, terus ada PPN >> diujung kanan setelah ditambah dari profit ke total
+
+kayanya mesti tambahin kolom ppn & profit deh di table pricing atau apa gitu yg rincian
+
+karenakan sudah ada data sebelumnya, tapi kan ga terisi, defaultnya ke 0 dulu aja
+
+jadi tambahin 2 grafik lagi dibawah total, bedain aja bukan grafik sih, jadi ada label gitu Profit | PPN
+
+
+nah di profit saya ingin kamu bisa pilih 0/11%
+
+di Profit ada : 0,10,11,12,13,14,15%
+
+jadi kaya semisal total dibawah grafik 800 rb
+
+nah kita pilih profit nya 10%
+kita pilih juga PPN 11% 
+
+jadinya gini
+
+Grafik :
+
+Total                     800,000
+Profit - Dropdown         80,000
+PPN    - Dropdown         88,000
+Total Setelah Profit+PPN  968,000 
+
+
+>> tapi saya mau itu nanti total setelah profit gitu terupdate nya ke db pricing nya, karena kan ngaruh ke bq juga kan nanti
+
+perlu deh buatin kolomnya, karena kan kalau aplikasi di close nanti ga kesimpan, ya ui nya otomatis berubah saat ganti dropdown
+
+ya tampilin rincian juga kaya struktur saya tadi
+
+di BQ tapilin juga subtotal, + profit+ PPN
+
+
+
+
+-=-=-
+
+saya barusan git reset, ulang baca semua file yg ada, saya cuman mau kamu tambahin satu kolom di tabel pricing, yaitu total_after_tax_Profit
+
+jadi itu kan belum ada, ga kesimpan ke db juga, jadi saya mau buatin itu jangan UBAH YANG LAINNNN PLISS
+
+dan juga perbarui pengambilan ahs di BQ, itu uangnya berdasarkan yang total_after_tax_profit
+
+dah saya ga minta yang lain cuman itu aja, jangan ubah tabel atau apapun di html
+
+
+
+-=-=-=
+
+perhatiin lah ni masih error total akhirnya, dan juga semisal saya pilih satu ahs, terus ke ahs lain kenapa pengaturannya sama? dan button simpannya mana biar kesave ke kolom total_ itu
+
+
+==-=
+
+nah akhirnua berhasil ssemua, tapi ada satu kendala, di bq aman, rincina aman
+
+semisal di rincina_ahs saya dah berhasil nyimpan di bq ada sih, di db juga ada
+
+tapi kalau saya close aplikasi pas pilih lagi, harusnya ke restore dia pilihnya berapa persen gitu, biar orang tau 
+
+fungsi lain aman sih jangan di otak atik, intinya ngerestore pas pilih ahs sih 
+
+
+-==-=
+
+perhatikan API RESPONSE TOO LONG < response bit smaller chunks, perhatikan kareana api ga bisa ngangkat Panjang
+
+kamu tuh suka error lho kalau langsung satu Panjang file , chunknya di cut cut jadi small gapapa
+
+nah udah benar semua fitur jangan ganggu !!
+
+sekarang saya ingin kamu atur PPN Nih, itukan automatis 11, saya ingin ada dropdown
+
+0,10,11 >> gitu , untuk default ya 0 sama kaya yang profit tadi
+
+
+
+-=-=-=
+
+karena gini, kadang hitungan uang disini ada "," sebagai pemisah ribuan, ada "." sebagai pemisah desimal
+
+karena memang kebanyakan pake , pemisah ribuan, dan . itu pemisah decimal
+
+saya ga ingin kamu ganggu fitur lain apalagi hitungan yang table dan grafik, saya cumin mau kamu benerin hitungan yang di profit,ppn,total << udah 3 itu yang lain jangan
+
+bentar bentar itu cuman ubah perhitungan yang si tax profit total aja kan? yang grafik sama tabelnya jangan ya...
+
+>> bisa ga kamu ikutin cara baca profit ppn itu mirip kaya si grafik total? coba cari fungsi dia dan jangan ganggu jadikan pelajaran aja
+
+
+coba kamu baca dulu semua utils, dan rincina_ahs dong, cara pembacaan parsing uang nya juga, soalnya di total profit totalnya masih error, dia nganggap .25 itu ga ada jadi dianggap 200rb,padahal 2 ribu 
+
+pokoknya yg decimal totalnya, dia masih salah parsing yg total profitnya,
+
+saya ga mau ganggu fitur lain!!! cukup perbaiki parsing total profit+ppn nya
+
+
+
+Rincian AHS
+Nama Analisa Harga Satuan Pekerjaan:
+1 m3 Galian Batu sedalam 2 s.d. 3 m, manual
+Kelompok Pekerjaan:
+-
+Satuan:
+m3
+Bahan
+0.0%
+Rp. 0
+Upah
+100.0%
+Rp. 835.312.5
+Alat
+0.0%
+Rp. 0
+Total
+100%
+Rp. 835.312.5
+Profit
+
+0%
+Rp. 0
+PPN
+
+0%
+Rp. 0
+Total Akhir
+Rp. 8.353.125
+💾 Simpan Total
+Kategori	Kode	Deskripsi	Satuan	Koefisien	Hrg Satuan	Lokasi	Sumber Data	Total
+Upah	-	Mandor	OH	
+0,4125
+Rp 285,000	Barito Kuala	SK Bupati	Rp 117,562.5
+Upah	-	Kepala Tukang	OH	
+0
+Rp 274,000	Barito Kuala	SK Bupati	Rp 0
+Upah	-	Pekerja	OH	
+4,125
+Rp 174,000	Barito Kuala	SK Bupati	Rp 717,750
+
+🗑
+Hapus
+
+✏️
+Edit Koefisien
+
++
+Bahan/Upah
+
+📥
+Import Excel
+
+🗑
+Hapus Semua
+
+📥
+Export Excel
+
+
+Rincian AHS
+Nama Analisa Harga Satuan Pekerjaan:
+1 m2 Pembabadan rumput (tidak diketahui kondisi medan secara detail)
+Kelompok Pekerjaan:
+-
+Satuan:
+m2
+Bahan
+0.0%
+Rp. 0
+Upah
+100.0%
+Rp. 2.531.25
+Alat
+0.0%
+Rp. 0
+Total
+100%
+Rp. 2.531.25
+Profit
+
+0%
+Rp. 0
+PPN
+
+0%
+Rp. 0
+Total Akhir
+Rp. 253.125
+💾 Simpan Total
+Kategori	Kode	Deskripsi	Satuan	Koefisien	Hrg Satuan	Lokasi	Sumber Data	Total
+Upah	-	Mandor	OH	
+0,00125
+Rp 285,000	Barito Kuala	SK Bupati	Rp 356.25
+Upah	-	Kepala Tukang	OH	
+0
+Rp 274,000	Barito Kuala	SK Bupati	Rp 0
+Upah	-	Pekerja	OH	
+0,0125
+Rp 174,000	Barito Kuala	SK Bupati	Rp 2,175
+
+🗑
+Hapus
+
+✏️
+Edit Koefisien
+
++
+Bahan/Upah
+
+📥
+Import Excel
+
+🗑
+Hapus Semua
+
+📥
+Expo
+
+
+
+-=-=-
+
+
+Rincian AHS
+Nama Analisa Harga Satuan Pekerjaan:
+1 m3 Galian Batu sedalam 2 s.d. 3 m, manual
+Kelompok Pekerjaan:
+-
+Satuan:
+m3
+Bahan
+0.0%
+Rp. 0
+Upah
+100.0%
+Rp. 835.312.5
+Alat
+0.0%
+Rp. 0
+Total
+100%
+Rp. 835.312.5
+Profit
+
+0%
+Rp. 0
+PPN
+
+0%
+Rp. 0
+Total Akhir
+Rp. 8.353.125
+💾 Simpan Total
+Kategori	Kode	Deskripsi	Satuan	Koefisien	Hrg Satuan	Lokasi	Sumber Data	Total
+Upah	-	Mandor	OH	
+0,4125
+Rp 285,000	Barito Kuala	SK Bupati	Rp 117,562.5
+Upah	-	Kepala Tukang	OH	
+0
+Rp 274,000	Barito Kuala	SK Bupati	Rp 0
+Upah	-	Pekerja	OH	
+4,125
+Rp 174,000	Barito Kuala	SK Bupati	Rp 717,750
+
+
+
+
+-==-=
+
+Saat mengambil baseTotal, fungsi replace(/./g, "") menghapus SEMUA titik, termasuk titik desimal
+Ini menyebabkan angka seperti "835.312.5" menjadi "8353125" (dikalikan 10 kali lipat)
+
+mau berapapun belakang koma jangan dianggap ga ada
+
+duh massih error nih , masih belum dianggap "." sebagai desimal disini
+
+>> tuh tabel saya masih salah ngira, kan 800rb. & 5 perak ada juga cuman 2ribu & perak malah dianggap 200ribu
+
+Bahan
+0.0%
+Rp. 0
+Upah
+100.0%
+Rp. 2.531.25
+Alat
+0.0%
+Rp. 0
+Total
+100%
+Rp. 2.531.25
+Profit
+
+0%
+Rp. 0
+PPN
+
+0%
+Rp. 0
+Total Akhir
+Rp. 253.125
+
+Bahan
+0.0%
+Rp. 0
+Upah
+100.0%
+Rp. 835.312.5
+Alat
+0.0%
+Rp. 0
+Total
+100%
+Rp. 835.312.5
+Profit
+
+0%
+Rp. 0
+PPN
+
+0%
+Rp. 0
+Total Akhir
+Rp. 8.353.125
+
+
+
+
+
+
+
+
+--=-=
+
+>> bisa ga sih kamu samain aja cara baca decimal kaya yang digrafik? soalnya saya ingin cara kamu baca decimal mirip kaya di grafik pada Profit, PPn, Total Akhir
+
+>> tuh tabel saya masih salah ngira, kan 800rb. & 5 perak ada juga cuman 2ribu & perak malah dianggap 200ribu
+
+saya ga ingin kamu ganggu fitur lain apalagi hitungan yang table dan grafik, saya cumin mau kamu benerin hitungan yang di profit,ppn,total << udah 3 itu yang lain jangan
+
+bentar bentar itu cuman ubah perhitungan yang si tax profit total aja kan? yang grafik sama tabelnya jangan ya...
+
+>> bisa ga kamu ikutin cara baca profit ppn itu mirip kaya si grafik total? coba cari fungsi dia dan jangan ganggu jadikan pelajaran aja
+
+
+coba kamu baca dulu semua utils, dan rincina_ahs dong, cara pembacaan parsing uang nya juga, soalnya di total profit totalnya masih error, dia nganggap .25 itu ga ada jadi dianggap 200rb,padahal 2 ribu 
+
+pokoknya yg decimal totalnya, dia masih salah parsing yg total profitnya,
+
+saya ga mau ganggu fitur lain!!! cukup perbaiki parsing total profit+ppn nya
+
+>> Contoh : harusnya 800 rb (malah kebca 8 juta di Total akhir ppn profit), di grafik sudah benar, tapi harusnya digrafik itu pake , Sebagai pemisah ribuan/ratusan >> kalau decimal baru titik 
+()
+
+dan juga harusnya 
+
+-==- contoh error di rincian ahs >> tuh dianggap 8 juta, padahal total asli 800rb, sama juga dengan yg lain gitu, intinya yang ada . diakhir gitu desimal malah dianggap ga ada
+
+> contoh error :
+
+Rincian AHS
+Nama Analisa Harga Satuan Pekerjaan:
+1 m3 Galian Batu sedalam 2 s.d. 3 m, manual
+Kelompok Pekerjaan:
+-
+Satuan:
+m3
+Bahan
+0.0%
+Rp. 0
+Upah
+100.0%
+Rp. 835.312.5
+Alat
+0.0%
+Rp. 0
+Total
+100%
+Rp. 835.312.5
+Profit
+
+10%
+Rp. 835.313
+PPN
+
+0%
+Rp. 0
+Total Akhir
+Rp. 9.188.438
+💾 Simpan Total
+
+
+
+-==-=
+
+duh kacau balau, ppn ga kereset ke 0 pas pilih , harusnya restore ke db sih ngecek, dan juga sekarang profitnya malah ga ke restore si ppn juga, dan semisal pindah ahs masih lengket
+
+
+-==-=
+
+perhatikan API RESPONSE TOO LONG, semisal ada fungsi Panjang baru buatkan file baru aje dah biar ga kepanjangana pa gimana gitu < response bit smaller chunks, perhatikan kareana api ga bisa ngangkat panjang
+
+
+Jadi saya ingin Di BQ, jangan ganggu file atau fitur lain
+
+mungkin tambahin table baru bq apa gitu biar bagus relasinya ke fitur baru ini
+
+jadi saya ingin semisal disamping tombol Tambah ahs paling atas yang di bq itu, ada in button "Tambah SubProyek" >> jadi pas ditekan nanti input kosong 1 aja, bisa diinput user dan disimpan jangan lupa buatin db baru aja biar enak
+
+nah jadi semisal gini tampilannya nanti
+
+SubProyek Pembangunan Air - Button Add AHS - Edit SuProyek - Delete SupProyek
+AHs …
+Ahs …
+
+SubProyek Dermaga - Button Add AHS - Edit SuProyek - Delete SupProyek
+Ahs …
+Ahs …
+
+….
+
+
+
+
+
+
+
+
+
+
+
+-==-=-=
+
+
+<search_files>
+<path>./</path>
+<regex>.*</regex>
+</search_files>
+
+Baca dan pahami seluruh file yang ada dalam proyek ini. Pastikan untuk memeriksa semua file kode, konfigurasi, dokumentasi, dan file lainnya yang relevan. Pahami struktur proyek, dependensi, dan konfigurasi yang ada. Jangan lewatkan file atau bagian apapun, dan pastikan untuk memeriksa dan memahami logika serta fungsi-fungsi yang ada di dalam setiap file. Setelah itu, berikan ringkasan terkait hal-hal penting dalam proyek ini, dan pastikan tidak ada konflik atau error yang berpotensi terjadi ketika melanjutkan pengembangan.
+
+
+Bisa ga kamu baca folder EXCEL/BQ/
+
+>> nah disana banyak file excel nih, saya ingin kamu baca semua bisa ga? karena ini ingin dipake kedepannya
+
+Rekap.xlsx
+BQ.xlsx
+Rekap HSP.xlsx
+Analisa_FIX.xlsx
+Daftar Harga.xlsx
+
+
+-
+
+Saya ingin kamu buat button baru dibawah Cetak semua, di cetak.html
+
+tambahin button "Cetak Kesimpulan"
+
+>> buatkan 5 file .js baru buat handler cetaknya biar fungsi yang lain tidak error, karena saya ga mau ganggu file lain 
+
+>> nah nanti dalamnya ada 5 sheet, buatkan sheet baru plisssssssssss,
+
+pas tekan cetak Kesimpulan, ambilin data ke db dan buatkan dalam 1 excel itu 5 sheet, ada Rekapitulasi, BQ, REKAP HSP, Analisa_FIX, Daftar Harga
+
+>> dan susunan di excel c etak nanti harus mirip dengan yang Contoh diatas tadi
+
+
+-=-
+
+Nah sekarang bagian yg di sheet "BQ" pas cetak kesimpulan, coba ikutin contoh yang excel tadi :
+
+NO URAIAN PEKERJAAN VOLUME SAT "HARGA
+SATUAN (Rp)" "JUMLAH
+HARGA (Rp)"
+1 2 3 4 5 6 = 3 x 5
+A PEKERJAAN PERSIAPAN
+1 Mobilisasi dan Demobilisasi 1 Ls 35.000.000 35.000.000
+2 Pengadaan dan pemasangan papan nama proyek 1 Ls 1.370.983 1.370.983
+3 Penerapan SMMK3L 1 Ls 8.500.000 8.500.000
+4 Pekerjaan Persiapan dan Pembersihan Hasil Pekerjaan 1 Ls 5.000.000 5.000.000
+49.870.983
+B PEKERJAAN OPTIMALISASI LAHAN
+I Pekerjaan Normalisasi Saluran Irigasi
+1. Galian tanah saluran 46.818 m3 18.190 851.626.972
+2. Perapihan 142.792 m2 20.103 2.870.502.045
+Pekerjaan Normalisasi Saluran Irigasi 3.722.129.017
+Sub Total Pekerjaan B 3.722.129.017
+TOTAL HARGA PEKERJAAN 3.772.000.000
+
+
+--=-
+1 2 3 4 5 6 = 3 x 5
+
+bentar yangg angka itu harusnya perkolom , bukan jadi 1 merge gitu, kan pas tuh 
+
+1 > kolom NO
+2 > kolom uraian Pekerjaan
+3 > kolom Volume
+4 > kolom SAT
+5 > kolom Satuan HArga
+6 = 3 x 5 > kolom Jumlah Harga

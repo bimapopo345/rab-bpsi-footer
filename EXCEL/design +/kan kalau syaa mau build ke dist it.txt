@@ -1,0 +1,9 @@
+kan kalau syaa mau build ke dist itu pake perintah ini ya? npx electron-packager . rab-bldsp --platform=win32 --arch=x64 --out=dist --overwrite
+
+projek saya itu
+
+nah kan nanti jadi ke folder terus ada exe tinggal jalanin, tapi dalam foldernya ada kodingannya, gimana supaya orang lain ga bisa liat? tambahin perintah baru dong , saya disuruh gitu biar g a bisa dijiplak orang
+
+iya tapi yang ini masih bisa ya? npx electron-packager . rab-bldsp --platform=win32 --arch=x64 --out=dist --overwrite
+
+soalnya saya ingin 2 versi, yang satu ya yg biasa itu, satu lagi saya mau buat dist2 aja kali ya, dia itu baru yg obfuscate, jadi saya ga mau ganggu fungsi yang awal
