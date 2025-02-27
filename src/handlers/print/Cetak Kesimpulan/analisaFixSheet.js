@@ -110,14 +110,18 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       categoryNameCell.font = { name: "Arial Narrow", size: 10, bold: true };
       categoryNameCell.alignment = { horizontal: "left", vertical: "middle" };
 
-      [2, 3].forEach((col) => {
-        sheet.getCell(currentRow, col).border = {
-          top: { style: "thin" },
+      // Apply border style and merge cells for category header
+      for (let col = 2; col <= 8; col++) {
+        const cell = sheet.getCell(currentRow, col);
+        const topStyle = itemNo === 1 ? "thin" : "none"; // Only first category has top border
+        cell.border = {
+          top: { style: topStyle },
           left: { style: "thin" },
-          bottom: { style: "thin" },
+          bottom: { style: "none" },
           right: { style: "thin" },
         };
-      });
+      }
+      sheet.mergeCells(`C${currentRow}:H${currentRow}`);
 
       currentRow++;
 
@@ -138,9 +142,9 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
           const cell = sheet.getCell(currentRow, col);
           cell.font = { name: "Arial Narrow", size: 10 };
           cell.border = {
-            top: { style: "thin" },
+            top: { style: "none" },
             left: { style: "thin" },
-            bottom: { style: "thin" },
+            bottom: { style: "none" },
             right: { style: "thin" },
           };
           if (col === 3) {
@@ -184,11 +188,11 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       0
     );
     sheet.getCell(currentRow, 2).value = "TOTAL";
-    sheet.getCell(currentRow, 3).value = total;
-    sheet.getCell(currentRow, 3).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 8).value = total;
+    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
 
     // Style for TOTAL row
-    [2, 3].forEach((col) => {
+    for (let col = 2; col <= 8; col++) {
       const cell = sheet.getCell(currentRow, col);
       cell.font = { name: "Arial Narrow", size: 10, bold: true };
       cell.border = {
@@ -197,8 +201,12 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
         bottom: { style: "thin" },
         right: { style: "thin" },
       };
-      cell.alignment = { horizontal: "center", vertical: "middle" };
-    });
+      if (col === 2) {
+        cell.alignment = { horizontal: "left", vertical: "middle" };
+      } else {
+        cell.alignment = { horizontal: "center", vertical: "middle" };
+      }
+    }
     currentRow++;
 
     const profitPercent =
@@ -212,11 +220,11 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       currentRow,
       2
     ).value = `Overhead & Profit (${profitPercent}%)`;
-    sheet.getCell(currentRow, 3).value = profitValue;
-    sheet.getCell(currentRow, 3).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 8).value = profitValue;
+    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
 
     // Style Overhead & Profit row
-    [2, 3].forEach((col) => {
+    for (let col = 2; col <= 8; col++) {
       const cell = sheet.getCell(currentRow, col);
       cell.font = { name: "Arial Narrow", size: 10, bold: true };
       cell.border = {
@@ -230,17 +238,17 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       } else {
         cell.alignment = { horizontal: "center", vertical: "middle" };
       }
-    });
+    }
     currentRow++;
 
     // Calculate PPN
     const ppnValue = (total + profitValue) * (ppnPercent / 100);
     sheet.getCell(currentRow, 2).value = `PPN (${ppnPercent}%)`;
-    sheet.getCell(currentRow, 3).value = ppnValue;
-    sheet.getCell(currentRow, 3).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 8).value = ppnValue;
+    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
 
     // Style PPN row
-    [2, 3].forEach((col) => {
+    for (let col = 2; col <= 8; col++) {
       const cell = sheet.getCell(currentRow, col);
       cell.font = { name: "Arial Narrow", size: 10, bold: true };
       cell.border = {
@@ -254,17 +262,17 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       } else {
         cell.alignment = { horizontal: "center", vertical: "middle" };
       }
-    });
+    }
     currentRow++;
 
     // Final Harga Satuan Pekerjaan
     const finalPrice = total + profitValue + ppnValue;
     sheet.getCell(currentRow, 2).value = "Harga Satuan Pekerjaan";
-    sheet.getCell(currentRow, 3).value = finalPrice;
-    sheet.getCell(currentRow, 3).numFmt = "#,##0.00";
+    sheet.getCell(currentRow, 8).value = finalPrice;
+    sheet.getCell(currentRow, 8).numFmt = "#,##0.00";
 
     // Style Harga Satuan Pekerjaan row
-    [2, 3].forEach((col) => {
+    for (let col = 2; col <= 8; col++) {
       const cell = sheet.getCell(currentRow, col);
       cell.font = { name: "Arial Narrow", size: 10, bold: true };
       cell.border = {
@@ -278,7 +286,12 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       } else {
         cell.alignment = { horizontal: "center", vertical: "middle" };
       }
-    });
+    }
+
+    // Merge cells for cleaner look
+    for (let row = currentRow - 3; row <= currentRow; row++) {
+      sheet.mergeCells(`C${row}:G${row}`);
+    }
 
     currentRow += 2; // Add space before next AHS
   }
