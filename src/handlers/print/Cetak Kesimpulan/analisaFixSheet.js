@@ -288,9 +288,17 @@ async function addAnalisaFixSheet(workbook, db, userId, project) {
       }
     }
 
-    // Merge cells for cleaner look
+    // Merge cells for total, profit, ppn, and harga satuan rows - make them wider
     for (let row = currentRow - 3; row <= currentRow; row++) {
-      sheet.mergeCells(`C${row}:G${row}`);
+      sheet.mergeCells(`B${row}:G${row}`);
+
+      // Get the merged cell for the description
+      const descCell = sheet.getCell(row, 2);
+      descCell.alignment = { horizontal: "left", vertical: "middle" };
+
+      // Style the value cell
+      const valueCell = sheet.getCell(row, 8);
+      valueCell.alignment = { horizontal: "right", vertical: "middle" };
     }
 
     currentRow += 2; // Add space before next AHS
