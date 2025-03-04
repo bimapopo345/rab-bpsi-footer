@@ -71,6 +71,13 @@
             border-radius: 8px;
         }
 
+        .instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
         .input-group {
             margin-bottom: 15px;
         }
@@ -101,10 +108,12 @@
             padding: 15px;
             background-color: var(--background);
             border-radius: 4px;
-            text-align: center;
-            font-weight: bold;
             color: var(--primary);
-            font-size: 18px;
+            font-size: 16px;
+        }
+
+        .result div {
+            margin: 8px 0;
         }
 
         .formula-section {
@@ -127,6 +136,11 @@
         .info-section {
             margin-top: 30px;
         }
+
+        .value {
+            font-weight: bold;
+            color: var(--primary);
+        }
     </style>
 </head>
 
@@ -141,54 +155,58 @@
 
     <div class="container">
         <div class="card">
+            <div class="instructions">
+                Masukkan dua nilai. Nilai lainnya akan dihitung secara otomatis.
+            </div>
+
             <div class="canvas-container">
                 <canvas id="persegiCanvas"></canvas>
             </div>
 
             <div class="input-group">
-                <label>Sisi (s):</label>
-                <input type="number" id="sisi" step="0.1" oninput="updatePersegi()">
+                <label>Sisi a:</label>
+                <input type="number" id="sisi-a" step="0.1" oninput="updatePersegi()">
             </div>
 
-            <div class="result" id="result">
-                Luas = 0
-                <br>
-                Keliling = 0
+            <div class="input-group">
+                <label>Sisi b:</label>
+                <input type="number" id="sisi-b" step="0.1" oninput="updatePersegi()">
+            </div>
+
+            <div class="result">
+                <div>Luas: <span id="luas" class="value">0</span></div>
+                <div>Keliling: <span id="keliling" class="value">0</span></div>
+                <div>Diagonal: <span id="diagonal" class="value">0</span></div>
             </div>
         </div>
 
         <div class="card formula-section">
-            <h3>Rumus-rumus Persegi</h3>
+            <h3>Rumus Persegi Panjang:</h3>
             <div class="formula">
-                • Luas = s × s
+                • Luas = a × b
             </div>
             <div class="formula">
-                • Keliling = 4 × s
+                • Keliling = 2 × a + 2 × b
+            </div>
+            <div class="formula">
+                • Diagonal = √(a² + b²)
             </div>
         </div>
 
         <div class="card info-section">
-            <h3>Apa itu Persegi?</h3>
+            <h3>Apa itu Persegi Panjang?</h3>
             <p>
-                Persegi adalah bangun datar dua dimensi yang dibentuk oleh empat buah sisi yang sama panjang dan
-                memiliki empat buah sudut yang sama besar yaitu 90°.
-                Sifat-sifat persegi:
+                Persegi panjang adalah bangun datar dua dimensi yang dibentuk oleh dua pasang sisi sejajar dan
+                memiliki empat sudut siku-siku (90°).
+            </p>
+            <p>
+                Sifat-sifat persegi panjang:
             </p>
             <ul>
-                <li>Memiliki empat sisi yang sama panjang</li>
-                <li>Memiliki empat sudut siku-siku (90°)</li>
-                <li>Memiliki dua diagonal yang sama panjang</li>
-                <li>Memiliki empat sumbu simetri</li>
-            </ul>
-
-            <h3>Cara Menghitung</h3>
-            <p>
-                Untuk menghitung luas dan keliling persegi, Anda hanya perlu mengetahui panjang sisinya (s).
-                Kemudian masukkan nilai tersebut ke dalam rumus:
-            </p>
-            <ul>
-                <li>Luas = s × s</li>
-                <li>Keliling = 4 × s</li>
+                <li>Memiliki dua pasang sisi yang sama panjang dan sejajar</li>
+                <li>Semua sudutnya siku-siku (90°)</li>
+                <li>Kedua diagonalnya sama panjang dan saling membagi dua sama besar</li>
+                <li>Dapat dilipat menjadi dua bagian yang sama melalui sumbu simetrinya</li>
             </ul>
         </div>
     </div>
@@ -199,46 +217,111 @@
         canvas.width = 600;
         canvas.height = 300;
 
-        function drawPersegi(highlight = false) {
+        let highlightedPart = null;
+
+        function drawPersegi(highlight = null) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Set style
-            ctx.strokeStyle = highlight ? '#f26522' : '#1a4f7c';
-            ctx.lineWidth = highlight ? 3 : 2;
+            // Set style default
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
             ctx.fillStyle = '#f5f5f5';
 
-            // Gambar persegi
-            const size = 150;
-            const x = (canvas.width - size) / 2;
-            const y = (canvas.height - size) / 2;
+            // Koordinat persegi
+            const width = 200;
+            const height = 150;
+            const x = (canvas.width - width) / 2;
+            const y = (canvas.height - height) / 2;
 
+            // Gambar persegi
             ctx.beginPath();
-            ctx.rect(x, y, size, size);
+            ctx.rect(x, y, width, height);
             ctx.fill();
             ctx.stroke();
+
+            // Gambar diagonal dengan garis putus-putus
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + width, y + height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Highlight bagian yang dipilih
+            if (highlight) {
+                ctx.strokeStyle = '#f26522';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+
+                switch (highlight) {
+                    case 'sisi-a':
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x + width, y);
+                        break;
+                    case 'sisi-b':
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x, y + height);
+                        break;
+                    case 'diagonal':
+                        ctx.setLineDash([5, 5]);
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x + width, y + height);
+                        break;
+                }
+
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
 
             // Label sisi
             ctx.font = '16px Arial';
             ctx.fillStyle = '#1a4f7c';
             ctx.textAlign = 'center';
-            ctx.fillText('s', x + size / 2, y - 10);
-            ctx.fillText('s', x - 20, y + size / 2);
+            ctx.fillText('a', x + width / 2, y - 10);
+            ctx.fillText('b', x - 20, y + height / 2);
         }
 
         function updatePersegi() {
-            drawPersegi(true);
+            const a = parseFloat(document.getElementById('sisi-a').value) || 0;
+            const b = parseFloat(document.getElementById('sisi-b').value) || 0;
 
-            const s = parseFloat(document.getElementById('sisi').value) || 0;
-            const luas = s * s;
-            const keliling = 4 * s;
+            if (a && b) {
+                const luas = a * b;
+                const keliling = 2 * (a + b);
+                const diagonal = Math.sqrt(a * a + b * b);
 
-            document.getElementById('result').innerHTML =
-                `Luas = ${luas.toFixed(2)}<br>Keliling = ${keliling.toFixed(2)}`;
+                document.getElementById('luas').textContent = luas.toFixed(2);
+                document.getElementById('keliling').textContent = keliling.toFixed(2);
+                document.getElementById('diagonal').textContent = diagonal.toFixed(2);
+
+                // Highlight diagonal when values are entered
+                if (a > 0 && b > 0) {
+                    highlightedPart = 'diagonal';
+                }
+            }
+
+            drawPersegi(highlightedPart);
         }
 
-        // Event listener untuk input focus
-        document.getElementById('sisi').addEventListener('focus', () => drawPersegi(true));
-        document.getElementById('sisi').addEventListener('blur', () => drawPersegi(false));
+        // Event listeners
+        document.getElementById('sisi-a').addEventListener('focus', () => {
+            highlightedPart = 'sisi-a';
+            drawPersegi(highlightedPart);
+        });
+
+        document.getElementById('sisi-b').addEventListener('focus', () => {
+            highlightedPart = 'sisi-b';
+            drawPersegi(highlightedPart);
+        });
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('blur', () => {
+                const a = parseFloat(document.getElementById('sisi-a').value) || 0;
+                const b = parseFloat(document.getElementById('sisi-b').value) || 0;
+                highlightedPart = (a > 0 && b > 0) ? 'diagonal' : null;
+                drawPersegi(highlightedPart);
+            });
+        });
 
         // Gambar persegi saat halaman dimuat
         drawPersegi();
