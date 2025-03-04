@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kalkulator Trapesium - RAB Application</title>
+    <style>
+        :root {
+            --primary: #1a4f7c;
+            --secondary: #f26522;
+            --accent: #58595b;
+            --background: #f5f5f5;
+            --white: #ffffff;
+            --border: #dde1e4;
+            --shadow: rgba(26, 79, 124, 0.1);
+            --hover: #183f62;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 4px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .canvas-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        #trapesiumCanvas {
+            width: 100%;
+            height: 300px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--shadow);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--background);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .formula-section {
+            margin-top: 30px;
+        }
+
+        .formula-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .formula {
+            background: var(--background);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: monospace;
+        }
+
+        .info-section {
+            margin-top: 30px;
+        }
+
+        .highlighted {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='kalkulator_hitung.html'">
+            ← Kembali
+        </button>
+        <h1>Kalkulator Trapesium</h1>
+        <div style="width: 80px;"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="canvas-container">
+                <canvas id="trapesiumCanvas"></canvas>
+            </div>
+
+            <div class="input-grid">
+                <div>
+                    <h3>Sisi-sisi</h3>
+                    <div class="input-group">
+                        <label>Sisi Atas (a):</label>
+                        <input type="number" id="sisi-a" step="0.1" oninput="updateTrapesium(this.id)">
+                    </div>
+                    <div class="input-group">
+                        <label>Sisi Bawah (c):</label>
+                        <input type="number" id="sisi-c" step="0.1" oninput="updateTrapesium(this.id)">
+                    </div>
+                    <div class="input-group">
+                        <label>Sisi Kiri (b):</label>
+                        <input type="number" id="sisi-b" step="0.1" oninput="updateTrapesium(this.id)">
+                    </div>
+                    <div class="input-group">
+                        <label>Sisi Kanan (d):</label>
+                        <input type="number" id="sisi-d" step="0.1" oninput="updateTrapesium(this.id)">
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Sudut-sudut</h3>
+                    <div class="input-group">
+                        <label>Sudut Alpha (°):</label>
+                        <input type="number" id="sudut-alpha" step="1" max="180" oninput="updateTrapesium(this.id)">
+                    </div>
+                    <div class="input-group">
+                        <label>Sudut Beta (°):</label>
+                        <input type="number" id="sudut-beta" step="1" max="180" oninput="updateTrapesium(this.id)">
+                    </div>
+                    <div class="input-group">
+                        <label>Sudut Gamma (°):</label>
+                        <input type="number" id="sudut-gamma" step="1" max="180" oninput="updateTrapesium(this.id)">
+                    </div>
+                    <div class="input-group">
+                        <label>Sudut Delta (°):</label>
+                        <input type="number" id="sudut-delta" step="1" max="180" oninput="updateTrapesium(this.id)">
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Dimensi Lain</h3>
+                    <div class="input-group">
+                        <label>Tinggi (h):</label>
+                        <input type="number" id="tinggi" step="0.1" oninput="updateTrapesium(this.id)">
+                    </div>
+                    <div class="input-group">
+                        <label>Diagonal (e):</label>
+                        <input type="number" id="diagonal-e" step="0.1" oninput="updateTrapesium(this.id)">
+                    </div>
+                    <div class="input-group">
+                        <label>Diagonal (f):</label>
+                        <input type="number" id="diagonal-f" step="0.1" oninput="updateTrapesium(this.id)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="result" id="result">
+                Luas = 0
+            </div>
+        </div>
+
+        <div class="card formula-section">
+            <h3>Rumus-rumus Trapesium</h3>
+            <div class="formula">
+                • Alpha + Delta = Beta + Gamma = 180°
+            </div>
+            <div class="formula">
+                • Luas = (a + c) × h ÷ 2
+            </div>
+        </div>
+
+        <div class="card info-section">
+            <h3>Apa itu Trapesium?</h3>
+            <p>
+                Trapesium adalah bangun datar segi empat yang memiliki dua sisi sejajar.
+                Dalam trapesium, sisi a dan c adalah sisi yang sejajar. Sifat-sifat trapesium:
+            </p>
+            <ul>
+                <li>Memiliki dua sisi sejajar yang tidak sama panjang</li>
+                <li>Jumlah sudut yang berdekatan pada sisi sejajar adalah 180°</li>
+                <li>Memiliki empat sisi dan empat sudut</li>
+            </ul>
+
+            <h3>Cara Menghitung</h3>
+            <p>
+                Untuk menghitung luas trapesium, Anda perlu mengetahui:
+            </p>
+            <ul>
+                <li>Panjang sisi sejajar (a dan c)</li>
+                <li>Tinggi trapesium (h)</li>
+            </ul>
+            <p>
+                Kemudian masukkan nilai-nilai tersebut ke dalam rumus:
+                Luas = (a + c) × h ÷ 2
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Canvas setup
+        const canvas = document.getElementById('trapesiumCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 300;
+
+        // Variabel untuk highlight
+        let highlightedElement = null;
+
+        // Fungsi untuk menggambar trapesium
+        function drawTrapesium(highlight = null) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set style default
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#f5f5f5';
+
+            // Koordinat trapesium
+            const points = {
+                topLeft: { x: 200, y: 100 },
+                topRight: { x: 400, y: 100 },
+                bottomRight: { x: 450, y: 200 },
+                bottomLeft: { x: 150, y: 200 }
+            };
+
+            // Gambar trapesium
+            ctx.beginPath();
+            ctx.moveTo(points.topLeft.x, points.topLeft.y);
+            ctx.lineTo(points.topRight.x, points.topRight.y);
+            ctx.lineTo(points.bottomRight.x, points.bottomRight.y);
+            ctx.lineTo(points.bottomLeft.x, points.bottomLeft.y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Highlight bagian yang dipilih
+            if (highlight) {
+                ctx.strokeStyle = '#f26522';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+
+                switch (highlight) {
+                    case 'sisi-a':
+                        ctx.moveTo(points.topLeft.x, points.topLeft.y);
+                        ctx.lineTo(points.topRight.x, points.topRight.y);
+                        break;
+                    case 'sisi-b':
+                        ctx.moveTo(points.topLeft.x, points.topLeft.y);
+                        ctx.lineTo(points.bottomLeft.x, points.bottomLeft.y);
+                        break;
+                    case 'sisi-c':
+                        ctx.moveTo(points.bottomLeft.x, points.bottomLeft.y);
+                        ctx.lineTo(points.bottomRight.x, points.bottomRight.y);
+                        break;
+                    case 'sisi-d':
+                        ctx.moveTo(points.topRight.x, points.topRight.y);
+                        ctx.lineTo(points.bottomRight.x, points.bottomRight.y);
+                        break;
+                    case 'tinggi':
+                        ctx.setLineDash([5, 5]);
+                        ctx.moveTo(points.topLeft.x, points.topLeft.y);
+                        ctx.lineTo(points.topLeft.x, points.bottomLeft.y);
+                        break;
+                }
+
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Label sisi-sisi
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#1a4f7c';
+            ctx.fillText('a', (points.topLeft.x + points.topRight.x) / 2, points.topLeft.y - 10);
+            ctx.fillText('b', points.topLeft.x - 20, (points.topLeft.y + points.bottomLeft.y) / 2);
+            ctx.fillText('c', (points.bottomLeft.x + points.bottomRight.x) / 2, points.bottomLeft.y + 20);
+            ctx.fillText('d', points.bottomRight.x + 20, (points.topRight.y + points.bottomRight.y) / 2);
+            ctx.fillText('h', points.topLeft.x - 40, (points.topLeft.y + points.bottomLeft.y) / 2);
+        }
+
+        // Fungsi untuk update trapesium saat input berubah
+        function updateTrapesium(inputId) {
+            highlightedElement = inputId;
+            drawTrapesium(inputId);
+
+            // Hitung luas jika nilai yang diperlukan tersedia
+            const a = parseFloat(document.getElementById('sisi-a').value) || 0;
+            const c = parseFloat(document.getElementById('sisi-c').value) || 0;
+            const h = parseFloat(document.getElementById('tinggi').value) || 0;
+
+            if (a && c && h) {
+                const luas = ((a + c) * h) / 2;
+                document.getElementById('result').innerText = `Luas = ${luas.toFixed(2)}`;
+            }
+        }
+
+        // Event listener untuk focus pada input
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => updateTrapesium(input.id));
+            input.addEventListener('blur', () => {
+                highlightedElement = null;
+                drawTrapesium();
+            });
+        });
+
+        // Gambar trapesium saat halaman dimuat
+        drawTrapesium();
+    </script>
+</body>
+
+</html>

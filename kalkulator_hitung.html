@@ -133,6 +133,13 @@
             color: var(--primary);
         }
 
+        .detail-hint {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--accent);
+            font-size: 12px;
+        }
+
         @media (max-width: 992px) {
             .grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -160,8 +167,11 @@
         <div class="grid">
             <!-- Trapesium -->
             <div class="card">
-                <h3>Trapesium</h3>
-                <canvas id="trapesium-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Trapesium (Luas)</h3>
+                <a href="kalkulator_trapesium.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="trapesium-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Sisi Atas (a)</label>
                     <input type="number" id="trap-a" step="0.01">
@@ -180,8 +190,11 @@
 
             <!-- Persegi -->
             <div class="card">
-                <h3>Persegi</h3>
-                <canvas id="persegi-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Persegi (Luas)</h3>
+                <a href="kalkulator_persegi.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="persegi-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Sisi (s)</label>
                     <input type="number" id="square-s" step="0.01">
@@ -192,8 +205,11 @@
 
             <!-- Kerucut -->
             <div class="card">
-                <h3>Kerucut</h3>
-                <canvas id="kerucut-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Kerucut (Volume)</h3>
+                <a href="kalkulator_kerucut.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="kerucut-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Jari-jari (r)</label>
                     <input type="number" id="cone-r" step="0.01">
@@ -208,8 +224,11 @@
 
             <!-- Lingkaran -->
             <div class="card">
-                <h3>Lingkaran</h3>
-                <canvas id="lingkaran-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Lingkaran (Luas)</h3>
+                <a href="kalkulator_lingkaran.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="lingkaran-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Jari-jari (r)</label>
                     <input type="number" id="circle-r" step="0.01">
@@ -220,8 +239,11 @@
 
             <!-- Persegi Ruang -->
             <div class="card">
-                <h3>Persegi Ruang</h3>
-                <canvas id="persegiruang-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Persegi Ruang (Volume)</h3>
+                <a href="kalkulator_persegi_ruang.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="persegiruang-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Panjang (p)</label>
                     <input type="number" id="cube-p" step="0.01">
@@ -240,8 +262,11 @@
 
             <!-- Tabung -->
             <div class="card">
-                <h3>Tabung</h3>
-                <canvas id="tabung-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Tabung (Volume)</h3>
+                <a href="kalkulator_tabung.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="tabung-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Jari-jari (r)</label>
                     <input type="number" id="cylinder-r" step="0.01">
@@ -256,8 +281,11 @@
 
             <!-- Prisma -->
             <div class="card">
-                <h3>Prisma</h3>
-                <canvas id="prisma-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Prisma (Volume)</h3>
+                <a href="kalkulator_prisma.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="prisma-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Alas (a)</label>
                     <input type="number" id="prism-a" step="0.01">
@@ -276,8 +304,11 @@
 
             <!-- Piramid -->
             <div class="card">
-                <h3>Piramid</h3>
-                <canvas id="piramid-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Piramid (Volume)</h3>
+                <a href="kalkulator_piramid.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="piramid-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Sisi Alas (s)</label>
                     <input type="number" id="pyramid-s" step="0.01">
@@ -292,8 +323,11 @@
 
             <!-- Segitiga Siku-siku -->
             <div class="card">
-                <h3>Segitiga Siku-siku</h3>
-                <canvas id="segitiga-canvas" width="200" height="150" class="shape-img"></canvas>
+                <h3>Segitiga Siku-siku (Luas)</h3>
+                <a href="kalkulator_segitiga.html" style="text-decoration: none; color: inherit;">
+                    <canvas id="segitiga-canvas" width="200" height="150" class="shape-img"></canvas>
+                    <div class="detail-hint">Klik gambar untuk detail lebih lanjut</div>
+                </a>
                 <div class="input-group">
                     <label>Alas (a)</label>
                     <input type="number" id="triangle-a" step="0.01">

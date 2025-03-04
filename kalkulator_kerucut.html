@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kalkulator Kerucut - RAB Application</title>
+    <style>
+        :root {
+            --primary: #1a4f7c;
+            --secondary: #f26522;
+            --accent: #58595b;
+            --background: #f5f5f5;
+            --white: #ffffff;
+            --border: #dde1e4;
+            --shadow: rgba(26, 79, 124, 0.1);
+            --hover: #183f62;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 4px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .canvas-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        #kerucutCanvas {
+            width: 100%;
+            height: 300px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--shadow);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--background);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .formula-section {
+            margin-top: 30px;
+        }
+
+        .formula-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .formula {
+            background: var(--background);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: monospace;
+        }
+
+        .info-section {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='kalkulator_hitung.html'">
+            ← Kembali
+        </button>
+        <h1>Kalkulator Kerucut</h1>
+        <div style="width: 80px;"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="canvas-container">
+                <canvas id="kerucutCanvas"></canvas>
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Jari-jari alas (r):</label>
+                    <input type="number" id="jari" step="0.1" oninput="updateKerucut('jari')">
+                </div>
+                <div class="input-group">
+                    <label>Tinggi (h):</label>
+                    <input type="number" id="tinggi" step="0.1" oninput="updateKerucut('tinggi')">
+                </div>
+            </div>
+
+            <div class="result" id="result">
+                Volume = 0
+                <br>
+                Luas Permukaan = 0
+            </div>
+        </div>
+
+        <div class="card formula-section">
+            <h3>Rumus-rumus Kerucut</h3>
+            <div class="formula">
+                • Volume = 1/3 × π × r² × h
+            </div>
+            <div class="formula">
+                • Luas Permukaan = π × r × (r + s)
+                <br>
+                dimana s = √(r² + h²) (garis pelukis)
+            </div>
+        </div>
+
+        <div class="card info-section">
+            <h3>Apa itu Kerucut?</h3>
+            <p>
+                Kerucut adalah bangun ruang tiga dimensi yang dibentuk oleh sebuah lingkaran (sebagai alas)
+                dan sebuah titik yang berada di luar lingkaran yang dihubungkan oleh selimut kerucut.
+                Sifat-sifat kerucut:
+            </p>
+            <ul>
+                <li>Memiliki 1 titik puncak</li>
+                <li>Memiliki 1 bidang alas berbentuk lingkaran</li>
+                <li>Memiliki 1 selimut berbentuk bidang lengkung</li>
+                <li>Memiliki garis pelukis (s) yang menghubungkan titik puncak dengan lingkaran alas</li>
+            </ul>
+
+            <h3>Cara Menghitung</h3>
+            <p>
+                Untuk menghitung volume dan luas permukaan kerucut, Anda perlu mengetahui:
+            </p>
+            <ul>
+                <li>Jari-jari alas (r)</li>
+                <li>Tinggi kerucut (h)</li>
+            </ul>
+            <p>
+                Kemudian masukkan nilai-nilai tersebut ke dalam rumus yang sesuai.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('kerucutCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 300;
+
+        function drawKerucut(highlight = null) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set style
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#f5f5f5';
+
+            // Gambar kerucut
+            const centerX = canvas.width / 2;
+            const centerY = 200;
+            const radius = 80;
+            const height = 150;
+
+            // Gambar garis tinggi (jika di-highlight)
+            if (highlight === 'tinggi') {
+                ctx.beginPath();
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = '#f26522';
+                ctx.lineWidth = 3;
+                ctx.moveTo(centerX, centerY - height);
+                ctx.lineTo(centerX, centerY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Gambar alas elips
+            ctx.beginPath();
+            ctx.ellipse(centerX, centerY, radius, radius / 3, 0, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            // Gambar sisi kerucut
+            ctx.beginPath();
+            ctx.moveTo(centerX - radius, centerY);
+            ctx.lineTo(centerX, centerY - height);
+            ctx.lineTo(centerX + radius, centerY);
+            ctx.stroke();
+
+            // Highlight jari-jari jika dipilih
+            if (highlight === 'jari') {
+                ctx.beginPath();
+                ctx.strokeStyle = '#f26522';
+                ctx.lineWidth = 3;
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX + radius, centerY);
+                ctx.stroke();
+            }
+
+            // Label dimensi
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#1a4f7c';
+            ctx.textAlign = 'left';
+            ctx.fillText('r', centerX + radius / 2, centerY + 20);
+            ctx.fillText('h', centerX + 10, centerY - height / 2);
+        }
+
+        function updateKerucut(highlightedPart) {
+            drawKerucut(highlightedPart);
+
+            const r = parseFloat(document.getElementById('jari').value) || 0;
+            const h = parseFloat(document.getElementById('tinggi').value) || 0;
+
+            const volume = (1 / 3) * Math.PI * r * r * h;
+            const s = Math.sqrt(r * r + h * h); // garis pelukis
+            const luasPermukaan = Math.PI * r * (r + s);
+
+            document.getElementById('result').innerHTML =
+                `Volume = ${volume.toFixed(2)}<br>` +
+                `Luas Permukaan = ${luasPermukaan.toFixed(2)}`;
+        }
+
+        // Event listeners untuk focus
+        document.getElementById('jari').addEventListener('focus', () => drawKerucut('jari'));
+        document.getElementById('tinggi').addEventListener('focus', () => drawKerucut('tinggi'));
+        document.getElementById('jari').addEventListener('blur', () => drawKerucut());
+        document.getElementById('tinggi').addEventListener('blur', () => drawKerucut());
+
+        // Gambar kerucut saat halaman dimuat
+        drawKerucut();
+    </script>
+</body>
+
+</html>

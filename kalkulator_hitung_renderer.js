@@ -1,217 +1,391 @@
-// Fungsi helper untuk mendapatkan nilai input
-function getInputValue(id) {
-  const value = document.getElementById(id).value;
-  return value ? parseFloat(value) : 0;
-}
-
-// Fungsi helper untuk menampilkan hasil
-function showResult(id, label, value) {
-  document.getElementById(id).innerText = `${label} = ${value.toFixed(2)}`;
-}
-
-// Fungsi untuk menggambar bentuk
-function drawShape(canvas, type) {
+// Fungsi untuk menggambar trapesium
+function drawTrapesium(canvas) {
   const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
   ctx.strokeStyle = "#1a4f7c";
-  ctx.lineWidth = 2;
   ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
 
-  switch (type) {
-    case "trapesium":
-      ctx.beginPath();
-      ctx.moveTo(40, 100);
-      ctx.lineTo(160, 100);
-      ctx.lineTo(140, 50);
-      ctx.lineTo(60, 50);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      break;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const topWidth = 80;
+  const bottomWidth = 120;
+  const h = 80;
 
-    case "persegi":
-      ctx.strokeRect(50, 50, 100, 100);
-      ctx.fillRect(50, 50, 100, 100);
-      break;
-
-    case "kerucut":
-      ctx.beginPath();
-      ctx.moveTo(100, 30);
-      ctx.lineTo(150, 120);
-      ctx.lineTo(50, 120);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.ellipse(100, 120, 50, 15, 0, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.stroke();
-      break;
-
-    case "lingkaran":
-      ctx.beginPath();
-      ctx.arc(100, 75, 50, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.stroke();
-      break;
-
-    case "persegiruang":
-      ctx.beginPath();
-      ctx.moveTo(50, 50);
-      ctx.lineTo(150, 50);
-      ctx.lineTo(150, 100);
-      ctx.lineTo(50, 100);
-      ctx.closePath();
-      ctx.moveTo(70, 70);
-      ctx.lineTo(170, 70);
-      ctx.lineTo(170, 120);
-      ctx.lineTo(150, 100);
-      ctx.moveTo(150, 50);
-      ctx.lineTo(170, 70);
-      ctx.fill();
-      ctx.stroke();
-      break;
-
-    case "tabung":
-      ctx.beginPath();
-      ctx.ellipse(100, 40, 40, 15, 0, 0, 2 * Math.PI);
-      ctx.moveTo(60, 40);
-      ctx.lineTo(60, 110);
-      ctx.moveTo(140, 40);
-      ctx.lineTo(140, 110);
-      ctx.ellipse(100, 110, 40, 15, 0, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.stroke();
-      break;
-
-    case "prisma":
-      ctx.beginPath();
-      ctx.moveTo(50, 100);
-      ctx.lineTo(100, 50);
-      ctx.lineTo(150, 100);
-      ctx.closePath();
-      ctx.moveTo(70, 120);
-      ctx.lineTo(120, 70);
-      ctx.lineTo(170, 120);
-      ctx.lineTo(50, 100);
-      ctx.lineTo(70, 120);
-      ctx.moveTo(100, 50);
-      ctx.lineTo(120, 70);
-      ctx.moveTo(150, 100);
-      ctx.lineTo(170, 120);
-      ctx.fill();
-      ctx.stroke();
-      break;
-
-    case "piramid":
-      ctx.beginPath();
-      ctx.moveTo(100, 30);
-      ctx.lineTo(150, 120);
-      ctx.lineTo(50, 120);
-      ctx.closePath();
-      ctx.moveTo(100, 30);
-      ctx.lineTo(100, 120);
-      ctx.fill();
-      ctx.stroke();
-      break;
-
-    case "segitiga":
-      ctx.beginPath();
-      ctx.moveTo(50, 120);
-      ctx.lineTo(150, 120);
-      ctx.lineTo(50, 50);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      break;
-  }
+  ctx.beginPath();
+  ctx.moveTo(centerX - topWidth / 2, centerY - h / 2);
+  ctx.lineTo(centerX + topWidth / 2, centerY - h / 2);
+  ctx.lineTo(centerX + bottomWidth / 2, centerY + h / 2);
+  ctx.lineTo(centerX - bottomWidth / 2, centerY + h / 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
 }
 
-// Fungsi inisialisasi untuk menggambar semua bentuk
-function initializeShapes() {
-  const shapes = [
-    "trapesium",
-    "persegi",
-    "kerucut",
-    "lingkaran",
-    "persegiruang",
-    "tabung",
-    "prisma",
-    "piramid",
-    "segitiga",
-  ];
-  shapes.forEach((shape) => {
-    const canvas = document.querySelector(`#${shape}-canvas`);
-    if (canvas) drawShape(canvas, shape);
-  });
+// Fungsi untuk menggambar persegi
+function drawPersegi(canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#1a4f7c";
+  ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
+
+  const size = 100;
+  const x = (width - size) / 2;
+  const y = (height - size) / 2;
+
+  ctx.beginPath();
+  ctx.rect(x, y, size, size);
+  ctx.fill();
+  ctx.stroke();
 }
 
-// Fungsi untuk menghitung
+// Fungsi untuk menggambar kerucut
+function drawKerucut(canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#1a4f7c";
+  ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
+
+  const centerX = width / 2;
+  const bottomY = height * 0.7;
+  const radius = 50;
+  const coneHeight = 100;
+
+  // Gambar alas elips
+  ctx.beginPath();
+  ctx.ellipse(centerX, bottomY, radius, radius / 3, 0, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.stroke();
+
+  // Gambar sisi kerucut
+  ctx.beginPath();
+  ctx.moveTo(centerX - radius, bottomY);
+  ctx.lineTo(centerX, bottomY - coneHeight);
+  ctx.lineTo(centerX + radius, bottomY);
+  ctx.stroke();
+}
+
+// Fungsi untuk menggambar lingkaran
+function drawLingkaran(canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#1a4f7c";
+  ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = 60;
+
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.stroke();
+}
+
+// Fungsi untuk menggambar persegi ruang
+function drawPersegiRuang(canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#1a4f7c";
+  ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const size = 80;
+  const depth = 40;
+
+  // Gambar sisi depan
+  ctx.beginPath();
+  ctx.rect(centerX - size / 2, centerY - size / 2, size, size);
+  ctx.fill();
+  ctx.stroke();
+
+  // Gambar garis kedalaman
+  ctx.beginPath();
+  ctx.moveTo(centerX - size / 2, centerY - size / 2);
+  ctx.lineTo(centerX - size / 2 + depth, centerY - size / 2 - depth / 2);
+  ctx.moveTo(centerX + size / 2, centerY - size / 2);
+  ctx.lineTo(centerX + size / 2 + depth, centerY - size / 2 - depth / 2);
+  ctx.moveTo(centerX + size / 2, centerY + size / 2);
+  ctx.lineTo(centerX + size / 2 + depth, centerY + size / 2 - depth / 2);
+  ctx.stroke();
+
+  // Gambar sisi atas
+  ctx.beginPath();
+  ctx.moveTo(centerX - size / 2 + depth, centerY - size / 2 - depth / 2);
+  ctx.lineTo(centerX + size / 2 + depth, centerY - size / 2 - depth / 2);
+  ctx.lineTo(centerX + size / 2, centerY - size / 2);
+  ctx.stroke();
+}
+
+// Fungsi untuk menggambar tabung
+function drawTabung(canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#1a4f7c";
+  ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radiusX = 40;
+  const radiusY = 15;
+  const h = 80;
+
+  // Gambar selimut
+  ctx.beginPath();
+  ctx.moveTo(centerX - radiusX, centerY - h / 2);
+  ctx.lineTo(centerX - radiusX, centerY + h / 2);
+  ctx.moveTo(centerX + radiusX, centerY - h / 2);
+  ctx.lineTo(centerX + radiusX, centerY + h / 2);
+  ctx.stroke();
+
+  // Gambar alas dan tutup
+  ctx.beginPath();
+  ctx.ellipse(centerX, centerY + h / 2, radiusX, radiusY, 0, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.ellipse(centerX, centerY - h / 2, radiusX, radiusY, 0, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.stroke();
+}
+
+// Fungsi untuk menggambar prisma
+function drawPrisma(canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#1a4f7c";
+  ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const baseWidth = 80;
+  const baseHeight = 60;
+  const depth = 40;
+
+  // Gambar segitiga depan
+  ctx.beginPath();
+  ctx.moveTo(centerX - baseWidth / 2, centerY + baseHeight / 2);
+  ctx.lineTo(centerX + baseWidth / 2, centerY + baseHeight / 2);
+  ctx.lineTo(centerX, centerY - baseHeight / 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Gambar garis kedalaman
+  ctx.beginPath();
+  ctx.moveTo(centerX - baseWidth / 2, centerY + baseHeight / 2);
+  ctx.lineTo(
+    centerX - baseWidth / 2 + depth,
+    centerY + baseHeight / 2 - depth / 2
+  );
+  ctx.moveTo(centerX + baseWidth / 2, centerY + baseHeight / 2);
+  ctx.lineTo(
+    centerX + baseWidth / 2 + depth,
+    centerY + baseHeight / 2 - depth / 2
+  );
+  ctx.moveTo(centerX, centerY - baseHeight / 2);
+  ctx.lineTo(centerX + depth, centerY - baseHeight / 2 - depth / 2);
+  ctx.stroke();
+}
+
+// Fungsi untuk menggambar piramid
+function drawPiramid(canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#1a4f7c";
+  ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
+
+  const centerX = width / 2;
+  const centerY = height * 0.6;
+  const baseSize = 80;
+  const pyramidHeight = 100;
+
+  // Gambar alas
+  ctx.beginPath();
+  ctx.rect(centerX - baseSize / 2, centerY - baseSize / 2, baseSize, baseSize);
+  ctx.fill();
+  ctx.stroke();
+
+  // Gambar garis ke puncak
+  ctx.beginPath();
+  ctx.moveTo(centerX - baseSize / 2, centerY - baseSize / 2);
+  ctx.lineTo(centerX, centerY - pyramidHeight);
+  ctx.moveTo(centerX + baseSize / 2, centerY - baseSize / 2);
+  ctx.lineTo(centerX, centerY - pyramidHeight);
+  ctx.moveTo(centerX - baseSize / 2, centerY + baseSize / 2);
+  ctx.lineTo(centerX, centerY - pyramidHeight);
+  ctx.moveTo(centerX + baseSize / 2, centerY + baseSize / 2);
+  ctx.lineTo(centerX, centerY - pyramidHeight);
+  ctx.stroke();
+}
+
+// Fungsi untuk menggambar segitiga
+function drawSegitiga(canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#1a4f7c";
+  ctx.fillStyle = "#f5f5f5";
+  ctx.lineWidth = 2;
+
+  const centerX = width / 2 - 30;
+  const centerY = height / 2 + 30;
+  const baseWidth = 100;
+  const triangleHeight = 80;
+
+  // Gambar segitiga
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY);
+  ctx.lineTo(centerX + baseWidth, centerY);
+  ctx.lineTo(centerX, centerY - triangleHeight);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Gambar tanda siku-siku
+  ctx.beginPath();
+  ctx.moveTo(centerX + 15, centerY);
+  ctx.lineTo(centerX + 15, centerY - 15);
+  ctx.lineTo(centerX, centerY - 15);
+  ctx.stroke();
+}
+
+// Fungsi-fungsi perhitungan
 function hitungTrapesium() {
-  const a = getInputValue("trap-a");
-  const b = getInputValue("trap-b");
-  const h = getInputValue("trap-h");
+  const a = parseFloat(document.getElementById("trap-a").value) || 0;
+  const b = parseFloat(document.getElementById("trap-b").value) || 0;
+  const h = parseFloat(document.getElementById("trap-h").value) || 0;
   const luas = ((a + b) * h) / 2;
-  showResult("trap-result", "Luas", luas);
+  document.getElementById("trap-result").innerHTML = `Luas = ${luas.toFixed(
+    2
+  )}`;
 }
 
 function hitungPersegi() {
-  const s = getInputValue("square-s");
+  const s = parseFloat(document.getElementById("square-s").value) || 0;
   const luas = s * s;
-  showResult("square-result", "Luas", luas);
+  document.getElementById("square-result").innerHTML = `Luas = ${luas.toFixed(
+    2
+  )}`;
 }
 
 function hitungKerucut() {
-  const r = getInputValue("cone-r");
-  const h = getInputValue("cone-h");
+  const r = parseFloat(document.getElementById("cone-r").value) || 0;
+  const h = parseFloat(document.getElementById("cone-h").value) || 0;
   const volume = (1 / 3) * Math.PI * r * r * h;
-  showResult("cone-result", "Volume", volume);
+  document.getElementById("cone-result").innerHTML = `Volume = ${volume.toFixed(
+    2
+  )}`;
 }
 
 function hitungLingkaran() {
-  const r = getInputValue("circle-r");
+  const r = parseFloat(document.getElementById("circle-r").value) || 0;
   const luas = Math.PI * r * r;
-  showResult("circle-result", "Luas", luas);
+  document.getElementById("circle-result").innerHTML = `Luas = ${luas.toFixed(
+    2
+  )}`;
 }
 
 function hitungPersegiRuang() {
-  const p = getInputValue("cube-p");
-  const l = getInputValue("cube-l");
-  const t = getInputValue("cube-t");
+  const p = parseFloat(document.getElementById("cube-p").value) || 0;
+  const l = parseFloat(document.getElementById("cube-l").value) || 0;
+  const t = parseFloat(document.getElementById("cube-t").value) || 0;
   const volume = p * l * t;
-  showResult("cube-result", "Volume", volume);
+  document.getElementById("cube-result").innerHTML = `Volume = ${volume.toFixed(
+    2
+  )}`;
 }
 
 function hitungTabung() {
-  const r = getInputValue("cylinder-r");
-  const h = getInputValue("cylinder-h");
+  const r = parseFloat(document.getElementById("cylinder-r").value) || 0;
+  const h = parseFloat(document.getElementById("cylinder-h").value) || 0;
   const volume = Math.PI * r * r * h;
-  showResult("cylinder-result", "Volume", volume);
+  document.getElementById(
+    "cylinder-result"
+  ).innerHTML = `Volume = ${volume.toFixed(2)}`;
 }
 
 function hitungPrisma() {
-  const a = getInputValue("prism-a");
-  const ta = getInputValue("prism-ta");
-  const t = getInputValue("prism-t");
-  const luasAlas = (a * ta) / 2;
-  const volume = luasAlas * t;
-  showResult("prism-result", "Volume", volume);
+  const a = parseFloat(document.getElementById("prism-a").value) || 0;
+  const ta = parseFloat(document.getElementById("prism-ta").value) || 0;
+  const t = parseFloat(document.getElementById("prism-t").value) || 0;
+  const volume = (1 / 2) * a * ta * t;
+  document.getElementById(
+    "prism-result"
+  ).innerHTML = `Volume = ${volume.toFixed(2)}`;
 }
 
 function hitungPiramid() {
-  const s = getInputValue("pyramid-s");
-  const h = getInputValue("pyramid-h");
-  const volume = (s * s * h) / 3;
-  showResult("pyramid-result", "Volume", volume);
+  const s = parseFloat(document.getElementById("pyramid-s").value) || 0;
+  const h = parseFloat(document.getElementById("pyramid-h").value) || 0;
+  const volume = (1 / 3) * s * s * h;
+  document.getElementById(
+    "pyramid-result"
+  ).innerHTML = `Volume = ${volume.toFixed(2)}`;
 }
 
 function hitungSegitiga() {
-  const a = getInputValue("triangle-a");
-  const t = getInputValue("triangle-t");
+  const a = parseFloat(document.getElementById("triangle-a").value) || 0;
+  const t = parseFloat(document.getElementById("triangle-t").value) || 0;
   const luas = (a * t) / 2;
-  showResult("triangle-result", "Luas", luas);
+  document.getElementById("triangle-result").innerHTML = `Luas = ${luas.toFixed(
+    2
+  )}`;
 }
 
-// Initialize shapes when page loads
-document.addEventListener("DOMContentLoaded", initializeShapes);
+// Menggambar semua bentuk saat halaman dimuat
+window.addEventListener("load", () => {
+  const canvases = {
+    "trapesium-canvas": drawTrapesium,
+    "persegi-canvas": drawPersegi,
+    "kerucut-canvas": drawKerucut,
+    "lingkaran-canvas": drawLingkaran,
+    "persegiruang-canvas": drawPersegiRuang,
+    "tabung-canvas": drawTabung,
+    "prisma-canvas": drawPrisma,
+    "piramid-canvas": drawPiramid,
+    "segitiga-canvas": drawSegitiga,
+  };
+
+  for (const [id, drawFunc] of Object.entries(canvases)) {
+    const canvas = document.getElementById(id);
+    if (canvas) {
+      drawFunc(canvas);
+    }
+  }
+});

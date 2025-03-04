@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kalkulator Persegi Ruang - RAB Application</title>
+    <style>
+        :root {
+            --primary: #1a4f7c;
+            --secondary: #f26522;
+            --accent: #58595b;
+            --background: #f5f5f5;
+            --white: #ffffff;
+            --border: #dde1e4;
+            --shadow: rgba(26, 79, 124, 0.1);
+            --hover: #183f62;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 4px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .canvas-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        #persegiRuangCanvas {
+            width: 100%;
+            height: 300px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--shadow);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--background);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .formula-section {
+            margin-top: 30px;
+        }
+
+        .formula-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .formula {
+            background: var(--background);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: monospace;
+        }
+
+        .info-section {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='kalkulator_hitung.html'">
+            ← Kembali
+        </button>
+        <h1>Kalkulator Persegi Ruang</h1>
+        <div style="width: 80px;"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="canvas-container">
+                <canvas id="persegiRuangCanvas"></canvas>
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Panjang (p):</label>
+                    <input type="number" id="panjang" step="0.1" oninput="updatePersegiRuang('panjang')">
+                </div>
+                <div class="input-group">
+                    <label>Lebar (l):</label>
+                    <input type="number" id="lebar" step="0.1" oninput="updatePersegiRuang('lebar')">
+                </div>
+                <div class="input-group">
+                    <label>Tinggi (t):</label>
+                    <input type="number" id="tinggi" step="0.1" oninput="updatePersegiRuang('tinggi')">
+                </div>
+            </div>
+
+            <div class="result" id="result">
+                Volume = 0
+                <br>
+                Luas Permukaan = 0
+            </div>
+        </div>
+
+        <div class="card formula-section">
+            <h3>Rumus-rumus Persegi Ruang (Balok/Kubus)</h3>
+            <div class="formula">
+                • Volume = p × l × t
+            </div>
+            <div class="formula">
+                • Luas Permukaan = 2(p×l + p×t + l×t)
+            </div>
+            <div class="formula">
+                • Panjang Diagonal = √(p² + l² + t²)
+            </div>
+        </div>
+
+        <div class="card info-section">
+            <h3>Apa itu Persegi Ruang?</h3>
+            <p>
+                Persegi ruang (balok/kubus) adalah bangun ruang tiga dimensi yang dibentuk oleh enam bidang sisi
+                berbentuk
+                persegi panjang (atau persegi untuk kubus) yang sepasang-sepasang sejajar. Sifat-sifat persegi ruang:
+            </p>
+            <ul>
+                <li>Memiliki 12 rusuk</li>
+                <li>Memiliki 8 titik sudut</li>
+                <li>Memiliki 6 bidang sisi</li>
+                <li>Memiliki 4 diagonal ruang</li>
+                <li>Memiliki 12 diagonal bidang</li>
+            </ul>
+
+            <h3>Jenis-jenis</h3>
+            <ul>
+                <li>Balok: panjang, lebar, dan tinggi berbeda</li>
+                <li>Kubus: panjang, lebar, dan tinggi sama</li>
+            </ul>
+
+            <h3>Cara Menghitung</h3>
+            <p>
+                Untuk menghitung volume dan luas permukaan, Anda perlu mengetahui:
+            </p>
+            <ul>
+                <li>Panjang (p)</li>
+                <li>Lebar (l)</li>
+                <li>Tinggi (t)</li>
+            </ul>
+            <p>
+                Jika semua sisi sama panjang (kubus), cukup masukkan nilai yang sama untuk p, l, dan t.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('persegiRuangCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 300;
+
+        function drawPersegiRuang(highlight = null) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set style
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#f5f5f5';
+
+            // Koordinat dasar
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const width = 120;
+            const height = 80;
+            const depth = 60;
+
+            // Gambar sisi belakang
+            ctx.beginPath();
+            ctx.moveTo(centerX - width / 2, centerY - height / 2);
+            ctx.lineTo(centerX + width / 2, centerY - height / 2);
+            ctx.lineTo(centerX + width / 2, centerY + height / 2);
+            ctx.lineTo(centerX - width / 2, centerY + height / 2);
+            ctx.closePath();
+            ctx.fillStyle = '#e8e8e8';
+            ctx.fill();
+            ctx.stroke();
+
+            // Gambar sisi atas dengan highlight jika dipilih
+            if (highlight === 'tinggi') {
+                ctx.strokeStyle = '#f26522';
+                ctx.lineWidth = 3;
+            }
+            ctx.beginPath();
+            ctx.moveTo(centerX - width / 2, centerY - height / 2);
+            ctx.lineTo(centerX - width / 2 + depth, centerY - height / 2 - depth / 2);
+            ctx.lineTo(centerX + width / 2 + depth, centerY - height / 2 - depth / 2);
+            ctx.lineTo(centerX + width / 2, centerY - height / 2);
+            ctx.closePath();
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fill();
+            ctx.stroke();
+
+            // Reset style
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+
+            // Gambar sisi kanan dengan highlight jika dipilih
+            if (highlight === 'panjang') {
+                ctx.strokeStyle = '#f26522';
+                ctx.lineWidth = 3;
+            }
+            ctx.beginPath();
+            ctx.moveTo(centerX + width / 2, centerY - height / 2);
+            ctx.lineTo(centerX + width / 2 + depth, centerY - height / 2 - depth / 2);
+            ctx.lineTo(centerX + width / 2 + depth, centerY + height / 2 - depth / 2);
+            ctx.lineTo(centerX + width / 2, centerY + height / 2);
+            ctx.closePath();
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fill();
+            ctx.stroke();
+
+            // Label dimensi
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#1a4f7c';
+            ctx.textAlign = 'center';
+            ctx.fillText('p', centerX, centerY + height / 2 + 20);
+            ctx.fillText('l', centerX + width / 2 + depth + 20, centerY);
+            ctx.fillText('t', centerX - width / 2 - 20, centerY);
+        }
+
+        function updatePersegiRuang(highlightedPart) {
+            drawPersegiRuang(highlightedPart);
+
+            const p = parseFloat(document.getElementById('panjang').value) || 0;
+            const l = parseFloat(document.getElementById('lebar').value) || 0;
+            const t = parseFloat(document.getElementById('tinggi').value) || 0;
+
+            const volume = p * l * t;
+            const luasPermukaan = 2 * ((p * l) + (p * t) + (l * t));
+
+            document.getElementById('result').innerHTML =
+                `Volume = ${volume.toFixed(2)}<br>` +
+                `Luas Permukaan = ${luasPermukaan.toFixed(2)}`;
+        }
+
+        // Event listeners
+        ['panjang', 'lebar', 'tinggi'].forEach(id => {
+            const elem = document.getElementById(id);
+            elem.addEventListener('focus', () => drawPersegiRuang(id));
+            elem.addEventListener('blur', () => drawPersegiRuang());
+        });
+
+        // Gambar awal
+        drawPersegiRuang();
+    </script>
+</body>
+
+</html>
