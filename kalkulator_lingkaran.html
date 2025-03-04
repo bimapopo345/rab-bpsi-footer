@@ -71,6 +71,21 @@
             border-radius: 8px;
         }
 
+        .instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .instructions h3 {
+            margin-bottom: 5px;
+        }
+
+        .instructions p {
+            margin-top: 0;
+            font-size: 14px;
+        }
+
         .input-group {
             margin-bottom: 15px;
         }
@@ -96,15 +111,24 @@
             box-shadow: 0 0 0 2px var(--shadow);
         }
 
-        .result {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: var(--background);
-            border-radius: 4px;
+        .button-container {
             text-align: center;
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        .reset-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .reset-btn:hover {
+            background-color: var(--hover);
         }
 
         .formula-section {
@@ -123,10 +147,6 @@
             margin-bottom: 15px;
             font-family: monospace;
         }
-
-        .info-section {
-            margin-top: 30px;
-        }
     </style>
 </head>
 
@@ -141,24 +161,43 @@
 
     <div class="container">
         <div class="card">
+            <div class="instructions">
+                <h3>Kalkulator ini menghitung nilai lingkaran (jari-jari, diameter, keliling atau luas) ketika satu
+                    nilai dimasukkan.</h3>
+                <p>Isi satu kolom. Yang lainnya akan dihitung secara otomatis.</p>
+            </div>
+
             <div class="canvas-container">
                 <canvas id="lingkaranCanvas"></canvas>
             </div>
 
             <div class="input-group">
                 <label>Jari-jari (r):</label>
-                <input type="number" id="jari" step="0.1" oninput="updateLingkaran()">
+                <input type="number" id="radius" step="0.1" oninput="updateLingkaran('radius')">
             </div>
 
-            <div class="result" id="result">
-                Luas = 0
-                <br>
-                Keliling = 0
+            <div class="input-group">
+                <label>Diameter (d):</label>
+                <input type="number" id="diameter" step="0.1" oninput="updateLingkaran('diameter')">
+            </div>
+
+            <div class="input-group">
+                <label>Keliling (K):</label>
+                <input type="number" id="perimeter" step="0.1" oninput="updateLingkaran('perimeter')">
+            </div>
+
+            <div class="input-group">
+                <label>Luas (A):</label>
+                <input type="number" id="area" step="0.1" oninput="updateLingkaran('area')">
+            </div>
+
+            <div class="button-container">
+                <button class="reset-btn" onclick="resetCalculator()">Reset</button>
             </div>
         </div>
 
         <div class="card formula-section">
-            <h3>Rumus-rumus Lingkaran</h3>
+            <h3>Rumus-rumus Lingkaran:</h3>
             <div class="formula">
                 • Luas = π × r²
             </div>
@@ -166,41 +205,8 @@
                 • Keliling = 2 × π × r
             </div>
             <div class="formula">
-                • π (pi) ≈ 3.14159
+                • Diameter = 2 × r
             </div>
-        </div>
-
-        <div class="card info-section">
-            <h3>Apa itu Lingkaran?</h3>
-            <p>
-                Lingkaran adalah bangun datar yang terbentuk dari himpunan titik-titik yang berjarak sama terhadap suatu
-                titik tertentu yang disebut pusat lingkaran.
-                Jarak yang sama ini disebut jari-jari lingkaran. Sifat-sifat lingkaran:
-            </p>
-            <ul>
-                <li>Memiliki satu titik pusat</li>
-                <li>Jarak semua titik ke pusat sama panjang (jari-jari)</li>
-                <li>Simetris terhadap semua sumbu yang melalui pusat</li>
-                <li>Memiliki satu sisi lengkung tertutup</li>
-            </ul>
-
-            <h3>Komponen Lingkaran</h3>
-            <ul>
-                <li>Jari-jari (r): jarak dari pusat ke tepi lingkaran</li>
-                <li>Diameter (d): garis lurus yang menghubungkan dua titik pada lingkaran melalui pusat</li>
-                <li>Keliling: panjang lintasan yang membentuk lingkaran</li>
-                <li>Luas: daerah yang dibatasi oleh keliling lingkaran</li>
-            </ul>
-
-            <h3>Cara Menghitung</h3>
-            <p>
-                Untuk menghitung luas dan keliling lingkaran, Anda hanya perlu mengetahui jari-jari (r).
-                Masukkan nilai jari-jari ke dalam rumus yang sesuai:
-            </p>
-            <ul>
-                <li>Luas = π × r²</li>
-                <li>Keliling = 2 × π × r</li>
-            </ul>
         </div>
     </div>
 
@@ -210,15 +216,9 @@
         canvas.width = 600;
         canvas.height = 300;
 
-        function drawLingkaran(highlight = false) {
+        function drawLingkaran(highlight = null) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Set style
-            ctx.strokeStyle = highlight ? '#f26522' : '#1a4f7c';
-            ctx.lineWidth = highlight ? 3 : 2;
-            ctx.fillStyle = '#f5f5f5';
-
-            // Gambar lingkaran
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const radius = 100;
@@ -226,6 +226,9 @@
             // Gambar lingkaran
             ctx.beginPath();
             ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = highlight === 'perimeter' ? '#f26522' : '#1a4f7c';
+            ctx.lineWidth = highlight === 'perimeter' ? 3 : 2;
+            ctx.fillStyle = highlight === 'area' ? '#f26522' : '#f5f5f5';
             ctx.fill();
             ctx.stroke();
 
@@ -235,38 +238,94 @@
             ctx.fillStyle = '#1a4f7c';
             ctx.fill();
 
-            // Gambar jari-jari
+            // Gambar jari-jari atau diameter berdasarkan highlight
             ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(centerX + radius, centerY);
-            ctx.strokeStyle = highlight ? '#f26522' : '#1a4f7c';
+            if (highlight === 'radius') {
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX + radius, centerY);
+            } else if (highlight === 'diameter') {
+                ctx.moveTo(centerX - radius, centerY);
+                ctx.lineTo(centerX + radius, centerY);
+            }
+            ctx.strokeStyle = '#f26522';
+            ctx.lineWidth = 3;
             ctx.stroke();
 
             // Label
             ctx.font = '16px Arial';
             ctx.fillStyle = '#1a4f7c';
             ctx.textAlign = 'center';
-            ctx.fillText('r', centerX + radius / 2, centerY - 10);
             ctx.fillText('O', centerX - 15, centerY + 15);
+            if (highlight === 'radius') {
+                ctx.fillText('r', centerX + radius / 2, centerY - 10);
+            } else if (highlight === 'diameter') {
+                ctx.fillText('d', centerX, centerY - 10);
+            }
         }
 
-        function updateLingkaran() {
-            drawLingkaran(true);
+        function updateLingkaran(source) {
+            const PI = Math.PI;
+            let r, d, k, a;
 
-            const r = parseFloat(document.getElementById('jari').value) || 0;
-            const luas = Math.PI * r * r;
-            const keliling = 2 * Math.PI * r;
+            // Get values
+            const inputRadius = parseFloat(document.getElementById('radius').value);
+            const inputDiameter = parseFloat(document.getElementById('diameter').value);
+            const inputPerimeter = parseFloat(document.getElementById('perimeter').value);
+            const inputArea = parseFloat(document.getElementById('area').value);
 
-            document.getElementById('result').innerHTML =
-                `Luas = ${luas.toFixed(2)}<br>` +
-                `Keliling = ${keliling.toFixed(2)}`;
+            // Calculate based on source
+            if (source === 'radius' && inputRadius) {
+                r = inputRadius;
+                d = 2 * r;
+                k = 2 * PI * r;
+                a = PI * r * r;
+            } else if (source === 'diameter' && inputDiameter) {
+                d = inputDiameter;
+                r = d / 2;
+                k = PI * d;
+                a = PI * r * r;
+            } else if (source === 'perimeter' && inputPerimeter) {
+                k = inputPerimeter;
+                r = k / (2 * PI);
+                d = 2 * r;
+                a = PI * r * r;
+            } else if (source === 'area' && inputArea) {
+                a = inputArea;
+                r = Math.sqrt(a / PI);
+                d = 2 * r;
+                k = 2 * PI * r;
+            }
+
+            // Update inputs if they're not the source
+            if (source !== 'radius') document.getElementById('radius').value = r ? r.toFixed(2) : '';
+            if (source !== 'diameter') document.getElementById('diameter').value = d ? d.toFixed(2) : '';
+            if (source !== 'perimeter') document.getElementById('perimeter').value = k ? k.toFixed(2) : '';
+            if (source !== 'area') document.getElementById('area').value = a ? a.toFixed(2) : '';
+
+            // Update visualization
+            drawLingkaran(source);
+        }
+
+        function resetCalculator() {
+            document.getElementById('radius').value = '';
+            document.getElementById('diameter').value = '';
+            document.getElementById('perimeter').value = '';
+            document.getElementById('area').value = '';
+            drawLingkaran();
         }
 
         // Event listeners untuk focus
-        document.getElementById('jari').addEventListener('focus', () => drawLingkaran(true));
-        document.getElementById('jari').addEventListener('blur', () => drawLingkaran(false));
+        ['radius', 'diameter', 'perimeter', 'area'].forEach(id => {
+            const elem = document.getElementById(id);
+            elem.addEventListener('focus', () => drawLingkaran(id));
+            elem.addEventListener('blur', () => {
+                if (!document.activeElement || !['radius', 'diameter', 'perimeter', 'area'].includes(document.activeElement.id)) {
+                    drawLingkaran();
+                }
+            });
+        });
 
-        // Gambar lingkaran saat halaman dimuat
+        // Initial draw
         drawLingkaran();
     </script>
 </body>
