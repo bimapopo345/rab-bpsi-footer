@@ -71,6 +71,13 @@
             border-radius: 8px;
         }
 
+        .instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
         .input-group {
             margin-bottom: 15px;
         }
@@ -96,15 +103,26 @@
             box-shadow: 0 0 0 2px var(--shadow);
         }
 
-        .result {
-            margin-top: 15px;
-            padding: 15px;
+        .results {
+            margin-top: 20px;
+        }
+
+        .result-item {
+            padding: 10px 15px;
+            margin: 5px 0;
             background-color: var(--background);
             border-radius: 4px;
-            text-align: center;
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .result-item:hover {
+            background-color: var(--border);
+        }
+
+        .result-item.highlighted {
+            background-color: var(--secondary);
+            color: var(--white);
         }
 
         .formula-section {
@@ -123,10 +141,6 @@
             margin-bottom: 15px;
             font-family: monospace;
         }
-
-        .info-section {
-            margin-top: 30px;
-        }
     </style>
 </head>
 
@@ -141,65 +155,91 @@
 
     <div class="container">
         <div class="card">
+            <div class="instructions">
+                Kalkulator Kerucut Lengkap - Masukkan dua nilai, nilai lainnya akan dihitung secara otomatis.
+            </div>
+
             <div class="canvas-container">
                 <canvas id="kerucutCanvas"></canvas>
             </div>
 
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Jari-jari alas (r):</label>
-                    <input type="number" id="jari" step="0.1" oninput="updateKerucut('jari')">
+                    <label>Jari-jari (r):</label>
+                    <input type="number" id="radius" step="0.1" oninput="updateKerucut()">
                 </div>
                 <div class="input-group">
                     <label>Tinggi (h):</label>
-                    <input type="number" id="tinggi" step="0.1" oninput="updateKerucut('tinggi')">
+                    <input type="number" id="height" step="0.1" oninput="updateKerucut()">
+                </div>
+                <div class="input-group">
+                    <label>Tinggi Sisi (s):</label>
+                    <input type="number" id="side" step="0.1" oninput="updateKerucut()">
+                </div>
+                <div class="input-group">
+                    <label>Keliling Alas:</label>
+                    <input type="number" id="perimeterInput" step="0.1" oninput="updateKerucut()">
+                </div>
+                <div class="input-group">
+                    <label>Luas Alas:</label>
+                    <input type="number" id="baseAreaInput" step="0.1" oninput="updateKerucut()">
+                </div>
+                <div class="input-group">
+                    <label>Luas Selimut:</label>
+                    <input type="number" id="lateralAreaInput" step="0.1" oninput="updateKerucut()">
+                </div>
+                <div class="input-group">
+                    <label>Luas Permukaan Total:</label>
+                    <input type="number" id="surfaceInput" step="0.1" oninput="updateKerucut()">
+                </div>
+                <div class="input-group">
+                    <label>Volume:</label>
+                    <input type="number" id="volumeInput" step="0.1" oninput="updateKerucut()">
                 </div>
             </div>
 
-            <div class="result" id="result">
-                Volume = 0
-                <br>
-                Luas Permukaan = 0
+            <div class="results">
+                <div class="result-item" onmouseover="highlightPart('base')" onmouseout="highlightPart(null)">
+                    Luas Alas: <span id="baseArea">0</span>
+                </div>
+                <div class="result-item" onmouseover="highlightPart('perimeter')" onmouseout="highlightPart(null)">
+                    Keliling Alas: <span id="perimeter">0</span>
+                </div>
+                <div class="result-item" onmouseover="highlightPart('lateral')" onmouseout="highlightPart(null)">
+                    Tinggi Sisi (s): <span id="lateralHeight">0</span>
+                </div>
+                <div class="result-item" onmouseover="highlightPart('lateralArea')" onmouseout="highlightPart(null)">
+                    Luas Selimut: <span id="lateralArea">0</span>
+                </div>
+                <div class="result-item" onmouseover="highlightPart('surface')" onmouseout="highlightPart(null)">
+                    Luas Permukaan Total: <span id="surface">0</span>
+                </div>
+                <div class="result-item" onmouseover="highlightPart('volume')" onmouseout="highlightPart(null)">
+                    Volume: <span id="volume">0</span>
+                </div>
             </div>
         </div>
 
         <div class="card formula-section">
-            <h3>Rumus-rumus Kerucut</h3>
+            <h3>Rumus-rumus Kerucut:</h3>
             <div class="formula">
-                • Volume = 1/3 × π × r² × h
+                • Luas alas = π × r²
             </div>
             <div class="formula">
-                • Luas Permukaan = π × r × (r + s)
-                <br>
-                dimana s = √(r² + h²) (garis pelukis)
+                • Keliling alas = 2π × r
             </div>
-        </div>
-
-        <div class="card info-section">
-            <h3>Apa itu Kerucut?</h3>
-            <p>
-                Kerucut adalah bangun ruang tiga dimensi yang dibentuk oleh sebuah lingkaran (sebagai alas)
-                dan sebuah titik yang berada di luar lingkaran yang dihubungkan oleh selimut kerucut.
-                Sifat-sifat kerucut:
-            </p>
-            <ul>
-                <li>Memiliki 1 titik puncak</li>
-                <li>Memiliki 1 bidang alas berbentuk lingkaran</li>
-                <li>Memiliki 1 selimut berbentuk bidang lengkung</li>
-                <li>Memiliki garis pelukis (s) yang menghubungkan titik puncak dengan lingkaran alas</li>
-            </ul>
-
-            <h3>Cara Menghitung</h3>
-            <p>
-                Untuk menghitung volume dan luas permukaan kerucut, Anda perlu mengetahui:
-            </p>
-            <ul>
-                <li>Jari-jari alas (r)</li>
-                <li>Tinggi kerucut (h)</li>
-            </ul>
-            <p>
-                Kemudian masukkan nilai-nilai tersebut ke dalam rumus yang sesuai.
-            </p>
+            <div class="formula">
+                • Tinggi sisi (s) = √(h² + r²)
+            </div>
+            <div class="formula">
+                • Luas selimut = π × r × s
+            </div>
+            <div class="formula">
+                • Luas permukaan = luas alas + luas selimut
+            </div>
+            <div class="formula">
+                • Volume = ⅓ × π × r² × h
+            </div>
         </div>
     </div>
 
@@ -212,19 +252,34 @@
         function drawKerucut(highlight = null) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Set style
-            ctx.strokeStyle = '#1a4f7c';
-            ctx.lineWidth = 2;
-            ctx.fillStyle = '#f5f5f5';
-
-            // Gambar kerucut
             const centerX = canvas.width / 2;
             const centerY = 200;
             const radius = 80;
             const height = 150;
 
-            // Gambar garis tinggi (jika di-highlight)
-            if (highlight === 'tinggi') {
+            // Default styles
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#f5f5f5';
+
+            // Gambar alas elips
+            ctx.beginPath();
+            ctx.ellipse(centerX, centerY, radius, radius / 3, 0, 0, 2 * Math.PI);
+            if (highlight === 'base' || highlight === 'surface') {
+                ctx.fillStyle = '#f26522';
+                ctx.fill();
+            } else {
+                ctx.fillStyle = '#f5f5f5';
+                ctx.fill();
+            }
+            if (highlight === 'perimeter') {
+                ctx.strokeStyle = '#f26522';
+                ctx.lineWidth = 3;
+            }
+            ctx.stroke();
+
+            // Gambar garis tinggi
+            if (highlight === 'height') {
                 ctx.beginPath();
                 ctx.setLineDash([5, 5]);
                 ctx.strokeStyle = '#f26522';
@@ -235,20 +290,17 @@
                 ctx.setLineDash([]);
             }
 
-            // Gambar alas elips
-            ctx.beginPath();
-            ctx.ellipse(centerX, centerY, radius, radius / 3, 0, 0, 2 * Math.PI);
-            ctx.stroke();
-
             // Gambar sisi kerucut
             ctx.beginPath();
+            ctx.strokeStyle = (highlight === 'lateral' || highlight === 'lateralArea' || highlight === 'surface') ? '#f26522' : '#1a4f7c';
+            ctx.lineWidth = (highlight === 'lateral' || highlight === 'lateralArea' || highlight === 'surface') ? 3 : 2;
             ctx.moveTo(centerX - radius, centerY);
             ctx.lineTo(centerX, centerY - height);
             ctx.lineTo(centerX + radius, centerY);
             ctx.stroke();
 
-            // Highlight jari-jari jika dipilih
-            if (highlight === 'jari') {
+            // Highlight radius jika dipilih
+            if (highlight === 'radius') {
                 ctx.beginPath();
                 ctx.strokeStyle = '#f26522';
                 ctx.lineWidth = 3;
@@ -263,30 +315,110 @@
             ctx.textAlign = 'left';
             ctx.fillText('r', centerX + radius / 2, centerY + 20);
             ctx.fillText('h', centerX + 10, centerY - height / 2);
+            ctx.fillText('s', centerX + radius / 2 + 20, centerY - height / 2);
         }
 
-        function updateKerucut(highlightedPart) {
-            drawKerucut(highlightedPart);
+        function updateKerucut() {
+            let r = parseFloat(document.getElementById('radius').value) || 0;
+            let h = parseFloat(document.getElementById('height').value) || 0;
+            let s = parseFloat(document.getElementById('side').value) || 0;
+            let p = parseFloat(document.getElementById('perimeterInput').value) || 0;
+            let ba = parseFloat(document.getElementById('baseAreaInput').value) || 0;
+            let la = parseFloat(document.getElementById('lateralAreaInput').value) || 0;
+            let sa = parseFloat(document.getElementById('surfaceInput').value) || 0;
+            let v = parseFloat(document.getElementById('volumeInput').value) || 0;
 
-            const r = parseFloat(document.getElementById('jari').value) || 0;
-            const h = parseFloat(document.getElementById('tinggi').value) || 0;
+            // Update dari radius dan height
+            if (r && h) {
+                s = Math.sqrt(h * h + r * r);
+                p = 2 * Math.PI * r;
+                ba = Math.PI * r * r;
+                la = Math.PI * r * s;
+                sa = ba + la;
+                v = (1 / 3) * Math.PI * r * r * h;
+            }
+            // Update dari tinggi sisi
+            else if (r && s) {
+                h = Math.sqrt(s * s - r * r);
+                p = 2 * Math.PI * r;
+                ba = Math.PI * r * r;
+                la = Math.PI * r * s;
+                sa = ba + la;
+                v = (1 / 3) * Math.PI * r * r * h;
+            }
+            // Update dari keliling
+            else if (p) {
+                r = p / (2 * Math.PI);
+                if (h) {
+                    s = Math.sqrt(h * h + r * r);
+                    ba = Math.PI * r * r;
+                    la = Math.PI * r * s;
+                    sa = ba + la;
+                    v = (1 / 3) * Math.PI * r * r * h;
+                }
+            }
+            // Update dari luas alas
+            else if (ba) {
+                r = Math.sqrt(ba / Math.PI);
+                p = 2 * Math.PI * r;
+                if (h) {
+                    s = Math.sqrt(h * h + r * r);
+                    la = Math.PI * r * s;
+                    sa = ba + la;
+                    v = (1 / 3) * Math.PI * r * r * h;
+                }
+            }
 
-            const volume = (1 / 3) * Math.PI * r * r * h;
-            const s = Math.sqrt(r * r + h * h); // garis pelukis
-            const luasPermukaan = Math.PI * r * (r + s);
+            // Update semua input
+            if (!document.activeElement || document.activeElement.id !== 'radius')
+                document.getElementById('radius').value = r ? r.toFixed(2) : '';
+            if (!document.activeElement || document.activeElement.id !== 'height')
+                document.getElementById('height').value = h ? h.toFixed(2) : '';
+            if (!document.activeElement || document.activeElement.id !== 'side')
+                document.getElementById('side').value = s ? s.toFixed(2) : '';
+            if (!document.activeElement || document.activeElement.id !== 'perimeterInput')
+                document.getElementById('perimeterInput').value = p ? p.toFixed(2) : '';
+            if (!document.activeElement || document.activeElement.id !== 'baseAreaInput')
+                document.getElementById('baseAreaInput').value = ba ? ba.toFixed(2) : '';
+            if (!document.activeElement || document.activeElement.id !== 'lateralAreaInput')
+                document.getElementById('lateralAreaInput').value = la ? la.toFixed(2) : '';
+            if (!document.activeElement || document.activeElement.id !== 'surfaceInput')
+                document.getElementById('surfaceInput').value = sa ? sa.toFixed(2) : '';
+            if (!document.activeElement || document.activeElement.id !== 'volumeInput')
+                document.getElementById('volumeInput').value = v ? v.toFixed(2) : '';
 
-            document.getElementById('result').innerHTML =
-                `Volume = ${volume.toFixed(2)}<br>` +
-                `Luas Permukaan = ${luasPermukaan.toFixed(2)}`;
+            // Update hasil
+            document.getElementById('baseArea').textContent = ba.toFixed(2);
+            document.getElementById('perimeter').textContent = p.toFixed(2);
+            document.getElementById('lateralHeight').textContent = s.toFixed(2);
+            document.getElementById('lateralArea').textContent = la.toFixed(2);
+            document.getElementById('surface').textContent = sa.toFixed(2);
+            document.getElementById('volume').textContent = v.toFixed(2);
+
+            // Highlight bagian yang sedang aktif
+            if (document.activeElement) {
+                drawKerucut(document.activeElement.id.replace('Input', ''));
+            }
+        }
+
+        function highlightPart(part) {
+            drawKerucut(part);
         }
 
         // Event listeners untuk focus
-        document.getElementById('jari').addEventListener('focus', () => drawKerucut('jari'));
-        document.getElementById('tinggi').addEventListener('focus', () => drawKerucut('tinggi'));
-        document.getElementById('jari').addEventListener('blur', () => drawKerucut());
-        document.getElementById('tinggi').addEventListener('blur', () => drawKerucut());
+        const inputs = ['radius', 'height', 'side', 'perimeterInput', 'baseAreaInput',
+            'lateralAreaInput', 'surfaceInput', 'volumeInput'];
+        inputs.forEach(id => {
+            const elem = document.getElementById(id);
+            elem.addEventListener('focus', () => drawKerucut(id.replace('Input', '')));
+            elem.addEventListener('blur', () => {
+                if (!document.activeElement || !inputs.includes(document.activeElement.id)) {
+                    drawKerucut();
+                }
+            });
+        });
 
-        // Gambar kerucut saat halaman dimuat
+        // Initial draw
         drawKerucut();
     </script>
 </body>
