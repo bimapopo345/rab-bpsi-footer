@@ -244,49 +244,152 @@
             const height = 80;
             const depth = 60;
 
-            // Gambar sisi belakang
-            ctx.beginPath();
-            ctx.moveTo(centerX - width / 2, centerY - height / 2);
-            ctx.lineTo(centerX + width / 2, centerY - height / 2);
-            ctx.lineTo(centerX + width / 2, centerY + height / 2);
-            ctx.lineTo(centerX - width / 2, centerY + height / 2);
-            ctx.closePath();
-            ctx.fillStyle = highlight === 'luas-alas' ? '#f26522' : '#e8e8e8';
-            ctx.fill();
-            ctx.stroke();
-
-            // Gambar sisi atas
-            ctx.beginPath();
-            ctx.moveTo(centerX - width / 2, centerY - height / 2);
-            ctx.lineTo(centerX - width / 2 + depth, centerY - height / 2 - depth / 2);
-            ctx.lineTo(centerX + width / 2 + depth, centerY - height / 2 - depth / 2);
-            ctx.lineTo(centerX + width / 2, centerY - height / 2);
-            ctx.closePath();
-            ctx.fillStyle = highlight === 'sisi-c' ? '#f26522' : '#f5f5f5';
-            ctx.fill();
-            ctx.stroke();
-
-            // Gambar sisi kanan
-            ctx.beginPath();
-            ctx.moveTo(centerX + width / 2, centerY - height / 2);
-            ctx.lineTo(centerX + width / 2 + depth, centerY - height / 2 - depth / 2);
-            ctx.lineTo(centerX + width / 2 + depth, centerY + height / 2 - depth / 2);
-            ctx.lineTo(centerX + width / 2, centerY + height / 2);
-            ctx.closePath();
-            ctx.fillStyle = highlight === 'sisi-b' ? '#f26522' : '#f5f5f5';
-            ctx.fill();
-            ctx.stroke();
-
-            // Gambar diagonal jika di-highlight
-            if (highlight === 'diagonal') {
+            // Draw each face of the cuboid
+            function drawFace(points, fillColor) {
                 ctx.beginPath();
-                ctx.setLineDash([5, 5]);
-                ctx.strokeStyle = '#f26522';
-                ctx.lineWidth = 2;
-                ctx.moveTo(centerX - width / 2, centerY + height / 2);
-                ctx.lineTo(centerX + width / 2 + depth, centerY - height / 2 - depth / 2);
+                ctx.moveTo(points[0][0], points[0][1]);
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i][0], points[i][1]);
+                }
+                ctx.closePath();
+                ctx.fillStyle = fillColor;
+                ctx.fill();
                 ctx.stroke();
-                ctx.setLineDash([]);
+            }
+
+            // Define all faces
+            const faces = {
+                front: {
+                    points: [
+                        [centerX - width / 2, centerY - height / 2],
+                        [centerX + width / 2, centerY - height / 2],
+                        [centerX + width / 2, centerY + height / 2],
+                        [centerX - width / 2, centerY + height / 2]
+                    ]
+                },
+                right: {
+                    points: [
+                        [centerX + width / 2, centerY - height / 2],
+                        [centerX + width / 2 + depth, centerY - height / 2 - depth / 2],
+                        [centerX + width / 2 + depth, centerY + height / 2 - depth / 2],
+                        [centerX + width / 2, centerY + height / 2]
+                    ]
+                },
+                top: {
+                    points: [
+                        [centerX - width / 2, centerY - height / 2],
+                        [centerX + width / 2, centerY - height / 2],
+                        [centerX + width / 2 + depth, centerY - height / 2 - depth / 2],
+                        [centerX - width / 2 + depth, centerY - height / 2 - depth / 2]
+                    ]
+                }
+            };
+
+            // Set default styles
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+
+            // Handle different highlights with proper overlay order
+            const defaultFill = '#f5f5f5';
+            const highlightFill = '#f26522';
+            const volumeFill = 'rgba(242, 101, 34, 0.3)';
+
+            // Reset all faces to default
+            faces.front.fillColor = defaultFill;
+            faces.right.fillColor = defaultFill;
+            faces.top.fillColor = defaultFill;
+
+            // Apply highlights based on input focus
+            switch (highlight) {
+                case 'sisi-a':
+                    drawFace(faces.front.points, defaultFill);
+                    drawFace(faces.right.points, defaultFill);
+
+                    // Draw highlighted lines for length
+                    ctx.beginPath();
+                    ctx.strokeStyle = highlightFill;
+                    ctx.lineWidth = 3;
+                    // Bottom length
+                    ctx.moveTo(centerX - width / 2, centerY + height / 2);
+                    ctx.lineTo(centerX + width / 2, centerY + height / 2);
+                    // Top length
+                    ctx.moveTo(centerX - width / 2, centerY - height / 2);
+                    ctx.lineTo(centerX + width / 2, centerY - height / 2);
+                    ctx.stroke();
+                    break;
+
+                case 'sisi-b':
+                    drawFace(faces.front.points, defaultFill);
+                    drawFace(faces.right.points, defaultFill);
+
+                    // Draw highlighted lines for width
+                    ctx.beginPath();
+                    ctx.strokeStyle = highlightFill;
+                    ctx.lineWidth = 3;
+                    // Draw width lines
+                    ctx.moveTo(centerX + width / 2, centerY - height / 2);
+                    ctx.lineTo(centerX + width / 2 + depth, centerY - height / 2 - depth / 2);
+                    ctx.moveTo(centerX + width / 2, centerY + height / 2);
+                    ctx.lineTo(centerX + width / 2 + depth, centerY + height / 2 - depth / 2);
+                    ctx.stroke();
+                    break;
+
+                case 'sisi-c':
+                    drawFace(faces.front.points, defaultFill);
+                    drawFace(faces.right.points, defaultFill);
+
+                    // Draw highlighted lines for height
+                    ctx.beginPath();
+                    ctx.strokeStyle = highlightFill;
+                    ctx.lineWidth = 3;
+                    // Left height
+                    ctx.moveTo(centerX - width / 2, centerY - height / 2);
+                    ctx.lineTo(centerX - width / 2, centerY + height / 2);
+                    // Right height
+                    ctx.moveTo(centerX + width / 2, centerY - height / 2);
+                    ctx.lineTo(centerX + width / 2, centerY + height / 2);
+                    ctx.stroke();
+                    break;
+
+                case 'luas-alas':
+                    drawFace(faces.front.points, defaultFill);
+                    drawFace(faces.right.points, defaultFill);
+                    drawFace(faces.top.points, highlightFill);
+                    break;
+
+                case 'luas-permukaan':
+                    drawFace(faces.front.points, highlightFill);
+                    drawFace(faces.right.points, highlightFill);
+                    drawFace(faces.top.points, highlightFill);
+                    break;
+
+                case 'volume':
+                    drawFace(faces.front.points, volumeFill);
+                    drawFace(faces.right.points, volumeFill);
+                    drawFace(faces.top.points, volumeFill);
+                    break;
+
+                case 'diagonal':
+                    drawFace(faces.front.points, defaultFill);
+                    drawFace(faces.right.points, defaultFill);
+                    drawFace(faces.top.points, defaultFill);
+
+                    // Draw diagonal
+                    ctx.beginPath();
+                    ctx.setLineDash([5, 5]);
+                    ctx.strokeStyle = highlightFill;
+                    ctx.lineWidth = 3;
+                    // Draw all diagonals
+                    ctx.moveTo(centerX - width / 2, centerY + height / 2);
+                    ctx.lineTo(centerX + width / 2 + depth, centerY - height / 2 - depth / 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    break;
+
+                default:
+                    drawFace(faces.front.points, defaultFill);
+                    drawFace(faces.right.points, defaultFill);
+                    drawFace(faces.top.points, defaultFill);
             }
 
             // Label dimensi
