@@ -322,6 +322,14 @@
                         ctx.moveTo(points.topLeft.x, points.topLeft.y);
                         ctx.lineTo(points.topLeft.x, points.bottomLeft.y);
                         break;
+                    case 'diagonal-e':
+                        ctx.moveTo(points.topLeft.x, points.topLeft.y);
+                        ctx.lineTo(points.bottomRight.x, points.bottomRight.y);
+                        break;
+                    case 'diagonal-f':
+                        ctx.moveTo(points.topRight.x, points.topRight.y);
+                        ctx.lineTo(points.bottomLeft.x, points.bottomLeft.y);
+                        break;
                     case 'sudut-alpha':
                         ctx.beginPath();
                         ctx.arc(points.topLeft.x, points.topLeft.y, 20, 0, Math.PI / 2);
@@ -344,11 +352,16 @@
                         break;
                 }
 
+                // Gambar diagonal dengan garis putus-putus jika sedang di-highlight
+                if (highlight === 'diagonal-e' || highlight === 'diagonal-f') {
+                    ctx.setLineDash([5, 5]);
+                }
+
                 ctx.stroke();
                 ctx.setLineDash([]);
             }
 
-            // Label sisi-sisi dan sudut
+            // Label sisi-sisi, diagonal dan sudut
             ctx.font = '16px Arial';
             ctx.fillStyle = '#1a4f7c';
             ctx.fillText('a', (points.topLeft.x + points.topRight.x) / 2, points.topLeft.y - 10);
@@ -356,6 +369,20 @@
             ctx.fillText('c', (points.bottomLeft.x + points.bottomRight.x) / 2, points.bottomLeft.y + 20);
             ctx.fillText('d', points.bottomRight.x + 20, (points.topRight.y + points.bottomRight.y) / 2);
             ctx.fillText('h', points.topLeft.x - 40, (points.topLeft.y + points.bottomLeft.y) / 2);
+            ctx.fillText('e', (points.topLeft.x + points.bottomRight.x) / 2 - 15, (points.topLeft.y + points.bottomRight.y) / 2);
+            ctx.fillText('f', (points.topRight.x + points.bottomLeft.x) / 2 + 15, (points.topRight.y + points.bottomLeft.y) / 2);
+
+            // Gambar diagonal dengan garis putus-putus
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(points.topLeft.x, points.topLeft.y);
+            ctx.lineTo(points.bottomRight.x, points.bottomRight.y);
+            ctx.moveTo(points.topRight.x, points.topRight.y);
+            ctx.lineTo(points.bottomLeft.x, points.bottomLeft.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
 
             // Gambar sudut-sudut
             ctx.strokeStyle = '#1a4f7c';
