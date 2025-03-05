@@ -58,6 +58,21 @@
             margin-bottom: 20px;
         }
 
+        .instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .instructions h3 {
+            margin-bottom: 5px;
+        }
+
+        .instructions p {
+            margin-top: 0;
+            font-size: 14px;
+        }
+
         .canvas-container {
             width: 100%;
             max-width: 600px;
@@ -69,6 +84,12 @@
             height: 300px;
             border: 1px solid var(--border);
             border-radius: 8px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
 
         .input-group {
@@ -96,15 +117,24 @@
             box-shadow: 0 0 0 2px var(--shadow);
         }
 
-        .result {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: var(--background);
-            border-radius: 4px;
+        .button-container {
             text-align: center;
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        .reset-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .reset-btn:hover {
+            background-color: var(--hover);
         }
 
         .formula-section {
@@ -123,10 +153,6 @@
             margin-bottom: 15px;
             font-family: monospace;
         }
-
-        .info-section {
-            margin-top: 30px;
-        }
     </style>
 </head>
 
@@ -141,76 +167,74 @@
 
     <div class="container">
         <div class="card">
+            <div class="instructions">
+                <h3>Kalkulator Piramid Persegi</h3>
+                <p>Masukkan dua nilai. Nilai lainnya akan dihitung secara otomatis.</p>
+                <p><small>Piramid berbentuk piramid persegi (tidak miring)</small></p>
+            </div>
+
             <div class="canvas-container">
                 <canvas id="piramidCanvas"></canvas>
             </div>
 
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Sisi Alas (s):</label>
-                    <input type="number" id="sisiAlas" step="0.1" oninput="updatePiramid('sisiAlas')">
+                    <label>Sisi a:</label>
+                    <input type="number" id="sideA" step="0.1" oninput="updatePiramid()">
                 </div>
                 <div class="input-group">
-                    <label>Tinggi (h):</label>
-                    <input type="number" id="tinggi" step="0.1" oninput="updatePiramid('tinggi')">
+                    <label>Tinggi:</label>
+                    <input type="number" id="height" step="0.1" oninput="updatePiramid()">
+                </div>
+                <div class="input-group">
+                    <label>Luas Alas:</label>
+                    <input type="number" id="baseArea" step="0.1" oninput="updatePiramid()">
+                </div>
+                <div class="input-group">
+                    <label>Diagonal:</label>
+                    <input type="number" id="diagonal" step="0.1" oninput="updatePiramid()">
+                </div>
+                <div class="input-group">
+                    <label>Tinggi ke sisi a:</label>
+                    <input type="number" id="heightToSide" step="0.1" oninput="updatePiramid()">
+                </div>
+                <div class="input-group">
+                    <label>Tinggi sisi miring:</label>
+                    <input type="number" id="slantHeight" step="0.1" oninput="updatePiramid()">
+                </div>
+                <div class="input-group">
+                    <label>Luas Selimut:</label>
+                    <input type="number" id="lateralArea" step="0.1" oninput="updatePiramid()">
+                </div>
+                <div class="input-group">
+                    <label>Luas Permukaan:</label>
+                    <input type="number" id="surface" step="0.1" oninput="updatePiramid()">
+                </div>
+                <div class="input-group">
+                    <label>Volume:</label>
+                    <input type="number" id="volume" step="0.1" oninput="updatePiramid()">
                 </div>
             </div>
 
-            <div class="result" id="result">
-                Volume = 0
-                <br>
-                Luas Permukaan = 0
+            <div class="button-container">
+                <button class="reset-btn" onclick="resetCalculator()">Reset</button>
             </div>
         </div>
 
         <div class="card formula-section">
-            <h3>Rumus-rumus Piramid Segiempat</h3>
+            <h3>Rumus-rumus Piramid:</h3>
             <div class="formula">
-                • Volume = ⅓ × s² × h
-                <br>
-                dimana: s = sisi alas, h = tinggi piramid
+                • Volume = ⅓ × a² × tinggi
             </div>
             <div class="formula">
-                • Luas Permukaan = s² + 2s√(h² + (s/2)²)
-                <br>
-                dimana: s² = luas alas, 2s√(h² + (s/2)²) = jumlah luas sisi tegak
+                • Luas permukaan = a² + 4 × (½ × a × tinggi sisi miring)
             </div>
             <div class="formula">
-                • Tinggi Sisi Tegak = √(h² + (s/2)²)
+                • Tinggi sisi miring = √(tinggi² + (a/2)²)
             </div>
-        </div>
-
-        <div class="card info-section">
-            <h3>Apa itu Piramid?</h3>
-            <p>
-                Piramid segiempat adalah bangun ruang tiga dimensi yang alasnya berbentuk persegi dan sisi-sisi tegaknya
-                berbentuk segitiga yang bertemu di satu titik puncak. Sifat-sifat piramid segiempat:
-            </p>
-            <ul>
-                <li>Memiliki 1 alas berbentuk persegi</li>
-                <li>Memiliki 4 sisi tegak berbentuk segitiga sama kaki</li>
-                <li>Memiliki 5 titik sudut (1 di puncak, 4 di alas)</li>
-                <li>Memiliki 8 rusuk (4 rusuk alas, 4 rusuk tegak)</li>
-                <li>Memiliki 5 bidang sisi (1 alas, 4 sisi tegak)</li>
-            </ul>
-
-            <h3>Komponen Piramid</h3>
-            <ul>
-                <li>Alas: berbentuk persegi dengan sisi s</li>
-                <li>Tinggi (h): jarak tegak lurus dari puncak ke alas</li>
-                <li>Tinggi sisi tegak: jarak dari puncak ke tengah rusuk alas</li>
-                <li>Sisi tegak: berbentuk segitiga sama kaki</li>
-                <li>Titik puncak: titik tertinggi piramid</li>
-            </ul>
-
-            <h3>Cara Menghitung</h3>
-            <p>
-                Untuk menghitung volume dan luas permukaan piramid, Anda perlu mengetahui:
-            </p>
-            <ul>
-                <li>Panjang sisi alas (s)</li>
-                <li>Tinggi piramid (h)</li>
-            </ul>
+            <div class="formula">
+                • Diagonal alas = a × √2
+            </div>
         </div>
     </div>
 
@@ -223,93 +247,196 @@
         function drawPiramid(highlight = null) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Set style
-            ctx.strokeStyle = '#1a4f7c';
-            ctx.lineWidth = 2;
-            ctx.fillStyle = '#f5f5f5';
-
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const baseSize = 100;
             const height = 120;
             const perspective = 0.5;
 
-            // Gambar alas
-            ctx.beginPath();
-            ctx.moveTo(centerX - baseSize, centerY + baseSize * perspective);
-            ctx.lineTo(centerX + baseSize, centerY + baseSize * perspective);
-            ctx.lineTo(centerX + baseSize, centerY - baseSize * perspective);
-            ctx.lineTo(centerX - baseSize, centerY - baseSize * perspective);
-            ctx.closePath();
-            ctx.fillStyle = '#e8e8e8';
-            ctx.fill();
-            ctx.stroke();
-
-            // Gambar garis ke puncak
-            ctx.beginPath();
-            ctx.moveTo(centerX - baseSize, centerY + baseSize * perspective);
-            ctx.lineTo(centerX, centerY - height);
-            ctx.moveTo(centerX + baseSize, centerY + baseSize * perspective);
-            ctx.lineTo(centerX, centerY - height);
-            ctx.moveTo(centerX + baseSize, centerY - baseSize * perspective);
-            ctx.lineTo(centerX, centerY - height);
-            ctx.moveTo(centerX - baseSize, centerY - baseSize * perspective);
-            ctx.lineTo(centerX, centerY - height);
-            ctx.stroke();
-
-            // Highlight sesuai input yang aktif
-            if (highlight) {
-                ctx.strokeStyle = '#f26522';
-                ctx.lineWidth = 3;
+            // Draw functions
+            function drawBase(fillStyle) {
                 ctx.beginPath();
+                ctx.moveTo(centerX - baseSize, centerY + baseSize * perspective);
+                ctx.lineTo(centerX + baseSize, centerY + baseSize * perspective);
+                ctx.lineTo(centerX + baseSize, centerY - baseSize * perspective);
+                ctx.lineTo(centerX - baseSize, centerY - baseSize * perspective);
+                ctx.closePath();
+                ctx.fillStyle = fillStyle;
+                ctx.fill();
+                ctx.stroke();
+            }
 
-                switch (highlight) {
-                    case 'sisiAlas':
-                        ctx.moveTo(centerX - baseSize, centerY + baseSize * perspective);
-                        ctx.lineTo(centerX + baseSize, centerY + baseSize * perspective);
-                        break;
-                    case 'tinggi':
-                        ctx.setLineDash([5, 5]);
-                        ctx.moveTo(centerX, centerY + baseSize * perspective);
-                        ctx.lineTo(centerX, centerY - height);
-                        break;
-                }
-
+            function drawHeightLine() {
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX, centerY - height);
                 ctx.stroke();
                 ctx.setLineDash([]);
             }
 
-            // Label dimensi
+            function drawEdges(color = '#1a4f7c', width = 2) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                ctx.beginPath();
+                // Draw edges to apex
+                ctx.moveTo(centerX - baseSize, centerY + baseSize * perspective);
+                ctx.lineTo(centerX, centerY - height);
+                ctx.moveTo(centerX + baseSize, centerY + baseSize * perspective);
+                ctx.lineTo(centerX, centerY - height);
+                ctx.moveTo(centerX + baseSize, centerY - baseSize * perspective);
+                ctx.lineTo(centerX, centerY - height);
+                ctx.moveTo(centerX - baseSize, centerY - baseSize * perspective);
+                ctx.lineTo(centerX, centerY - height);
+                ctx.stroke();
+            }
+
+            // Default styles
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+
+            // Handle different highlights
+            switch (highlight) {
+                case 'sideA':
+                    drawBase('#f5f5f5');
+                    drawEdges();
+                    // Highlight side a
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - baseSize, centerY + baseSize * perspective);
+                    ctx.lineTo(centerX + baseSize, centerY + baseSize * perspective);
+                    ctx.stroke();
+                    break;
+
+                case 'height':
+                    drawBase('#f5f5f5');
+                    drawEdges();
+                    // Highlight height
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    drawHeightLine();
+                    break;
+
+                case 'baseArea':
+                    drawBase('#f26522');
+                    drawEdges();
+                    break;
+
+                case 'diagonal':
+                    drawBase('#f5f5f5');
+                    drawEdges();
+                    // Draw diagonal
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - baseSize, centerY - baseSize * perspective);
+                    ctx.lineTo(centerX + baseSize, centerY + baseSize * perspective);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    break;
+
+                case 'heightToSide':
+                    drawBase('#f5f5f5');
+                    drawEdges();
+                    // Highlight height to side
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY - height);
+                    ctx.lineTo(centerX, centerY);
+                    ctx.stroke();
+                    break;
+
+                case 'slantHeight':
+                    drawBase('#f5f5f5');
+                    drawEdges();
+                    // Highlight slant height
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY - height);
+                    ctx.lineTo(centerX + baseSize, centerY);
+                    ctx.stroke();
+                    break;
+
+                case 'lateralArea':
+                    drawBase('#f5f5f5');
+                    drawEdges('#f26522', 3);
+                    break;
+
+                case 'surface':
+                    drawBase('#f26522');
+                    drawEdges('#f26522', 3);
+                    break;
+
+                case 'volume':
+                    drawBase('rgba(242, 101, 34, 0.3)');
+                    drawEdges('#f26522', 2);
+                    break;
+
+                default:
+                    drawBase('#f5f5f5');
+                    drawEdges();
+            }
+
+            // Labels
             ctx.font = '16px Arial';
             ctx.fillStyle = '#1a4f7c';
             ctx.textAlign = 'center';
-            ctx.fillText('s', centerX, centerY + baseSize * perspective + 20);
+            ctx.fillText('a', centerX, centerY + baseSize * perspective + 20);
             ctx.fillText('h', centerX + 20, centerY - height / 2);
         }
 
-        function updatePiramid(highlightedPart) {
-            drawPiramid(highlightedPart);
+        function updatePiramid() {
+            const sourceId = document.activeElement ? document.activeElement.id : null;
+            let a = parseFloat(document.getElementById('sideA').value) || 0;
+            let h = parseFloat(document.getElementById('height').value) || 0;
 
-            const s = parseFloat(document.getElementById('sisiAlas').value) || 0;
-            const h = parseFloat(document.getElementById('tinggi').value) || 0;
+            if (a && h) {
+                const baseArea = a * a;
+                const diagonal = a * Math.sqrt(2);
+                const slantHeight = Math.sqrt(h * h + (a / 2) * (a / 2));
+                const lateralArea = 2 * a * slantHeight;
+                const surface = baseArea + lateralArea;
+                const volume = (1 / 3) * baseArea * h;
+                const heightToSide = Math.sqrt(h * h + (a / 2) * (a / 2));
 
-            const volume = (1 / 3) * s * s * h;
-            const tinggiSisiTegak = Math.sqrt(h * h + (s / 2) * (s / 2));
-            const luasPermukaan = s * s + 2 * s * tinggiSisiTegak;
+                // Update fields
+                if (sourceId !== 'baseArea') document.getElementById('baseArea').value = baseArea.toFixed(2);
+                if (sourceId !== 'diagonal') document.getElementById('diagonal').value = diagonal.toFixed(2);
+                if (sourceId !== 'heightToSide') document.getElementById('heightToSide').value = heightToSide.toFixed(2);
+                if (sourceId !== 'slantHeight') document.getElementById('slantHeight').value = slantHeight.toFixed(2);
+                if (sourceId !== 'lateralArea') document.getElementById('lateralArea').value = lateralArea.toFixed(2);
+                if (sourceId !== 'surface') document.getElementById('surface').value = surface.toFixed(2);
+                if (sourceId !== 'volume') document.getElementById('volume').value = volume.toFixed(2);
+            }
 
-            document.getElementById('result').innerHTML =
-                `Volume = ${volume.toFixed(2)}<br>` +
-                `Luas Permukaan = ${luasPermukaan.toFixed(2)}`;
+            drawPiramid(sourceId);
+        }
+
+        function resetCalculator() {
+            const inputs = ['sideA', 'height', 'baseArea', 'diagonal', 'heightToSide',
+                'slantHeight', 'lateralArea', 'surface', 'volume'];
+            inputs.forEach(id => document.getElementById(id).value = '');
+            drawPiramid();
         }
 
         // Event listeners
-        ['sisiAlas', 'tinggi'].forEach(id => {
+        const inputs = ['sideA', 'height', 'baseArea', 'diagonal', 'heightToSide',
+            'slantHeight', 'lateralArea', 'surface', 'volume'];
+        inputs.forEach(id => {
             const elem = document.getElementById(id);
             elem.addEventListener('focus', () => drawPiramid(id));
-            elem.addEventListener('blur', () => drawPiramid());
+            elem.addEventListener('blur', () => {
+                if (!document.activeElement || !inputs.includes(document.activeElement.id)) {
+                    drawPiramid();
+                }
+            });
         });
 
-        // Gambar awal
+        // Initial draw
         drawPiramid();
     </script>
 </body>
