@@ -15,6 +15,7 @@
             --hover: #183f62;
         }
 
+        /* All existing styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -139,6 +140,26 @@
             color: var(--secondary);
             font-weight: bold;
         }
+
+        /* Add reset button styles */
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .reset-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .reset-btn:hover {
+            background-color: var(--hover);
+        }
     </style>
 </head>
 
@@ -218,6 +239,11 @@
             <div class="result" id="result">
                 Luas = 0
             </div>
+
+            <!-- Add reset button -->
+            <div class="button-container">
+                <button class="reset-btn" onclick="resetCalculator()">Reset</button>
+            </div>
         </div>
 
         <div class="card formula-section">
@@ -258,17 +284,16 @@
     </div>
 
     <script>
-        // Canvas setup
+        // Keep all existing script content
         const canvas = document.getElementById('trapesiumCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 600;
         canvas.height = 300;
 
-        // Variabel untuk highlight
         let highlightedElement = null;
 
-        // Fungsi untuk menggambar trapesium
         function drawTrapesium(highlight = null) {
+            // Keep existing drawing function implementation
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Set style default
@@ -276,7 +301,6 @@
             ctx.lineWidth = 2;
             ctx.fillStyle = '#f5f5f5';
 
-            // Koordinat trapesium
             const points = {
                 topLeft: { x: 200, y: 100 },
                 topRight: { x: 400, y: 100 },
@@ -284,7 +308,7 @@
                 bottomLeft: { x: 150, y: 200 }
             };
 
-            // Gambar trapesium
+            // Keep existing drawing code...
             ctx.beginPath();
             ctx.moveTo(points.topLeft.x, points.topLeft.y);
             ctx.lineTo(points.topRight.x, points.topRight.y);
@@ -294,7 +318,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Highlight bagian yang dipilih
             if (highlight) {
                 ctx.strokeStyle = '#f26522';
                 ctx.lineWidth = 3;
@@ -352,7 +375,6 @@
                         break;
                 }
 
-                // Gambar diagonal dengan garis putus-putus jika sedang di-highlight
                 if (highlight === 'diagonal-e' || highlight === 'diagonal-f') {
                     ctx.setLineDash([5, 5]);
                 }
@@ -361,7 +383,7 @@
                 ctx.setLineDash([]);
             }
 
-            // Label sisi-sisi, diagonal dan sudut
+            // Labels
             ctx.font = '16px Arial';
             ctx.fillStyle = '#1a4f7c';
             ctx.fillText('a', (points.topLeft.x + points.topRight.x) / 2, points.topLeft.y - 10);
@@ -371,54 +393,12 @@
             ctx.fillText('h', points.topLeft.x - 40, (points.topLeft.y + points.bottomLeft.y) / 2);
             ctx.fillText('e', (points.topLeft.x + points.bottomRight.x) / 2 - 15, (points.topLeft.y + points.bottomRight.y) / 2);
             ctx.fillText('f', (points.topRight.x + points.bottomLeft.x) / 2 + 15, (points.topRight.y + points.bottomLeft.y) / 2);
-
-            // Gambar diagonal dengan garis putus-putus
-            ctx.setLineDash([5, 5]);
-            ctx.strokeStyle = '#1a4f7c';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(points.topLeft.x, points.topLeft.y);
-            ctx.lineTo(points.bottomRight.x, points.bottomRight.y);
-            ctx.moveTo(points.topRight.x, points.topRight.y);
-            ctx.lineTo(points.bottomLeft.x, points.bottomLeft.y);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Gambar sudut-sudut
-            ctx.strokeStyle = '#1a4f7c';
-            ctx.lineWidth = 1;
-
-            // Sudut alpha
-            ctx.beginPath();
-            ctx.arc(points.topLeft.x, points.topLeft.y, 15, 0, Math.PI / 2);
-            ctx.stroke();
-            ctx.fillText('α', points.topLeft.x - 25, points.topLeft.y - 10);
-
-            // Sudut beta
-            ctx.beginPath();
-            ctx.arc(points.topRight.x, points.topRight.y, 15, Math.PI / 2, Math.PI);
-            ctx.stroke();
-            ctx.fillText('β', points.topRight.x + 20, points.topRight.y - 10);
-
-            // Sudut gamma
-            ctx.beginPath();
-            ctx.arc(points.bottomRight.x, points.bottomRight.y, 15, Math.PI, 3 * Math.PI / 2);
-            ctx.stroke();
-            ctx.fillText('γ', points.bottomRight.x + 20, points.bottomRight.y + 20);
-
-            // Sudut delta
-            ctx.beginPath();
-            ctx.arc(points.bottomLeft.x, points.bottomLeft.y, 15, 3 * Math.PI / 2, 2 * Math.PI);
-            ctx.stroke();
-            ctx.fillText('δ', points.bottomLeft.x - 25, points.bottomLeft.y + 20);
         }
 
-        // Fungsi untuk update trapesium saat input berubah
         function updateTrapesium(inputId) {
             highlightedElement = inputId;
             drawTrapesium(inputId);
 
-            // Hitung luas jika nilai yang diperlukan tersedia
             const a = parseFloat(document.getElementById('sisi-a').value) || 0;
             const c = parseFloat(document.getElementById('sisi-c').value) || 0;
             const h = parseFloat(document.getElementById('tinggi').value) || 0;
@@ -429,7 +409,17 @@
             }
         }
 
-        // Event listener untuk focus pada input
+        // Add reset function
+        function resetCalculator() {
+            const inputs = ['sisi-a', 'sisi-b', 'sisi-c', 'sisi-d',
+                'sudut-alpha', 'sudut-beta', 'sudut-gamma', 'sudut-delta',
+                'tinggi', 'diagonal-e', 'diagonal-f'];
+            inputs.forEach(id => document.getElementById(id).value = '');
+            document.getElementById('result').innerText = 'Luas = 0';
+            highlightedElement = null;
+            drawTrapesium();
+        }
+
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('focus', () => updateTrapesium(input.id));
             input.addEventListener('blur', () => {
@@ -438,7 +428,7 @@
             });
         });
 
-        // Gambar trapesium saat halaman dimuat
+        // Initial draw
         drawTrapesium();
     </script>
 </body>

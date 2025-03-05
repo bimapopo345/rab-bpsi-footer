@@ -15,6 +15,7 @@
             --hover: #183f62;
         }
 
+        /* Keep all existing styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -141,6 +142,26 @@
             font-weight: bold;
             color: var(--primary);
         }
+
+        /* Add reset button styles */
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .reset-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .reset-btn:hover {
+            background-color: var(--hover);
+        }
     </style>
 </head>
 
@@ -171,6 +192,11 @@
             <div class="input-group">
                 <label>Sisi b:</label>
                 <input type="number" id="sisi-b" step="0.1" oninput="updatePersegi()">
+            </div>
+
+            <!-- Add reset button -->
+            <div class="button-container">
+                <button class="reset-btn" onclick="resetCalculator()">Reset</button>
             </div>
 
             <div class="result">
@@ -294,13 +320,23 @@
                 document.getElementById('keliling').textContent = keliling.toFixed(2);
                 document.getElementById('diagonal').textContent = diagonal.toFixed(2);
 
-                // Highlight diagonal when values are entered
                 if (a > 0 && b > 0) {
                     highlightedPart = 'diagonal';
                 }
             }
 
             drawPersegi(highlightedPart);
+        }
+
+        // Add reset function
+        function resetCalculator() {
+            document.getElementById('sisi-a').value = '';
+            document.getElementById('sisi-b').value = '';
+            document.getElementById('luas').textContent = '0';
+            document.getElementById('keliling').textContent = '0';
+            document.getElementById('diagonal').textContent = '0';
+            highlightedPart = null;
+            drawPersegi();
         }
 
         // Event listeners
@@ -323,7 +359,7 @@
             });
         });
 
-        // Gambar persegi saat halaman dimuat
+        // Initial draw
         drawPersegi();
     </script>
 </body>
