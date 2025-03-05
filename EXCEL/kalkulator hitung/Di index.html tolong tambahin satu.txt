@@ -1,0 +1,440 @@
+Di index.html tolong tambahin satu fitur lagi "Kalkulator Hitung" jadi pas ditekan nanti dalam nya ada 9 komponen seperti dibawah beserta gambarnya itu aja dulu jangan ubah yang lain
+
+Ingat jangan ubah yang lain dah yang sudah ada!!! cukup tambahkan dan perhatikan chunk api smaller karena response api saya ga bisa Panjang di cline nya kedepannya!!!
+
+Trapesium
+Persegi
+Kerucut
+Lingkaran
+Persegi ruang
+Tabung
+Prisma
+Piramid
+Segitiga siku2
+
+
+-=-=-
+
+1. Trapesium : https://www.mathepower.com/en/trapezoid.php ✅
+2. Persegi : https://www.mathepower.com/en/rectangle.php ✅
+3. Kerucut : https://www.mathepower.com/en/cone.php ✅
+4. Lingkaran : https://www.mathepower.com/en/circle.php ✅
+5. Persegi ruang : https://www.mathepower.com/en/cuboid.php ✅
+6. Tabung : https://www.mathepower.com/en/cylinder.php ✅
+7. Prisma : https://www.mathepower.com/en/prism.php ✅
+8. Piramid : https://www.mathepower.com/en/pyramid.php ✅
+9. Segitiga siku2 : https://www.mathepower.com/en/pythagoras.php  ✅
+
+
+
+=-=-=
+
+
+Jadiin tulisan dibawah ini Indonesia, dan juga semisal trapesium ditekan gambarnya, dia akan ngelink ke html baru kalkulator_trapesium.html, nah isinya kaya dibawah, kan ada rumus dan kolom input nih dibawah serta penjelasan, dan juga disana tuh semisal nih kita tekan kolom a, di gambar nya nanti ada garis gitu highlight penanda, dan bisa diisi kosong juga seperti dibawah
+
+Enter four values. Other values will be calculated.
+a and c are parallel.
+ A trapezoid. 
+
+a:
+ b:
+ c:
+ d:
+
+alpha 
+ beta 
+ gamma 
+ delta 
+
+Height: 
+
+Diagonal: e:
+ Diagonal: f:
+
+Area: :
+
+
+
+ 
+The following formulas are true for trapezoids:
+Alpha + Delta = Beta + Gamma = 180°
+Area = (a+c)/2*height
+
+Trapezoids
+What is a trapezoid?
+A trapezoid is a quadrangle with two parallel sides. This is not saying much about the quadrangle, so it is quite difficult to do calculations. At least you know that angles lying at different of the parallel sides have the sum 180°.
+
+How can I imagine trapezoid formulas?
+Most of them can be understood by cutting corners of the trapezoid and re-shaping it to a rectangle.
+
+What are the names of the sides and angles of a trapezoid?
+Move the mouse over them and they are shown colored.
+Ein Trapez.Side a, Side b, Side c, Side d,
+Angle alpha, Angle beta, Angle gamma, Angle delta,
+Diagonal e, Diagonal f
+Area
+Height
+
+
+
+-=-=
+
+bentar di kalkulator_hitung.html kenapa masih ada hitung-hitungan? bukannya udah ada nanti di tiap html banguannya?
+
+
+-==
+
+
+oke deh biarin aja, saya mau kamu urus yang lain aja
+
+itu kalau yang trapesium detail semisal ditekan, untuk sisi semisal saya tekan udah ke highlight, tapi kalau kaya sudut saya tekan kenapa ga ada ya? kan sudut tuh kaya melengkung kecil di sudut gitu lho
+
+itu aja sih jangan ubah yang lain
+
+
+
+-==-=
+
+>> sekarang uabh detail persegi jadi dibawah gini (perhatikan WAJIB ada semua highlight warnanya semua kolom ke gambarnya!! dan indonesia)
+
+
+
+Enter two values. Other values will be calculated.
+
+ A rectangle. 
+
+Side a:
+ Side b:
+
+area 
+
+Perimeter: 
+
+diagonal 
+
+
+
+For a rectangle with sides a and b, the following formulas hold:
+Area = a*b
+Perimeter = 2*a+2*b
+Diagonal = square root of a²+b²
+
+ 
+
+
+--=-=
+
+>> sekarang uabh detail kerucut jadi dibawah gini (perhatikan WAJIB ada semua highlight warnanya semua kolom ke gambarnya!! dan indonesia)
+
+
+Cone calculations
+
+ A cone. 
+
+radius 
+ Height: 
+
+Base area: 
+
+Perimeter: 
+
+lateral height s:
+
+Lateral area: 
+
+Surface: 
+
+Volume: 
+ 
+
+
+For a cone, these formulae hold:
+Base area = pi * Radius^2
+Volume = 1/3 * base area * height
+Lateral height = square root of (height^2+radius^2)
+lateral area: pi*radius*side height
+Surface = base area + lateral area
+
+
+
+-=-=
+
+>> sekarang uabh detail Lingkaran jadi dibawah gini (perhatikan WAJIB ada semua highlight warnanya semua kolom ke gambarnya!! dan indonesia)
+
+Note : Ikutin dibawah kalau inputnya banyakin lah kaya Contoh dibawah, jangan sedikit
+
+jangan lupa ada tombol reset
+
+WAJIB ikutin format kaya dibawah : 
+
+
+This calculator computes the values of a circle (radius, diameter, circumference or area) when one value is given.
+ A circle. 
+
+Fill in one field. The others will be calculated.
+
+Radius r:
+
+
+Diameter d:
+
+
+perimeter U:
+
+
+Area A:
+
+
+ 
+These are the formulas for calculating circles:
+Area: pi * radius²
+Circumference = 2 * pi * radius
+Diameter = 2 * radius
+
+
+
+
+
+-=-=
+
+>> sekarang uabh detail Persegi Ruang jadi dibawah gini (perhatikan WAJIB ada semua highlight warnanya semua kolom ke gambarnya!! dan indonesia)
+
+Note : Ikutin dibawah kalau inputnya banyakin lah kaya Contoh dibawah, jangan sedikit
+
+jangan lupa ada tombol reset
+
+WAJIB ikutin format kaya dibawah : 
+
+
+alculate a cuboid
+
+ A cuboid. 
+
+
+Enter three values. Other values will be calculated.
+
+
+a: 
+ b: 
+ c: 
+
+Surface: 
+
+Volume: 
+
+diagonal 
+
+
+ 
+For cuboids those formulas hold:
+base area = a*b
+volume = a*b*c
+surface=2*a*b + 2*a*c + 2*b*c
+
+
+
+
+
+
+
+-=-=
+
+>> sekarang uabh detail Tabung jadi dibawah gini (perhatikan WAJIB ada semua highlight warnanya semua kolom ke gambarnya!! dan indonesia)
+
+Note : Ikutin dibawah kalau inputnya banyakin lah kaya Contoh dibawah, jangan sedikit
+
+Perhatikan highlight jangan salah pas ditekan!!!
+
+jangan lupa ada tombol reset
+
+WAJIB ikutin format kaya dibawah : 
+
+
+
+
+Calculating a cylinder
+
+ A cylinder. 
+
+
+Enter two values. Other values will be calculated.
+
+
+radius 
+ Diameter 
+
+Perimeter: 
+
+Base area: 
+
+Height: 
+
+Lateral area: 
+ Surface: 
+
+Volume: 
+
+
+ 
+Cylinder formulas:
+Base area = pi * radius²
+Volume = base area *height
+Lateral area = perimeter * height
+Surface = 2 * base area + lateral area
+
+
+
+
+-==-
+
+-=-=
+
+>> sekarang uabh detail Prisma jadi dibawah gini (perhatikan WAJIB ada semua highlight warnanya semua kolom ke gambarnya!! dan indonesia)
+
+Note : Ikutin dibawah kalau inputnya banyakin lah kaya Contoh dibawah, jangan sedikit
+
+Perhatikan highlight jangan salah pas ditekan!!!
+
+jangan lupa ada tombol reset
+
+WAJIB ikutin format kaya dibawah : 
+
+
+Calculate a prism
+
+Enter three values. Other values will be calculated.
+
+
+ A prism. 
+Base area: :
+
+Base area perimeter 
+
+Height: 
+
+Lateral area: 
+
+Surface: 
+
+Volume: 
+
+ 
+For prisms, the following formulas hold:
+Volume = base area * height
+Surface = 2*base area + lateral area
+Lateral area = base area perimeter * height
+
+
+
+
+
+
+-==-
+
+-=-=
+
+>> sekarang uabh detail piramid jadi dibawah gini (perhatikan WAJIB ada semua highlight warnanya semua kolom ke gambarnya!! dan indonesia)
+
+Note : Ikutin dibawah kalau inputnya banyakin lah kaya Contoh dibawah, jangan sedikit
+
+Perhatikan highlight jangan salah pas ditekan!!!
+
+jangan lupa ada tombol reset
+
+WAJIB ikutin format kaya dibawah : 
+
+
+Enter two values. Other values will be calculated.
+We assume having a square-based non-skew pyramid.
+
+
+ A pyramid. 
+Side a:
+
+height 
+
+Base area: 
+
+Diagonal: 
+
+Height on a: 
+
+Slant height: 
+
+Lateral area: 
+
+Surface: 
+
+Volume: 
+
+
+
+
+
+-==-=
+
+
+
+
+
+
+
+-==-
+
+-=-=
+
+>> sekarang uabh detail segitiga siku-siku jadi dibawah gini (perhatikan WAJIB ada semua highlight warnanya semua kolom ke gambarnya!! dan indonesia)
+
+Note : Ikutin dibawah kalau inputnya banyakin lah kaya Contoh dibawah, jangan sedikit
+
+Perhatikan highlight jangan salah pas ditekan!!!
+
+jangan lupa ada tombol reset
+
+WAJIB ikutin format kaya dibawah : 
+
+
+
+
+ A right-angled triangle. 
+
+Enter two values. Other values will be calculated.
+
+Side a:
+ Side b:
+ Side c:
+ 
+
+Not often needed (let empty if not needed):
+
+alpha 
+ beta 
+
+p:
+ q:
+ height h:
+
+Area: 
+
+ 
+For rightangled triangles the following formulas hold:
+t_2
+a²+b²=c² (Pythagoras theorem)
+a²=c*p and b²=c*q ( Euclids cathetus theorem)
+h²=p*q (Euclids height theorem)
+sin alpha = a/c
+
+
+-==-
+
+Cline tried to use write_to_file without value for required parameter 'content'. Retrying...
+
+karena error harus comple single update untuk trapezium & kerucut
+
+try again with a complete single update:
+
+ingat saya ga inggin ubah fungsi yang ada
+
+cukup liat detail trapezium,persegi,kerucut
+
+mereka ber-3 belum ada tombol reset itu aja sih yang kurang
