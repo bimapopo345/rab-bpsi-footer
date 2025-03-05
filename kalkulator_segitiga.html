@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Kalkulator Segitiga - RAB Application</title>
+    <title>Kalkulator Segitiga Siku-siku - RAB Application</title>
     <style>
         :root {
             --primary: #1a4f7c;
@@ -58,6 +58,21 @@
             margin-bottom: 20px;
         }
 
+        .instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .instructions h3 {
+            margin-bottom: 5px;
+        }
+
+        .instructions p {
+            margin-top: 0;
+            font-size: 14px;
+        }
+
         .canvas-container {
             width: 100%;
             max-width: 600px;
@@ -69,6 +84,12 @@
             height: 300px;
             border: 1px solid var(--border);
             border-radius: 8px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
 
         .input-group {
@@ -96,15 +117,24 @@
             box-shadow: 0 0 0 2px var(--shadow);
         }
 
-        .result {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: var(--background);
-            border-radius: 4px;
+        .button-container {
             text-align: center;
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        .reset-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .reset-btn:hover {
+            background-color: var(--hover);
         }
 
         .formula-section {
@@ -123,10 +153,6 @@
             margin-bottom: 15px;
             font-family: monospace;
         }
-
-        .info-section {
-            margin-top: 30px;
-        }
     </style>
 </head>
 
@@ -141,85 +167,73 @@
 
     <div class="container">
         <div class="card">
+            <div class="instructions">
+                <h3>Kalkulator Segitiga Siku-siku</h3>
+                <p>Masukkan dua nilai. Nilai lainnya akan dihitung secara otomatis.</p>
+            </div>
+
             <div class="canvas-container">
                 <canvas id="segitigaCanvas"></canvas>
             </div>
 
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Alas (a):</label>
-                    <input type="number" id="alas" step="0.1" oninput="updateSegitiga('alas')">
+                    <label>Sisi a:</label>
+                    <input type="number" id="sideA" step="0.1" oninput="updateSegitiga()">
                 </div>
                 <div class="input-group">
-                    <label>Tinggi (t):</label>
-                    <input type="number" id="tinggi" step="0.1" oninput="updateSegitiga('tinggi')">
+                    <label>Sisi b:</label>
+                    <input type="number" id="sideB" step="0.1" oninput="updateSegitiga()">
+                </div>
+                <div class="input-group">
+                    <label>Sisi c (hipotenusa):</label>
+                    <input type="number" id="sideC" step="0.1" oninput="updateSegitiga()">
+                </div>
+                <div class="input-group">
+                    <label>Alpha (°):</label>
+                    <input type="number" id="alpha" step="0.1" oninput="updateSegitiga()">
+                </div>
+                <div class="input-group">
+                    <label>Beta (°):</label>
+                    <input type="number" id="beta" step="0.1" oninput="updateSegitiga()">
+                </div>
+                <div class="input-group">
+                    <label>p (proyeksi a pada c):</label>
+                    <input type="number" id="p" step="0.1" oninput="updateSegitiga()">
+                </div>
+                <div class="input-group">
+                    <label>q (proyeksi b pada c):</label>
+                    <input type="number" id="q" step="0.1" oninput="updateSegitiga()">
+                </div>
+                <div class="input-group">
+                    <label>Tinggi (h):</label>
+                    <input type="number" id="height" step="0.1" oninput="updateSegitiga()">
+                </div>
+                <div class="input-group">
+                    <label>Luas:</label>
+                    <input type="number" id="area" step="0.1" oninput="updateSegitiga()">
                 </div>
             </div>
 
-            <div class="result" id="result">
-                Luas = 0
-                <br>
-                Keliling = 0
-                <br>
-                Sisi Miring = 0
+            <div class="button-container">
+                <button class="reset-btn" onclick="resetCalculator()">Reset</button>
             </div>
         </div>
 
         <div class="card formula-section">
-            <h3>Rumus-rumus Segitiga Siku-siku</h3>
+            <h3>Rumus-rumus Segitiga Siku-siku:</h3>
             <div class="formula">
-                • Luas = ½ × a × t
+                • a² + b² = c² (Teorema Pythagoras)
             </div>
             <div class="formula">
-                • Sisi Miring (c) = √(a² + t²)
-                <br>
-                (Teorema Pythagoras)
+                • a² = c × p dan b² = c × q (Teorema Cathetus Euclid)
             </div>
             <div class="formula">
-                • Keliling = a + t + c
+                • h² = p × q (Teorema Tinggi Euclid)
             </div>
             <div class="formula">
-                • Sin θ = t/c
-                <br>
-                • Cos θ = a/c
-                <br>
-                • Tan θ = t/a
+                • sin α = a/c
             </div>
-        </div>
-
-        <div class="card info-section">
-            <h3>Apa itu Segitiga Siku-siku?</h3>
-            <p>
-                Segitiga siku-siku adalah segitiga yang memiliki satu sudut siku-siku (90°). Segitiga ini merupakan
-                dasar dari Teorema Pythagoras dan banyak digunakan dalam trigonometri. Sifat-sifat segitiga siku-siku:
-            </p>
-            <ul>
-                <li>Memiliki satu sudut 90° (siku-siku)</li>
-                <li>Dua sudut lainnya berjumlah 90° (komplementer)</li>
-                <li>Sisi terpanjang (sisi miring/hipotenusa) selalu di depan sudut siku-siku</li>
-                <li>Berlaku Teorema Pythagoras: c² = a² + t²</li>
-            </ul>
-
-            <h3>Komponen Segitiga Siku-siku</h3>
-            <ul>
-                <li>Alas (a): sisi dasar segitiga</li>
-                <li>Tinggi (t): sisi tegak segitiga</li>
-                <li>Sisi miring (c): sisi terpanjang/hipotenusa</li>
-                <li>Sudut siku-siku: sudut 90°</li>
-                <li>Sudut lancip: dua sudut yang besarnya kurang dari 90°</li>
-            </ul>
-
-            <h3>Cara Menghitung</h3>
-            <p>
-                Untuk menghitung luas dan keliling segitiga siku-siku, Anda perlu mengetahui:
-            </p>
-            <ul>
-                <li>Alas (a)</li>
-                <li>Tinggi (t)</li>
-            </ul>
-            <p>
-                Sisi miring akan dihitung otomatis menggunakan Teorema Pythagoras.
-            </p>
         </div>
     </div>
 
@@ -232,86 +246,194 @@
         function drawSegitiga(highlight = null) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Set style
-            ctx.strokeStyle = '#1a4f7c';
-            ctx.lineWidth = 2;
-            ctx.fillStyle = '#f5f5f5';
-
             const centerX = canvas.width / 2 - 50;
             const centerY = canvas.height / 2 + 50;
             const baseWidth = 150;
             const height = 120;
 
-            // Gambar segitiga
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(centerX + baseWidth, centerY);
-            ctx.lineTo(centerX, centerY - height);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
+            // Default styles
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#f5f5f5';
 
-            // Gambar tanda siku-siku
-            ctx.beginPath();
-            ctx.moveTo(centerX + 20, centerY);
-            ctx.lineTo(centerX + 20, centerY - 20);
-            ctx.lineTo(centerX, centerY - 20);
-            ctx.stroke();
-
-            // Highlight sesuai input yang aktif
-            if (highlight) {
-                ctx.strokeStyle = '#f26522';
-                ctx.lineWidth = 3;
+            // Draw base triangle
+            function drawBase() {
                 ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX + baseWidth, centerY);
+                ctx.lineTo(centerX, centerY - height);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
 
-                switch (highlight) {
-                    case 'alas':
-                        ctx.moveTo(centerX, centerY);
-                        ctx.lineTo(centerX + baseWidth, centerY);
-                        break;
-                    case 'tinggi':
-                        ctx.moveTo(centerX, centerY);
-                        ctx.lineTo(centerX, centerY - height);
-                        break;
-                }
-
+                // Draw right angle mark
+                ctx.beginPath();
+                ctx.moveTo(centerX + 20, centerY);
+                ctx.lineTo(centerX + 20, centerY - 20);
+                ctx.lineTo(centerX, centerY - 20);
                 ctx.stroke();
             }
 
-            // Label dimensi
+            // Handle different highlights
+            switch (highlight) {
+                case 'sideA':
+                    drawBase();
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.moveTo(centerX + baseWidth, centerY);
+                    ctx.lineTo(centerX, centerY - height);
+                    ctx.stroke();
+                    break;
+
+                case 'sideB':
+                    drawBase();
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX, centerY - height);
+                    ctx.stroke();
+                    break;
+
+                case 'sideC':
+                    drawBase();
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + baseWidth, centerY);
+                    ctx.stroke();
+                    break;
+
+                case 'alpha':
+                    drawBase();
+                    // Draw angle arc
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.arc(centerX, centerY, 30, -Math.PI / 2, 0);
+                    ctx.stroke();
+                    break;
+
+                case 'beta':
+                    drawBase();
+                    // Draw angle arc
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.arc(centerX + baseWidth, centerY, 30, Math.PI, -Math.PI / 4);
+                    ctx.stroke();
+                    break;
+
+                case 'height':
+                    drawBase();
+                    // Draw height
+                    ctx.beginPath();
+                    ctx.setLineDash([5, 5]);
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.moveTo(centerX, centerY - height);
+                    ctx.lineTo(centerX, centerY);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    break;
+
+                case 'p':
+                case 'q':
+                    drawBase();
+                    // Draw projections
+                    ctx.beginPath();
+                    ctx.setLineDash([5, 5]);
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + baseWidth / 2, centerY);
+                    if (highlight === 'q') {
+                        ctx.moveTo(centerX + baseWidth / 2, centerY);
+                        ctx.lineTo(centerX + baseWidth, centerY);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    break;
+
+                case 'area':
+                    // Draw filled triangle
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + baseWidth, centerY);
+                    ctx.lineTo(centerX, centerY - height);
+                    ctx.closePath();
+                    ctx.fillStyle = '#f26522';
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+
+                default:
+                    drawBase();
+            }
+
+            // Labels
             ctx.font = '16px Arial';
             ctx.fillStyle = '#1a4f7c';
             ctx.textAlign = 'center';
-            ctx.fillText('a', centerX + baseWidth / 2, centerY + 20);
-            ctx.fillText('t', centerX - 20, centerY - height / 2);
+            ctx.fillText('a', centerX + baseWidth / 2, centerY + 25);
+            ctx.fillText('b', centerX - 20, centerY - height / 2);
             ctx.fillText('c', centerX + baseWidth / 2 - 10, centerY - height / 2);
             ctx.fillText('90°', centerX + 35, centerY - 25);
+            ctx.fillText('α', centerX + 40, centerY - 10);
+            ctx.fillText('β', centerX + baseWidth - 30, centerY - height / 4);
         }
 
-        function updateSegitiga(highlightedPart) {
-            drawSegitiga(highlightedPart);
+        function updateSegitiga() {
+            const sourceId = document.activeElement ? document.activeElement.id : null;
 
-            const a = parseFloat(document.getElementById('alas').value) || 0;
-            const t = parseFloat(document.getElementById('tinggi').value) || 0;
+            // Get input values
+            const a = parseFloat(document.getElementById('sideA').value) || 0;
+            const b = parseFloat(document.getElementById('sideB').value) || 0;
 
-            const sisiMiring = Math.sqrt(a * a + t * t);
-            const luas = (a * t) / 2;
-            const keliling = a + t + sisiMiring;
+            if (a && b) {
+                // Calculate other values
+                const c = Math.sqrt(a * a + b * b);
+                const alpha = Math.asin(a / c) * 180 / Math.PI;
+                const beta = Math.asin(b / c) * 180 / Math.PI;
+                const h = b;
+                const p = (a * a) / c;
+                const q = (b * b) / c;
+                const area = (a * b) / 2;
 
-            document.getElementById('result').innerHTML =
-                `Luas = ${luas.toFixed(2)}<br>` +
-                `Keliling = ${keliling.toFixed(2)}<br>` +
-                `Sisi Miring = ${sisiMiring.toFixed(2)}`;
+                // Update fields
+                if (sourceId !== 'sideC') document.getElementById('sideC').value = c.toFixed(2);
+                if (sourceId !== 'alpha') document.getElementById('alpha').value = alpha.toFixed(2);
+                if (sourceId !== 'beta') document.getElementById('beta').value = beta.toFixed(2);
+                if (sourceId !== 'height') document.getElementById('height').value = h.toFixed(2);
+                if (sourceId !== 'p') document.getElementById('p').value = p.toFixed(2);
+                if (sourceId !== 'q') document.getElementById('q').value = q.toFixed(2);
+                if (sourceId !== 'area') document.getElementById('area').value = area.toFixed(2);
+            }
+
+            drawSegitiga(sourceId);
+        }
+
+        function resetCalculator() {
+            const inputs = ['sideA', 'sideB', 'sideC', 'alpha', 'beta', 'p', 'q', 'height', 'area'];
+            inputs.forEach(id => document.getElementById(id).value = '');
+            drawSegitiga();
         }
 
         // Event listeners
-        ['alas', 'tinggi'].forEach(id => {
+        const inputs = ['sideA', 'sideB', 'sideC', 'alpha', 'beta', 'p', 'q', 'height', 'area'];
+        inputs.forEach(id => {
             const elem = document.getElementById(id);
             elem.addEventListener('focus', () => drawSegitiga(id));
-            elem.addEventListener('blur', () => drawSegitiga());
+            elem.addEventListener('blur', () => {
+                if (!document.activeElement || !inputs.includes(document.activeElement.id)) {
+                    drawSegitiga();
+                }
+            });
         });
 
-        // Gambar awal
+        // Initial draw
         drawSegitiga();
     </script>
 </body>
