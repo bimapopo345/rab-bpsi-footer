@@ -58,6 +58,21 @@
             margin-bottom: 20px;
         }
 
+        .instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .instructions h3 {
+            margin-bottom: 5px;
+        }
+
+        .instructions p {
+            margin-top: 0;
+            font-size: 14px;
+        }
+
         .canvas-container {
             width: 100%;
             max-width: 600px;
@@ -69,6 +84,12 @@
             height: 300px;
             border: 1px solid var(--border);
             border-radius: 8px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
 
         .input-group {
@@ -96,15 +117,24 @@
             box-shadow: 0 0 0 2px var(--shadow);
         }
 
-        .result {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: var(--background);
-            border-radius: 4px;
+        .button-container {
             text-align: center;
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        .reset-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .reset-btn:hover {
+            background-color: var(--hover);
         }
 
         .formula-section {
@@ -123,10 +153,6 @@
             margin-bottom: 15px;
             font-family: monospace;
         }
-
-        .info-section {
-            margin-top: 30px;
-        }
     </style>
 </head>
 
@@ -141,79 +167,58 @@
 
     <div class="container">
         <div class="card">
+            <div class="instructions">
+                <h3>Kalkulator Prisma</h3>
+                <p>Masukkan tiga nilai. Nilai lainnya akan dihitung secara otomatis.</p>
+            </div>
+
             <div class="canvas-container">
                 <canvas id="prismaCanvas"></canvas>
             </div>
 
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Alas (a):</label>
-                    <input type="number" id="alas" step="0.1" oninput="updatePrisma('alas')">
+                    <label>Luas Alas:</label>
+                    <input type="number" id="baseArea" step="0.1" oninput="updatePrisma()">
                 </div>
                 <div class="input-group">
-                    <label>Tinggi Alas (ta):</label>
-                    <input type="number" id="tinggiAlas" step="0.1" oninput="updatePrisma('tinggiAlas')">
+                    <label>Keliling Alas:</label>
+                    <input type="number" id="basePerimeter" step="0.1" oninput="updatePrisma()">
                 </div>
                 <div class="input-group">
-                    <label>Tinggi Prisma (t):</label>
-                    <input type="number" id="tinggi" step="0.1" oninput="updatePrisma('tinggi')">
+                    <label>Tinggi:</label>
+                    <input type="number" id="height" step="0.1" oninput="updatePrisma()">
+                </div>
+                <div class="input-group">
+                    <label>Luas Selimut:</label>
+                    <input type="number" id="lateralArea" step="0.1" oninput="updatePrisma()">
+                </div>
+                <div class="input-group">
+                    <label>Luas Permukaan:</label>
+                    <input type="number" id="surface" step="0.1" oninput="updatePrisma()">
+                </div>
+                <div class="input-group">
+                    <label>Volume:</label>
+                    <input type="number" id="volume" step="0.1" oninput="updatePrisma()">
                 </div>
             </div>
 
-            <div class="result" id="result">
-                Volume = 0
-                <br>
-                Luas Permukaan = 0
+            <div class="button-container">
+                <button class="reset-btn" onclick="resetCalculator()">Reset</button>
             </div>
         </div>
 
         <div class="card formula-section">
-            <h3>Rumus-rumus Prisma Segitiga</h3>
+            <h3>Rumus-rumus Prisma:</h3>
             <div class="formula">
-                • Volume = (½ × a × ta) × t
-                <br>
-                dimana: a = alas segitiga, ta = tinggi alas, t = tinggi prisma
+                • Volume = luas alas × tinggi
             </div>
             <div class="formula">
-                • Luas Permukaan = (a × t × 3) + (a × ta)
-                <br>
-                dimana: (a × t × 3) = luas selimut, (a × ta) = 2 × luas alas
+                • Luas permukaan = 2 × luas alas + luas selimut
             </div>
-        </div>
-
-        <div class="card info-section">
-            <h3>Apa itu Prisma Segitiga?</h3>
-            <p>
-                Prisma segitiga adalah bangun ruang tiga dimensi yang dibentuk oleh dua buah segitiga yang sejajar dan
-                sebangun (sebagai alas dan tutup) serta tiga buah persegi panjang sebagai sisi tegak.
-                Sifat-sifat prisma segitiga:
-            </p>
-            <ul>
-                <li>Memiliki 2 sisi berbentuk segitiga yang sejajar dan kongruen</li>
-                <li>Memiliki 3 sisi berbentuk persegi panjang</li>
-                <li>Memiliki 9 rusuk</li>
-                <li>Memiliki 6 titik sudut</li>
-                <li>Memiliki 5 bidang sisi</li>
-            </ul>
-
-            <h3>Komponen Prisma Segitiga</h3>
-            <ul>
-                <li>Alas dan tutup: berbentuk segitiga dengan ukuran sama</li>
-                <li>Alas segitiga (a): panjang alas dari segitiga alas/tutup</li>
-                <li>Tinggi alas (ta): tinggi dari segitiga alas/tutup</li>
-                <li>Tinggi prisma (t): jarak antara alas dan tutup</li>
-                <li>Selimut: tiga bidang persegi panjang yang menghubungkan alas dan tutup</li>
-            </ul>
-
-            <h3>Cara Menghitung</h3>
-            <p>
-                Untuk menghitung volume dan luas permukaan prisma segitiga, Anda perlu mengetahui:
-            </p>
-            <ul>
-                <li>Alas segitiga (a)</li>
-                <li>Tinggi segitiga alas (ta)</li>
-                <li>Tinggi prisma (t)</li>
-            </ul>
+            <div class="formula">
+                • Luas selimut = keliling alas × tinggi
+            </div>
         </div>
     </div>
 
@@ -226,114 +231,182 @@
         function drawPrisma(highlight = null) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Set style
-            ctx.strokeStyle = '#1a4f7c';
-            ctx.lineWidth = 2;
-            ctx.fillStyle = '#f5f5f5';
-
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const baseWidth = 100;
             const baseHeight = 80;
             const depth = 60;
 
-            // Gambar segitiga belakang
-            ctx.beginPath();
-            ctx.moveTo(centerX - baseWidth / 2, centerY + baseHeight / 2);
-            ctx.lineTo(centerX + baseWidth / 2, centerY + baseHeight / 2);
-            ctx.lineTo(centerX, centerY - baseHeight / 2);
-            ctx.closePath();
-            ctx.fillStyle = '#e8e8e8';
-            ctx.fill();
-            ctx.stroke();
-
-            // Gambar garis tinggi segitiga jika dipilih
-            if (highlight === 'tinggiAlas') {
+            function drawFace(points, fillStyle) {
                 ctx.beginPath();
-                ctx.setLineDash([5, 5]);
-                ctx.strokeStyle = '#f26522';
-                ctx.lineWidth = 3;
-                ctx.moveTo(centerX, centerY - baseHeight / 2);
-                ctx.lineTo(centerX, centerY + baseHeight / 2);
-                ctx.stroke();
-                ctx.setLineDash([]);
-            }
-
-            // Gambar segitiga depan
-            ctx.beginPath();
-            ctx.moveTo(centerX - baseWidth / 2 + depth, centerY + baseHeight / 2 - depth / 2);
-            ctx.lineTo(centerX + baseWidth / 2 + depth, centerY + baseHeight / 2 - depth / 2);
-            ctx.lineTo(centerX + depth, centerY - baseHeight / 2 - depth / 2);
-            ctx.closePath();
-            ctx.fillStyle = '#f5f5f5';
-            ctx.fill();
-            ctx.stroke();
-
-            // Gambar garis penghubung
-            ctx.beginPath();
-            ctx.moveTo(centerX - baseWidth / 2, centerY + baseHeight / 2);
-            ctx.lineTo(centerX - baseWidth / 2 + depth, centerY + baseHeight / 2 - depth / 2);
-            ctx.moveTo(centerX + baseWidth / 2, centerY + baseHeight / 2);
-            ctx.lineTo(centerX + baseWidth / 2 + depth, centerY + baseHeight / 2 - depth / 2);
-            ctx.moveTo(centerX, centerY - baseHeight / 2);
-            ctx.lineTo(centerX + depth, centerY - baseHeight / 2 - depth / 2);
-            ctx.stroke();
-
-            // Highlight sesuai input yang aktif
-            if (highlight) {
-                ctx.strokeStyle = '#f26522';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-
-                switch (highlight) {
-                    case 'alas':
-                        ctx.moveTo(centerX - baseWidth / 2, centerY + baseHeight / 2);
-                        ctx.lineTo(centerX + baseWidth / 2, centerY + baseHeight / 2);
-                        break;
-                    case 'tinggi':
-                        ctx.setLineDash([5, 5]);
-                        ctx.moveTo(centerX - baseWidth / 2 - 20, centerY + baseHeight / 2);
-                        ctx.lineTo(centerX - baseWidth / 2 - 20, centerY + baseHeight / 2 - depth / 2);
-                        break;
+                ctx.moveTo(points[0][0], points[0][1]);
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i][0], points[i][1]);
                 }
-
+                ctx.closePath();
+                ctx.fillStyle = fillStyle;
+                ctx.fill();
                 ctx.stroke();
-                ctx.setLineDash([]);
             }
 
-            // Label dimensi
+            // Default styles
+            ctx.strokeStyle = '#1a4f7c';
+            ctx.lineWidth = 2;
+
+            const faces = {
+                back: {
+                    points: [
+                        [centerX - baseWidth / 2, centerY + baseHeight / 2],
+                        [centerX + baseWidth / 2, centerY + baseHeight / 2],
+                        [centerX, centerY - baseHeight / 2]
+                    ]
+                },
+                front: {
+                    points: [
+                        [centerX - baseWidth / 2 + depth, centerY + baseHeight / 2 - depth / 2],
+                        [centerX + baseWidth / 2 + depth, centerY + baseHeight / 2 - depth / 2],
+                        [centerX + depth, centerY - baseHeight / 2 - depth / 2]
+                    ]
+                }
+            };
+
+            switch (highlight) {
+                case 'baseArea':
+                    // Highlight alas
+                    drawFace(faces.back.points, '#f26522');
+                    drawFace(faces.front.points, '#f5f5f5');
+                    break;
+
+                case 'basePerimeter':
+                    // Highlight keliling alas
+                    drawFace(faces.back.points, '#f5f5f5');
+                    drawFace(faces.front.points, '#f5f5f5');
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(...faces.back.points[0]);
+                    ctx.lineTo(...faces.back.points[1]);
+                    ctx.lineTo(...faces.back.points[2]);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+
+                case 'height':
+                    // Highlight tinggi
+                    drawFace(faces.back.points, '#f5f5f5');
+                    drawFace(faces.front.points, '#f5f5f5');
+                    ctx.setLineDash([5, 5]);
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - baseWidth / 2 - 20, centerY + baseHeight / 2);
+                    ctx.lineTo(centerX - baseWidth / 2 - 20, centerY + baseHeight / 2 - depth / 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    break;
+
+                case 'lateralArea':
+                    // Highlight selimut
+                    drawFace(faces.back.points, '#f5f5f5');
+                    drawFace(faces.front.points, '#f5f5f5');
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    // Draw highlighted lateral edges
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(faces.back.points[i][0], faces.back.points[i][1]);
+                        ctx.lineTo(faces.front.points[i][0], faces.front.points[i][1]);
+                        ctx.stroke();
+                    }
+                    break;
+
+                case 'surface':
+                    // Highlight all surfaces
+                    drawFace(faces.back.points, '#f26522');
+                    drawFace(faces.front.points, '#f26522');
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 3;
+                    // Draw all edges
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(faces.back.points[i][0], faces.back.points[i][1]);
+                        ctx.lineTo(faces.front.points[i][0], faces.front.points[i][1]);
+                        ctx.stroke();
+                    }
+                    break;
+
+                case 'volume':
+                    // Semi-transparent volume highlight
+                    drawFace(faces.back.points, 'rgba(242, 101, 34, 0.3)');
+                    drawFace(faces.front.points, 'rgba(242, 101, 34, 0.3)');
+                    ctx.strokeStyle = '#f26522';
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(faces.back.points[i][0], faces.back.points[i][1]);
+                        ctx.lineTo(faces.front.points[i][0], faces.front.points[i][1]);
+                        ctx.stroke();
+                    }
+                    break;
+
+                default:
+                    // Default drawing
+                    drawFace(faces.back.points, '#f5f5f5');
+                    drawFace(faces.front.points, '#f5f5f5');
+                    // Draw connecting edges
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(faces.back.points[i][0], faces.back.points[i][1]);
+                        ctx.lineTo(faces.front.points[i][0], faces.front.points[i][1]);
+                        ctx.stroke();
+                    }
+            }
+
+            // Labels
             ctx.font = '16px Arial';
             ctx.fillStyle = '#1a4f7c';
             ctx.textAlign = 'center';
-            ctx.fillText('a', centerX, centerY + baseHeight / 2 + 20);
-            ctx.fillText('ta', centerX + 20, centerY);
-            ctx.fillText('t', centerX - baseWidth / 2 - 30, centerY);
+            ctx.fillText('h', centerX - baseWidth / 2 - 30, centerY);
         }
 
-        function updatePrisma(highlightedPart) {
-            drawPrisma(highlightedPart);
+        function updatePrisma() {
+            const sourceId = document.activeElement ? document.activeElement.id : null;
+            let baseArea = parseFloat(document.getElementById('baseArea').value) || 0;
+            let basePerimeter = parseFloat(document.getElementById('basePerimeter').value) || 0;
+            let height = parseFloat(document.getElementById('height').value) || 0;
 
-            const a = parseFloat(document.getElementById('alas').value) || 0;
-            const ta = parseFloat(document.getElementById('tinggiAlas').value) || 0;
-            const t = parseFloat(document.getElementById('tinggi').value) || 0;
+            if (baseArea && height) {
+                const lateralArea = basePerimeter * height;
+                const surface = 2 * baseArea + lateralArea;
+                const volume = baseArea * height;
 
-            const luasAlas = (a * ta) / 2;
-            const volume = luasAlas * t;
-            const luasPermukaan = (a * t * 3) + (2 * luasAlas);
+                if (sourceId !== 'lateralArea') document.getElementById('lateralArea').value = lateralArea.toFixed(2);
+                if (sourceId !== 'surface') document.getElementById('surface').value = surface.toFixed(2);
+                if (sourceId !== 'volume') document.getElementById('volume').value = volume.toFixed(2);
+            }
 
-            document.getElementById('result').innerHTML =
-                `Volume = ${volume.toFixed(2)}<br>` +
-                `Luas Permukaan = ${luasPermukaan.toFixed(2)}`;
+            drawPrisma(sourceId);
+        }
+
+        function resetCalculator() {
+            const inputs = ['baseArea', 'basePerimeter', 'height', 'lateralArea', 'surface', 'volume'];
+            inputs.forEach(id => document.getElementById(id).value = '');
+            drawPrisma();
         }
 
         // Event listeners
-        ['alas', 'tinggiAlas', 'tinggi'].forEach(id => {
+        const inputs = ['baseArea', 'basePerimeter', 'height', 'lateralArea', 'surface', 'volume'];
+        inputs.forEach(id => {
             const elem = document.getElementById(id);
             elem.addEventListener('focus', () => drawPrisma(id));
-            elem.addEventListener('blur', () => drawPrisma());
+            elem.addEventListener('blur', () => {
+                if (!document.activeElement || !inputs.includes(document.activeElement.id)) {
+                    drawPrisma();
+                }
+            });
         });
 
-        // Gambar awal
+        // Initial draw
         drawPrisma();
     </script>
 </body>
